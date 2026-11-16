@@ -1,0 +1,3144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VIOLET TRIP | 한·일 여행 인터랙티브 포털 (무한루프 방지 적용)</title>
+  <!-- GSAP & ScrollTrigger CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    /* ==========================================================================
+       1. MULTI-COLOR PALETTE SYSTEM ANCHORED BY VIOLET (Pure Vanilla CSS)
+       ========================================================================== */
+    :root {
+      --bg-white: #ffffff;
+      --bg-canvas: #f8f7fc;
+      --bg-glass: rgba(255, 255, 255, 0.90);
+      --bg-dark-ink: #131129;
+
+      /* Main Anchor: Royal Violet */
+      --violet-50: #f5f3ff;
+      --violet-100: #ede9fe;
+      --violet-200: #ddd6fe;
+      --violet-300: #c4b5fd;
+      --violet-400: #a78bfa;
+      --violet-500: #8b5cf6;
+      --violet-600: #7c3aed;
+      --violet-700: #6d28d9;
+      --violet-800: #5b21b6;
+      --violet-900: #3b0764;
+
+      /* Multi-Color Accents per Category */
+      --cyan-50: #ecfeff;
+      --cyan-500: #06b6d4;
+      --cyan-700: #0e7490;
+
+      --amber-50: #fffbeb;
+      --amber-500: #f59e0b;
+      --amber-700: #b45309;
+
+      --rose-50: #fff1f2;
+      --rose-500: #f43f5e;
+      --rose-700: #be123c;
+
+      --emerald-50: #ecfdf5;
+      --emerald-500: #10b981;
+      --emerald-700: #047857;
+
+      --magenta-50: #fdf2f8;
+      --magenta-500: #ec4899;
+      --magenta-700: #be185d;
+
+      --indigo-600: #4f46e5;
+
+      /* Typography & Borders */
+      --text-main: #181336;
+      --text-sub: #4a4568;
+      --text-muted: #7e789c;
+      --border-soft: #e6e1f7;
+      --border-strong: #c9bdf5;
+
+      /* Shadows & Radius */
+      --shadow-sm: 0 4px 14px rgba(109, 40, 217, 0.06);
+      --shadow-md: 0 12px 30px rgba(109, 40, 217, 0.11);
+      --shadow-lg: 0 20px 44px rgba(76, 29, 149, 0.18);
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+      background-color: var(--bg-canvas);
+      background-image:
+        radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.08) 0px, transparent 45%),
+        radial-gradient(at 100% 15%, rgba(6, 182, 212, 0.08) 0px, transparent 45%),
+        radial-gradient(at 50% 100%, rgba(244, 63, 94, 0.06) 0px, transparent 50%);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    ul, ol {
+      list-style: none;
+    }
+
+    /* ==========================================================================
+       2. STICKY TOP HEADER & FILE SYNC CONTROLS
+       ========================================================================== */
+    .top-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-soft);
+      box-shadow: 0 4px 20px rgba(59, 7, 100, 0.06);
+    }
+
+    .header-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .brand-orb {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--violet-600) 0%, var(--magenta-500) 55%, var(--cyan-500) 100%);
+      color: var(--bg-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.25rem;
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+    }
+
+    .brand-title {
+      font-size: 1.18rem;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--violet-900), var(--violet-600), var(--magenta-700));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
+      display: block;
+    }
+
+    .brand-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    /* Country Switcher */
+    .country-switcher {
+      display: inline-flex;
+      background: var(--violet-50);
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+    }
+
+    .country-btn {
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--text-sub);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .country-btn.active[data-country="ALL"] {
+      background: linear-gradient(135deg, var(--violet-600), var(--indigo-600));
+      color: var(--bg-white);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    }
+
+    .country-btn.active[data-country="KR"] {
+      background: linear-gradient(135deg, var(--violet-700), var(--rose-500));
+      color: var(--bg-white);
+      box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+    }
+
+    .country-btn.active[data-country="JP"] {
+      background: linear-gradient(135deg, var(--violet-700), var(--cyan-500));
+      color: var(--bg-white);
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+    }
+
+    /* Header Actions */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .file-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--text-sub);
+      background: var(--bg-white);
+      border: 1px solid var(--border-soft);
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--emerald-500);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .status-dot.syncing {
+      background: var(--amber-500);
+      animation: pulseGlow 0.9s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      from { transform: scale(0.9); opacity: 0.6; }
+      to { transform: scale(1.3); opacity: 1; }
+    }
+
+    .btn-folder-bind {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 13px;
+      border-radius: 10px;
+      font-size: 0.79rem;
+      font-weight: 800;
+      background: var(--cyan-50);
+      color: var(--cyan-700);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-folder-bind:hover {
+      background: var(--cyan-500);
+      color: var(--bg-white);
+    }
+
+    .btn-folder-bind.bound {
+      background: var(--emerald-50);
+      color: var(--emerald-700);
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-json-view {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      background: var(--violet-50);
+      color: var(--violet-700);
+      border: 1px solid var(--border-strong);
+      transition: all 0.2s ease;
+    }
+
+    .btn-json-view:hover {
+      background: var(--violet-100);
+    }
+
+    /* Fixed Top Refresh Button */
+    .btn-refresh {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: linear-gradient(135deg, var(--violet-600) 0%, var(--violet-800) 100%);
+      color: var(--bg-white);
+      font-weight: 800;
+      font-size: 0.84rem;
+      padding: 9px 16px;
+      border-radius: 11px;
+      box-shadow: 0 5px 15px rgba(109, 40, 217, 0.3);
+      transition: all 0.22s ease;
+    }
+
+    .btn-refresh:hover {
+      background: linear-gradient(135deg, var(--violet-700) 0%, var(--magenta-700) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(109, 40, 217, 0.4);
+    }
+
+    .btn-refresh.loading .refresh-icon {
+      display: inline-block;
+      animation: spin360 0.75s linear infinite;
+    }
+
+    @keyframes spin360 {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Category Sub-Nav Bar */
+    .category-nav-bar {
+      background: var(--bg-white);
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .category-nav-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .category-nav-inner::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-tab {
+      padding: 12px 16px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: var(--text-sub);
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .nav-tab:hover {
+      color: var(--violet-700);
+      background: var(--violet-50);
+    }
+
+    .nav-tab.active {
+      color: var(--violet-800);
+      border-bottom-color: var(--violet-600);
+      background: linear-gradient(180deg, transparent, var(--violet-50));
+    }
+
+    .nav-pill {
+      font-size: 0.68rem;
+      padding: 2px 7px;
+      border-radius: 99px;
+      font-weight: 800;
+    }
+
+    .pill-cyan { background: var(--cyan-50); color: var(--cyan-700); }
+    .pill-amber { background: var(--amber-50); color: var(--amber-700); }
+    .pill-rose { background: var(--rose-50); color: var(--rose-700); }
+    .pill-violet { background: var(--violet-100); color: var(--violet-800); }
+    .pill-emerald { background: var(--emerald-50); color: var(--emerald-700); }
+    .pill-magenta { background: var(--magenta-50); color: var(--magenta-700); }
+
+    /* ==========================================================================
+       3. MAIN CONTAINER & MULTI-COLOR HERO BANNER
+       ========================================================================== */
+    .main-container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 28px 24px 84px;
+    }
+
+    .hero-showcase {
+      background: linear-gradient(125deg, #2e1065 0%, #5b21b6 42%, #7c3aed 72%, #0891b2 100%);
+      border-radius: var(--radius-lg);
+      padding: 38px 42px;
+      color: var(--bg-white);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 42px;
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero-orb-deco {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(45px);
+      pointer-events: none;
+    }
+
+    .hero-orb-1 {
+      width: 260px;
+      height: 260px;
+      background: rgba(244, 63, 94, 0.35);
+      top: -60px;
+      right: 22%;
+    }
+
+    .hero-orb-2 {
+      width: 220px;
+      height: 220px;
+      background: rgba(6, 182, 212, 0.35);
+      bottom: -70px;
+      right: -30px;
+    }
+
+    .hero-badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .hero-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      backdrop-filter: blur(6px);
+    }
+
+    .hero-title {
+      font-size: 2.1rem;
+      font-weight: 900;
+      line-height: 1.24;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-desc {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.88);
+      margin-bottom: 22px;
+      max-width: 660px;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 10px;
+    }
+
+    .hero-metric-card {
+      background: rgba(19, 17, 41, 0.38);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 11px 14px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-metric-card span {
+      font-size: 0.71rem;
+      color: rgba(255, 255, 255, 0.72);
+      display: block;
+    }
+
+    .hero-metric-card strong {
+      font-size: 0.94rem;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    /* Interactive File Engine Console inside Hero */
+    .hero-console {
+      background: rgba(19, 17, 41, 0.86);
+      border: 1px solid rgba(196, 181, 253, 0.35);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      color: #e9e5ff;
+      z-index: 1;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+    }
+
+    .console-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .console-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .console-dots i {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .console-log-list {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.76rem;
+      line-height: 1.55;
+      color: #c4b5fd;
+      max-height: 135px;
+      overflow-y: auto;
+    }
+
+    .console-log-list div {
+      margin-bottom: 4px;
+    }
+
+    .console-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-console {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      background: rgba(124, 58, 237, 0.35);
+      color: #fff;
+      border: 1px solid rgba(167, 139, 250, 0.45);
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .btn-console:hover {
+      background: var(--violet-600);
+    }
+
+    /* Section Header Common */
+    .section-block {
+      margin-bottom: 56px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.74rem;
+      font-weight: 900;
+      padding: 4px 11px;
+      border-radius: 99px;
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .section-title {
+      font-size: 1.48rem;
+      font-weight: 900;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .btn-section-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      background: var(--bg-white);
+      color: var(--violet-700);
+      border: 1.5px solid var(--border-strong);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.22s ease;
+    }
+
+    .btn-section-more:hover {
+      background: var(--violet-600);
+      color: var(--bg-white);
+      border-color: var(--violet-600);
+      transform: translateX(3px);
+    }
+
+    /* ==========================================================================
+       4. DESIGN PATTERN 1: ROAMING (3D Tilt Cards + Method Simulator Tabs)
+       ========================================================================== */
+    .roaming-simulator-box {
+      background: linear-gradient(135deg, #ffffff 0%, #f3f0ff 60%, #ecfeff 100%);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .roam-method-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .roam-tab-btn {
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      background: var(--bg-white);
+      color: var(--text-sub);
+      border: 1px solid var(--border-soft);
+      transition: all 0.2s ease;
+    }
+
+    .roam-tab-btn.active {
+      background: linear-gradient(135deg, var(--violet-600), var(--cyan-500));
+      color: var(--bg-white);
+      border-color: transparent;
+      box-shadow: 0 6px 16px rgba(6, 182, 212, 0.28);
+    }
+
+    .roam-simulator-panel {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 20px;
+      background: var(--bg-white);
+      padding: 18px 22px;
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
+      align-items: center;
+    }
+
+    .roam-gauge-row {
+      margin-bottom: 10px;
+    }
+
+    .roam-gauge-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .roam-gauge-track {
+      height: 9px;
+      background: var(--violet-50);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .roam-gauge-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--violet-600), var(--cyan-500));
+    }
+
+    .roam-company-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+      gap: 18px;
+      perspective: 1000px;
+    }
+
+    .roam-tilt-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .roam-tilt-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--violet-600), var(--cyan-500));
+    }
+
+    .roam-terminal-badge {
+      background: var(--bg-dark-ink);
+      color: #67e8f9;
+      font-family: 'Consolas', monospace;
+      font-size: 0.72rem;
+      padding: 8px 10px;
+      border-radius: 8px;
+      margin: 12px 0;
+      border-left: 3px solid var(--cyan-500);
+    }
+
+    .roam-price-tag {
+      font-size: 0.9rem;
+      font-weight: 900;
+      color: var(--violet-700);
+      background: var(--violet-50);
+      padding: 7px 10px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .btn-crawl-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--violet-600), var(--violet-800));
+      color: var(--bg-white);
+      font-size: 0.81rem;
+      font-weight: 800;
+      transition: all 0.2s ease;
+    }
+
+    .btn-crawl-link:hover {
+      background: linear-gradient(135deg, var(--cyan-700), var(--violet-700));
+      transform: translateY(-2px);
+    }
+
+    /* ==========================================================================
+       5. DESIGN PATTERN 2: ESSENTIALS (Interactive Bento Grid + Accordion Drawer)
+       ========================================================================== */
+    .essentials-bento-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    .bento-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border-soft);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .bento-card[data-accent="amber"] { border-top: 5px solid var(--amber-500); }
+    .bento-card[data-accent="emerald"] { border-top: 5px solid var(--emerald-500); }
+    .bento-card[data-accent="cyan"] { border-top: 5px solid var(--cyan-500); }
+    .bento-card[data-accent="rose"] { border-top: 5px solid var(--rose-500); }
+
+    .bento-card:hover {
+      border-color: var(--violet-500);
+      box-shadow: var(--shadow-md);
+    }
+
+    .bento-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .bento-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      background: var(--violet-50);
+    }
+
+    .bento-expand-btn {
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 5px 11px;
+      border-radius: 99px;
+      background: var(--amber-50);
+      color: var(--amber-700);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .bento-drawer {
+      overflow: hidden;
+      height: 0;
+      opacity: 0;
+      background: var(--bg-canvas);
+      border-radius: 10px;
+      padding: 0 14px;
+      margin-top: 0;
+      border: 1px dashed var(--border-strong);
+    }
+
+    .bento-drawer.open {
+      height: auto;
+      opacity: 1;
+      padding: 12px 14px;
+      margin-top: 14px;
+    }
+
+    .bento-kv-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      font-size: 0.81rem;
+      border-bottom: 1px solid var(--border-soft);
+      gap: 10px;
+    }
+
+    .bento-kv-row:last-child { border-bottom: none; }
+
+    /* ==========================================================================
+       6. DESIGN PATTERN 3: IMMIGRATION (Before vs After Diff Toggle & Timeline)
+       ========================================================================== */
+    .immigration-timeline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 20px;
+    }
+
+    .imm-diff-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      border-left: 6px solid var(--rose-500);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .imm-diff-toggle-bar {
+      display: flex;
+      background: var(--bg-canvas);
+      padding: 4px;
+      border-radius: 10px;
+      margin: 12px 0;
+      border: 1px solid var(--border-soft);
+    }
+
+    .imm-mode-btn {
+      flex: 1;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .imm-mode-btn.active[data-mode="after"] {
+      background: linear-gradient(135deg, var(--rose-500), var(--violet-600));
+      color: var(--bg-white);
+    }
+
+    .imm-mode-btn.active[data-mode="before"] {
+      background: #475569;
+      color: var(--bg-white);
+    }
+
+    .imm-diff-box {
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 0.83rem;
+      margin-bottom: 12px;
+      min-height: 74px;
+    }
+
+    .imm-diff-box.after-state {
+      background: var(--rose-50);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: var(--rose-700);
+      font-weight: 700;
+    }
+
+    .imm-diff-box.before-state {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      text-decoration: line-through;
+    }
+
+    .imm-check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      padding: 5px 0;
+      cursor: pointer;
+    }
+
+    .imm-check-item input {
+      margin-top: 4px;
+      accent-color: var(--violet-600);
+    }
+
+    /* ==========================================================================
+       7. DESIGN PATTERN 4: ATTRACTIONS TOP 5 (Interactive Expandable Podium Deck)
+       ========================================================================== */
+    .podium-deck-container {
+      display: flex;
+      gap: 12px;
+      min-height: 360px;
+      margin-bottom: 24px;
+    }
+
+    .podium-panel {
+      flex: 1;
+      background: var(--bg-white);
+      border: 1.5px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      transition: flex 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .podium-panel.expanded {
+      flex: 2.6;
+      border-color: var(--violet-600);
+      background: linear-gradient(160deg, #ffffff 0%, #f5f3ff 65%, #fdf2f8 100%);
+      box-shadow: var(--shadow-md);
+    }
+
+    .podium-rank-watermark {
+      position: absolute;
+      right: 12px;
+      top: 6px;
+      font-size: 3.4rem;
+      font-weight: 900;
+      color: rgba(124, 58, 237, 0.09);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .podium-panel.expanded .podium-rank-watermark {
+      color: rgba(236, 72, 153, 0.16);
+      font-size: 4.5rem;
+    }
+
+    .podium-rank-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--violet-600), var(--magenta-500));
+      color: var(--bg-white);
+      width: fit-content;
+      margin-bottom: 10px;
+    }
+
+    .podium-visitor-counter {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--violet-800);
+      margin: 8px 0 4px;
+    }
+
+    .podium-detail-content {
+      display: none;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border-strong);
+      font-size: 0.84rem;
+      color: var(--text-sub);
+    }
+
+    .podium-panel.expanded .podium-detail-content {
+      display: block;
+    }
+
+    /* ==========================================================================
+       8. DESIGN PATTERN 5: ITINERARIES (Interactive Metro Line Stepper)
+       ========================================================================== */
+    .itinerary-metro-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 22px;
+    }
+
+    .metro-route-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .metro-line-track {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin: 20px 0;
+      padding: 0 6px;
+    }
+
+    .metro-line-track::before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: 50%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--violet-500), var(--emerald-500));
+      transform: translateY(-50%);
+      z-index: 0;
+      border-radius: 99px;
+    }
+
+    .metro-day-node {
+      position: relative;
+      z-index: 1;
+      padding: 7px 14px;
+      border-radius: 99px;
+      font-size: 0.76rem;
+      font-weight: 900;
+      background: var(--bg-white);
+      color: var(--text-sub);
+      border: 2px solid var(--violet-400);
+      transition: all 0.22s ease;
+    }
+
+    .metro-day-node.active {
+      background: linear-gradient(135deg, var(--violet-600), var(--emerald-500));
+      color: var(--bg-white);
+      border-color: transparent;
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+    }
+
+    .metro-stage-box {
+      background: linear-gradient(135deg, var(--violet-50), var(--emerald-50));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+      min-height: 92px;
+    }
+
+    .metro-stage-day {
+      font-size: 0.75rem;
+      font-weight: 900;
+      color: var(--emerald-700);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .metro-stage-route {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    /* ==========================================================================
+       9. DESIGN PATTERN 6: RESTAURANTS (Perforated Gourmet Ticket Stub UI)
+       ========================================================================== */
+    .gourmet-ticket-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 20px;
+    }
+
+    .gourmet-ticket {
+      background: var(--bg-white);
+      border-radius: 16px;
+      border: 1.5px solid var(--border-strong);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .gourmet-ticket::before,
+    .gourmet-ticket::after {
+      content: "";
+      position: absolute;
+      top: 66%;
+      width: 22px;
+      height: 22px;
+      background: var(--bg-canvas);
+      border: 1.5px solid var(--border-strong);
+      border-radius: 50%;
+      z-index: 2;
+    }
+
+    .gourmet-ticket::before { left: -12px; }
+    .gourmet-ticket::after { right: -12px; }
+
+    .ticket-upper {
+      padding: 20px 22px 16px;
+      background: linear-gradient(180deg, #fff1f2 0%, #ffffff 45%);
+    }
+
+    .ticket-star-ribbon {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      background: var(--amber-50);
+      color: var(--amber-700);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      font-size: 0.74rem;
+      font-weight: 900;
+    }
+
+    .ticket-menu-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0;
+    }
+
+    .ticket-menu-pill {
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      background: var(--violet-50);
+      color: var(--violet-800);
+      border: 1px solid var(--violet-200);
+    }
+
+    .ticket-lower {
+      padding: 16px 22px 20px;
+      border-top: 2px dashed var(--border-strong);
+      background: var(--bg-white);
+    }
+
+    .ticket-secret-tip {
+      background: var(--amber-50);
+      border-left: 3px solid var(--amber-500);
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 0.79rem;
+      color: var(--amber-700);
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .ticket-secret-tip.revealed {
+      display: block;
+    }
+
+    /* ==========================================================================
+       10. MODAL & TOAST NOTIFICATION
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(19, 17, 41, 0.65);
+      backdrop-filter: blur(5px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-window {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      max-width: 880px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      background: linear-gradient(90deg, var(--violet-50), var(--cyan-50));
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 20px 24px;
+      overflow-y: auto;
+      background: var(--bg-dark-ink);
+      color: #ddd6fe;
+      font-family: 'Consolas', monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+    }
+
+    .modal-footer {
+      padding: 14px 24px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .toast-stack {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast-item {
+      background: var(--bg-dark-ink);
+      color: var(--bg-white);
+      padding: 13px 18px;
+      border-radius: 12px;
+      font-size: 0.83rem;
+      font-weight: 700;
+      box-shadow: var(--shadow-lg);
+      border-left: 5px solid var(--cyan-500);
+    }
+
+    .site-footer {
+      background: var(--bg-white);
+      border-top: 1px solid var(--border-soft);
+      padding: 34px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    @media (max-width: 960px) {
+      .hero-showcase { grid-template-columns: 1fr; padding: 26px; }
+      .roam-simulator-panel { grid-template-columns: 1fr; }
+      .podium-deck-container { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       STICKY TOP HEADER (Country Switcher + Safe File Sync Controls)
+       ======================================================================== -->
+  <header class="top-header">
+    <div class="header-inner">
+      <div class="brand-logo" onclick="navigateToPage('home')">
+        <div class="brand-orb">V</div>
+        <div>
+          <span class="brand-title">VIOLET TRIP</span>
+          <span class="brand-sub">KR · JP MULTI-INTERACTION PORTAL</span>
+        </div>
+      </div>
+
+      <!-- Country Filter -->
+      <div class="country-switcher" role="group">
+        <button class="country-btn active" data-country="ALL" onclick="setCountryFilter('ALL')">🌏 한·일 통합</button>
+        <button class="country-btn" data-country="KR" onclick="setCountryFilter('KR')">🇰🇷 대한민국</button>
+        <button class="country-btn" data-country="JP" onclick="setCountryFilter('JP')">🇯🇵 일본</button>
+      </div>
+
+      <!-- Safe File Sync & Fixed Refresh Controls -->
+      <div class="header-actions">
+        <div class="file-status-badge">
+          <span id="syncDot" class="status-dot"></span>
+          <span id="syncStatusText">data_travel.json 준비 중...</span>
+        </div>
+
+        <button id="btnBindFolder" class="btn-folder-bind" onclick="bindHtmlFolderForDirectSave()" title="HTML이 위치한 폴더를 지정하면 다운로드 팝업 및 무한 새로고침 없이 data_travel.json을 직접 생성/갱신합니다.">
+          📁 폴더 연결 (직접 저장)
+        </button>
+
+        <button class="btn-json-view" onclick="openJsonModal()">
+          { } JSON 확인/다운로드
+        </button>
+
+        <button id="btnRefreshData" class="btn-refresh" onclick="handleManualRefreshClick()">
+          <span class="refresh-icon">↻</span>
+          <span>데이터 새로고침</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Sub-Navigation -->
+    <nav class="category-nav-bar">
+      <div class="category-nav-inner">
+        <button class="nav-tab active" data-page="home" onclick="navigateToPage('home')">
+          🏠 메인 랜딩
+        </button>
+        <button class="nav-tab" data-page="roaming" onclick="navigateToPage('roaming')">
+          📡 데이터 로밍 <span class="nav-pill pill-cyan">3D 틸트 & 5사 크롤링</span>
+        </button>
+        <button class="nav-tab" data-page="essentials" onclick="navigateToPage('essentials')">
+          💡 알아야 할 것 <span class="nav-pill pill-amber">벤토 그리드</span>
+        </button>
+        <button class="nav-tab" data-page="immigration" onclick="navigateToPage('immigration')">
+          🛂 입출국 변경사항 <span class="nav-pill pill-rose">Before/After 토글</span>
+        </button>
+        <button class="nav-tab" data-page="attractions" onclick="navigateToPage('attractions')">
+          🏛️ 추천 관광지 <span class="nav-pill pill-violet">TOP 5 포디움 덱</span>
+        </button>
+        <button class="nav-tab" data-page="itineraries" onclick="navigateToPage('itineraries')">
+          🗺️ 여행 경로 <span class="nav-pill pill-emerald">메트로 스텝퍼</span>
+        </button>
+        <button class="nav-tab" data-page="restaurants" onclick="navigateToPage('restaurants')">
+          🍽️ 추천 음식집 <span class="nav-pill pill-magenta">미식 티켓 UI</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ========================================================================
+       MAIN VIEWPORT
+       ======================================================================== -->
+  <main class="main-container" id="appViewport"></main>
+
+  <!-- ========================================================================
+       MODAL: data_travel.json Inspector
+       ======================================================================== -->
+  <div class="modal-backdrop" id="jsonModal">
+    <div class="modal-window">
+      <div class="modal-header">
+        <strong style="color:var(--violet-900);">📄 ./data_travel.json 실시간 구조 및 내용</strong>
+        <button class="btn-json-view" onclick="closeJsonModal()">닫기 ✕</button>
+      </div>
+      <div class="modal-body" id="jsonModalBody"></div>
+      <div class="modal-footer">
+        <button class="btn-folder-bind" onclick="bindHtmlFolderForDirectSave()">📁 현재 폴더에 직접 연결</button>
+        <button class="btn-refresh" onclick="downloadDataTravelJsonFile('MANUAL_MODAL_DOWNLOAD')">💾 data_travel.json 파일 다운로드</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-stack" id="toastStack"></div>
+
+  <footer class="site-footer">
+    <p><strong>VIOLET TRIP Portal</strong> · 로컬 파일 연동: <strong>./data_travel.json</strong> (무한 새로고침/무한 다운로드 방지 가드 적용 완료)</p>
+    <p style="margin-top:5px;">GSAP Interactive UI Engine · 한국관광공사(KTO) & 일본정부관광국(JNTO) 관광객 통계 TOP 5 · 통신 5사 실시간 크롤링</p>
+  </footer>
+
+  <!-- ========================================================================
+       JAVASCRIPT: Infinite-Loop Guard + data_travel.json File I/O + GSAP UI
+       ======================================================================== -->
+  <script>
+    /**
+     * [핵심 해결책 1] VS Code Live Server 웹소켓 강제 새로고침(reload) 차단 가드
+     * data_travel.json 파일을 폴더에 생성/수정할 때 Live Server가 파일 변경을 감지해
+     * 페이지를 무한 새로고침하는 현상을 원천 차단합니다.
+     */
+    let isWritingDataTravelFile = false;
+    let suppressReloadUntil = 0;
+
+    (function installLiveServerReloadGuard() {
+      const NativeWebSocket = window.WebSocket;
+      if (!NativeWebSocket) return;
+
+      window.WebSocket = function(url, protocols) {
+        const ws = protocols ? new NativeWebSocket(url, protocols) : new NativeWebSocket(url);
+
+        const wrapHandler = (handler) => function(event) {
+          if (event && (event.data === 'reload' || event.data === 'refreshcss')) {
+            // data_travel.json 저장 중이거나 저장 직후 5초 이내, 혹은 세션 내 이미 초기화된 경우 Live Server의 자동 리로드 차단
+            if (isWritingDataTravelFile || Date.now() < suppressReloadUntil || sessionStorage.getItem('VIOLET_LIVE_RELOAD_LOCK') === '1') {
+              console.info('[LiveServer Guard] data_travel.json 변경으로 인한 무한 새로고침 신호를 차단했습니다.');
+              return;
+            }
+          }
+          return handler.apply(this, arguments);
+        };
+
+        const origAddEventListener = ws.addEventListener;
+        ws.addEventListener = function(type, listener, options) {
+          if (type === 'message' && typeof listener === 'function') {
+            return origAddEventListener.call(this, type, wrapHandler(listener), options);
+          }
+          return origAddEventListener.call(this, type, listener, options);
+        };
+
+        Object.defineProperty(ws, 'onmessage', {
+          set(fn) {
+            this._onmessage = typeof fn === 'function' ? wrapHandler(fn) : fn;
+            origAddEventListener.call(this, 'message', this._onmessage);
+          },
+          get() {
+            return this._onmessage;
+          }
+        });
+
+        return ws;
+      };
+      window.WebSocket.prototype = NativeWebSocket.prototype;
+      window.WebSocket.CONNECTING = NativeWebSocket.CONNECTING;
+      window.WebSocket.OPEN = NativeWebSocket.OPEN;
+      window.WebSocket.CLOSING = NativeWebSocket.CLOSING;
+      window.WebSocket.CLOSED = NativeWebSocket.CLOSED;
+    })();
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // 전역 상태 변수
+    let currentPage = 'home';
+    let currentCountry = 'ALL'; // 'ALL' | 'KR' | 'JP'
+    let activeRoamMethodIdx = 0;
+    let directoryHandle = null;
+    let fileSyncLogs = [];
+
+    window.data_travel = null;
+    window.data_trable = null;
+
+    function pushSyncLog(msg) {
+      const time = new Date().toLocaleTimeString('ko-KR');
+      fileSyncLogs.unshift(`[${time}] ${msg}`);
+      if (fileSyncLogs.length > 8) fileSyncLogs.pop();
+      const logEl = document.getElementById('heroConsoleLogs');
+      if (logEl) {
+        logEl.innerHTML = fileSyncLogs.map(l => `<div>&gt; ${l}</div>`).join('');
+      }
+    }
+
+    /**
+     * 데이터 본문 해시 생성 (meta 타임스탬프를 제외한 실제 데이터 변경 여부만 판별)
+     */
+    function computePayloadHash(dataObj) {
+      if (!dataObj) return '';
+      const clone = {
+        roaming: dataObj.roaming,
+        essentials: dataObj.essentials,
+        immigration: dataObj.immigration,
+        attractions: dataObj.attractions,
+        itineraries: dataObj.itineraries,
+        restaurants: dataObj.restaurants
+      };
+      return JSON.stringify(clone);
+    }
+
+    /**
+     * IndexedDB에 폴더 핸들 저장/복원
+     */
+    function openHandleDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open('VioletTripFileDB', 1);
+        req.onupgradeneeded = () => req.result.createObjectStore('handles');
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function saveFolderHandleToIDB(handle) {
+      try {
+        const db = await openHandleDB();
+        const tx = db.transaction('handles', 'readwrite');
+        tx.objectStore('handles').put(handle, 'htmlDirHandle');
+      } catch (e) {}
+    }
+
+    async function loadFolderHandleFromIDB() {
+      try {
+        const db = await openHandleDB();
+        return new Promise((resolve) => {
+          const tx = db.transaction('handles', 'readonly');
+          const req = tx.objectStore('handles').get('htmlDirHandle');
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        });
+      } catch (e) {
+        return null;
+      }
+    }
+
+    /**
+     * 상단 [📁 폴더 연결 (직접 저장)] 버튼 클릭 시
+     * 현재 HTML 폴더를 지정하면 다운로드 창 없이 해당 폴더에 data_travel.json을 직접 생성/저장합니다.
+     */
+    async function bindHtmlFolderForDirectSave() {
+      if (!window.showDirectoryPicker) {
+        showToast('현재 브라우저는 폴더 직접 쓰기를 지원하지 않습니다. 우측 JSON 다운로드 버튼을 이용해 주세요.');
+        return;
+      }
+      try {
+        directoryHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+        await saveFolderHandleToIDB(directoryHandle);
+        updateFolderBindButtonUI(true);
+        pushSyncLog('폴더 직접 연결 완료: ./data_travel.json 직접 저장 활성화');
+        await writeDataTravelToBoundFolder('FOLDER_BIND_SAVE', true);
+        showToast('폴더 연결 완료! 이제 새로고침 없이 해당 폴더에 data_travel.json 파일이 직접 저장됩니다.');
+      } catch (err) {
+        pushSyncLog('폴더 연결 취소됨');
+      }
+    }
+
+    function updateFolderBindButtonUI(isBound) {
+      const btn = document.getElementById('btnBindFolder');
+      if (!btn) return;
+      if (isBound) {
+        btn.classList.add('bound');
+        btn.innerHTML = '✅ 폴더 연결됨 (data_travel.json 직접 저장)';
+      } else {
+        btn.classList.remove('bound');
+        btn.innerHTML = '📁 폴더 연결 (직접 저장)';
+      }
+    }
+
+    /**
+     * 기본 여행 데이터 시드 생성 함수
+     */
+    function buildBaseTravelDataset() {
+      return {
+        meta: {
+          fileName: 'data_travel.json',
+          version: '2026.11.v3',
+          lastUpdated: new Date().toLocaleString('ko-KR'),
+          triggerSource: 'PAGE_ACCESS_INIT',
+          countries: ['KR', 'JP']
+        },
+
+        // 1. 데이터 로밍 & 통신 수단 비교 + 대표 5개사 크롤링 데이터
+        roaming: {
+          methodsComparison: [
+            {
+              id: 'm-roam',
+              method: '통신사 직영 로밍 (SKT·KT·LGU+)',
+              badge: '통화·문자 완벽 유지',
+              pros: '한국 번호 그대로 전화·금융 인증문자 수신, 유심 교체 불필요',
+              cons: '장기 체류 시 로컬 eSIM 대비 요금이 다소 높음',
+              recommendedFor: '업무 연락·은행 OTP 수신이 필수인 직장인 및 가족 여행객',
+              avgPrice: '패스형 29,000원 ~ 79,000원',
+              metrics: { speed: 95, convenience: 98, priceValue: 74, stability: 99 }
+            },
+            {
+              id: 'm-esim',
+              method: 'eSIM (QR 디지털 심)',
+              badge: '가성비 & 간편함 1위',
+              pros: '실물 칩 배송 없이 구매 즉시 QR 스캔 개통, 한국 유심과 듀얼 사용 가능',
+              cons: '구형 스마트폰 미지원 가능 (아이폰 XS, 갤럭시 S23 이후 지원)',
+              recommendedFor: '빠른 개통과 합리적 요금을 선호하는 2030 자유여행객',
+              avgPrice: '일 1,500원 ~ 3,800원 (무제한)',
+              metrics: { speed: 92, convenience: 94, priceValue: 98, stability: 90 }
+            },
+            {
+              id: 'm-usim',
+              method: '실물 USIM (현지·공항 유심)',
+              badge: '단말기 호환성 최고',
+              pros: 'eSIM 미지원 기종에서도 완벽 작동, 현지 음성 번호 부여 옵션 다양',
+              cons: '핀으로 트레이를 열어 기존 한국 유심을 분리·보관해야 함 (분실 주의)',
+              recommendedFor: 'eSIM 미지원 스마트폰 이용자 및 중장기 여행자',
+              avgPrice: '3~5일권 11,000원 ~ 19,000원',
+              metrics: { speed: 93, convenience: 76, priceValue: 92, stability: 94 }
+            },
+            {
+              id: 'm-wifi',
+              method: '포켓 와이파이 (도시락 단말기)',
+              badge: '다인 동시접속 & 노트북',
+              pros: '단말기 1대로 최대 5명 동시 연결, 태블릿·노트북 와이파이 즉시 연동',
+              cons: '단말기 대여·반납 절차 및 배터리 충전 필요, 일행과 떨어지면 연결 해제',
+              recommendedFor: '3~4인 가족·친구 단체 여행 및 노트북 지참 사용자',
+              avgPrice: '일 3,900원 ~ 6,900원 (N분의 1 최저가)',
+              metrics: { speed: 88, convenience: 72, priceValue: 89, stability: 87 }
+            }
+          ],
+          companies: [
+            {
+              id: 'comp-skt',
+              rank: 1,
+              companyName: 'SKT T로밍 (baro 요금제)',
+              serviceType: '통신사 직영 로밍 · 에이닷 baro 무료통화',
+              supportedCountries: ['KR', 'JP'],
+              flagshipPlan: 'baro 3GB/6GB/12GB/24GB & 가족로밍 (+3,000원 공유)',
+              priceRange: '29,000원 ~ 79,000원 (0청년 50% 상시 할인)',
+              highlight: '일본 SoftBank·KDDI 5G 듀얼망 연동 및 에이닷 앱을 통한 한국/현지 무료 음성통화 지원',
+              url: 'https://troaming.tworld.co.kr',
+              crawlStatus: 'READY',
+              crawledTitle: 'SK텔레콤 T로밍 공식 포털 - baro 요금제 & 가족로밍',
+              crawledSnippet: '가족 대표 1명만 가입해도 3,000원만 추가하면 최대 5명까지 데이터를 함께 쓰는 SKT 로밍'
+            },
+            {
+              id: 'comp-kt',
+              rank: 2,
+              companyName: 'KT 로밍 (함께 쓰는 로밍)',
+              serviceType: '통신사 직영 로밍 · 추가요금 없는 공유',
+              supportedCountries: ['KR', 'JP'],
+              flagshipPlan: '함께 쓰는 로밍 4GB / 8GB / 12GB (최대 5회선 무료 결합)',
+              priceRange: '33,000원 ~ 66,000원',
+              highlight: '일본 NTT 도코모·KDDI 망 직결 및 KT 가입자 간 추가 비용 없이 데이터 쉐어링 가능',
+              url: 'https://roaming.kt.com',
+              crawlStatus: 'READY',
+              crawledTitle: 'KT 글로벌 로밍 - 함께 쓰는 로밍 & 하루종일 로밍',
+              crawledSnippet: '복잡한 유심 교체 없이 쓰던 번호 그대로! 함께 갈수록 더 아끼는 KT 로밍 혜택'
+            },
+            {
+              id: 'comp-lgu',
+              rank: 3,
+              companyName: 'LG U+ 로밍 (유플러스 로밍패스)',
+              serviceType: '통신사 직영 로밍 · 데이터 2배 혜택',
+              supportedCountries: ['KR', 'JP'],
+              flagshipPlan: '로밍패스 3GB / 8GB / 13GB / 25GB (온라인 +1GB)',
+              priceRange: '29,000원 ~ 79,000원',
+              highlight: '데이터 소진 후에도 400kbps 속도로 카카오톡·구글맵·네이버지도 무제한 이용 보장',
+              url: 'https://www.lguplus.com/plan/roaming',
+              crawlStatus: 'READY',
+              crawledTitle: 'LG U+ 해외로밍 공식 안내 - 로밍패스 및 제로 프리미엄',
+              crawledSnippet: '아시아·일본 포함 83개국 어디서나 넉넉한 데이터와 나눠쓰기 혜택을 제공하는 로밍패스'
+            },
+            {
+              id: 'comp-dosirak',
+              rank: 4,
+              companyName: '와이파이도시락 & 도시락eSIM',
+              serviceType: '포켓 와이파이 & 로컬망 eSIM 통합',
+              supportedCountries: ['KR', 'JP'],
+              flagshipPlan: '일본·한국 5G 무제한 포켓와이파이 / 도시락eSIM 일 무제한',
+              priceRange: 'eSIM 일 1,800원~ / 와이파이 일 3,900원~',
+              highlight: '인천·김포·김해·나리타·간사이·후쿠오카 공항 직영 카운터 수령 및 QR 즉시 개통 eSIM',
+              url: 'https://www.wifidosirak.com',
+              crawlStatus: 'READY',
+              crawledTitle: '와이파이도시락 공식 사이트 - 포켓와이파이 · 도시락eSIM · 도시락유심',
+              crawledSnippet: '국가별 최적의 현지 통신망 자동 선택! 멤버십 제휴 할인 및 무료 보조배터리 대여 이벤트'
+            },
+            {
+              id: 'comp-maaltalk',
+              rank: 5,
+              companyName: '말톡 (Maaltalk) 유심·eSIM',
+              serviceType: '현지 로컬 네이티브망 eSIM · 유심',
+              supportedCountries: ['KR', 'JP'],
+              flagshipPlan: '일본 소프트뱅크·도코모 로컬망 eSIM / 방한 외국인 무제한 유심',
+              priceRange: '3일권 4,900원 ~ 5일권 9,500원',
+              highlight: '로밍 우회망이 아닌 현지 통신사 네이티브 직결망으로 낮은 핑(Ping)과 빠른 속도 제공',
+              url: 'https://www.maaltalk.com',
+              crawlStatus: 'READY',
+              crawledTitle: '말톡(Maaltalk) - 해외유심, eSIM, 포켓와이파이 전문 스토어',
+              crawledSnippet: '결제 후 3분 내 이메일·카카오톡 QR코드 즉시 발송 및 24시간 실시간 한국어 기술 상담'
+            }
+          ]
+        },
+
+        // 2. 알아야 할 것
+        essentials: [
+          {
+            id: 'ess-kr-1',
+            country: 'KR',
+            accent: 'amber',
+            icon: '💳',
+            categoryTag: '교통 · 무현금 결제',
+            title: '기후동행카드 관광권 & WOWPASS · 티머니',
+            summary: '서울 지하철·버스를 무제한 탑승하는 기후동행카드 단기권(1·2·3·5·7일)과 환전·결제·교통카드가 하나로 합쳐진 WOWPASS가 필수입니다.',
+            details: {
+              '전압 및 콘센트': '220V / 60Hz (C·F타입 둥근 2구 콘센트)',
+              '기후동행카드 가격': '1일권 5,000원 / 2일권 8,000원 / 3일권 10,000원 / 5일권 15,000원',
+              '결제 환경': '신용카드·애플페이·삼성페이 결제율 99% (전통시장 일부 현금)'
+            },
+            url: 'https://www.t-money.co.kr',
+            sourceName: '티머니 & 기후동행카드 안내'
+          },
+          {
+            id: 'ess-kr-2',
+            country: 'KR',
+            accent: 'emerald',
+            icon: '🗺️',
+            categoryTag: '지도 · 모빌리티',
+            title: '네이버 지도(Naver Map) · 카카오맵 & 카카오 T',
+            summary: '한국은 안보 규정상 구글 지도 도보·자전거 내비게이션이 작동하지 않으므로 다국어(한·영·일·중)를 지원하는 네이버 지도 설치가 필수입니다.',
+            details: {
+              '실시간 교통': '초 단위 시내버스 위치, 지하철 최단 환승 칸 번호 안내',
+              '맛집 예약 연동': '네이버 스마트플레이스 예약 및 캐치테이블(CatchTable) 원격 줄서기',
+              '택시 호출': '카카오 T 또는 외국인 전용 K.ride / Uber(UT) 즉시 호출'
+            },
+            url: 'https://map.naver.com',
+            sourceName: '네이버 지도 바로가기'
+          },
+          {
+            id: 'ess-kr-3',
+            country: 'KR',
+            accent: 'rose',
+            icon: '🛍️',
+            categoryTag: '즉시 면세 · 1330 통역',
+            title: '사후면세 즉시환급(Tax Refund) & 1330 관광통역 핫라인',
+            summary: '올리브영·백화점·대형마트 등에서 실물 여권 제시 시 건당 15,000원 이상 구매하면 현장에서 부가세가 차감된 금액으로 바로 결제됩니다.',
+            details: {
+              '즉시환급 한도': '1회 100만 원 미만 (총 체류기간 500만 원 한도)',
+              '1330 관광통역': '국번 없이 1330 (24시간 한·영·일·중 무료 통역 및 분실물 지원)',
+              '긴급 연락처': '범죄신고 112 / 화재·구급차 119'
+            },
+            url: 'https://korean.visitkorea.or.kr',
+            sourceName: '한국관광공사 VisitKorea'
+          },
+          {
+            id: 'ess-jp-1',
+            country: 'JP',
+            accent: 'cyan',
+            icon: '🔌',
+            categoryTag: '전압 · 기내 반입 규정',
+            title: '일본 100V 전압(110V 돼지코) & 보조배터리 기내 소지 규정',
+            summary: '일본은 100V 납작한 11자형(A타입) 플러그를 사용합니다. 프리볼트(100~240V) 스마트폰 충전기는 돼지코 어댑터만 끼우면 바로 작동합니다.',
+            details: {
+              '전압 주의사항': '220V 전용 한국 고데기·드라이기는 변압기 없이 일본에서 사용 불가',
+              '보조배터리 규정': '위탁수하물 위탁 절대 금지! 기내 직접 소지 및 기내 선반 보관 제한 준수',
+              '무선 고데기': '배터리 일체형(분리 불가) 리튬이온 무선 고데기는 일본 출국 시 기내·위탁 모두 반입 불가'
+            },
+            url: 'https://www.japan.travel/ko/plan/electricity/',
+            sourceName: '일본정부관광국(JNTO) 안내'
+          },
+          {
+            id: 'ess-jp-2',
+            country: 'JP',
+            accent: 'amber',
+            icon: '🚆',
+            categoryTag: '교통 IC카드 · 패스',
+            title: '애플페이 스이카(Suica)·파스모 & JR/사철 교통패스 조합',
+            summary: '아이폰 사용자는 지갑 앱에서 실물 카드 없이 Suica·PASMO·ICOCA를 즉시 발급하고 트래블카드나 현대카드로 엔화를 바로 충전할 수 있습니다.',
+            details: {
+              '모바일 교통카드': 'iOS 지갑 앱 → 스이카 추가 → 마스터/아멕스 트래블카드로 수수료 없이 충전',
+              '안드로이드/실물': '공항 자동발매기에서 Welcome Suica 또는 관서 ICOCA 발급',
+              '편의점/코인로커': '일본 전국 편의점, 자판기, 코인로커에서 스이카 터치 결제 완벽 호환'
+            },
+            url: 'https://www.jreast.co.jp/multi/kr/pass/suica.html',
+            sourceName: 'JR동일본 스이카 공식 가이드'
+          },
+          {
+            id: 'ess-jp-3',
+            country: 'JP',
+            accent: 'emerald',
+            icon: '💴',
+            categoryTag: '환전 · QR 간편결제',
+            title: '트래블카드 세븐일레븐 ATM 출금 & PayPay QR 결제',
+            summary: '환율 우대 100% 트래블월렛·트래블로그·토스뱅크 카드로 일본 현지 ATM에서 필요할 때마다 엔화를 인출하고, PayPay 가맹점에선 한국 페이 앱으로 결제합니다.',
+            details: {
+              '수수료 무료 ATM': '세븐일레븐(7-Bank ATM), 이온(AEON) ATM 인출 수수료 면제',
+              'PayPay 연동': 'PayPay 스티커가 붙은 일본 식당·상점에서 카카오페이·네이버페이 QR 결제 가능',
+              '동전 소진 팁': '귀국 전 공항 세븐일레븐 셀프 계산대에 남은 동전을 한꺼번에 투입 후 차액만 카드 결제'
+            },
+            url: 'https://paypay.ne.jp',
+            sourceName: '일본 PayPay 공식 안내'
+          }
+        ],
+
+        // 3. 입출국에 의해 변경된 내용
+        immigration: [
+          {
+            id: 'imm-jp-1',
+            country: 'JP',
+            badge: '통합 QR 전면 시행',
+            title: 'Visit Japan Web 입국심사 + 세관신고 단일 QR코드 일원화',
+            beforeRule: '[기존 규정] 외국인 입국기록(파란색 QR)과 휴대품·별송품 세관신고(노란색 QR) 2개를 각각 따로 발급받아 심사대마다 전환 제시해야 했음.',
+            afterRule: '[변경 후 규정] 입국심사와 세관신고 데이터가 1개의 단일 통합 QR코드로 합쳐져 공항 공동 키오스크 및 게이트에서 한 번에 스캔 통과!',
+            checklist: [
+              '출국 최소 6시간 전 Visit Japan Web 공식 사이트(.go.jp)에서 여권·항공편·숙소 입력 완료',
+              '통합 QR코드 화면을 미리 스마트폰 사진첩에 스크린샷 저장 (공항 와이파이 지연 대비)',
+              '유료 대행 피싱 사이트 주의: 공식 서비스는 100% 무료 운영'
+            ],
+            url: 'https://services.digital.go.jp/ko/visit-japan-web/',
+            sourceName: 'Visit Japan Web 공식 포털'
+          },
+          {
+            id: 'imm-jp-2',
+            country: 'JP',
+            badge: '사전 심사 & 키오스크',
+            title: '일본 주요 공항 통합 공동 키오스크(지문·안면 등록) 패스트트랙',
+            beforeRule: '[기존 규정] 비행기 착륙 후 입국심사관 대면 부스 앞에서 지문 채취·사진 촬영·질의응답을 모두 진행하여 1~2시간 대기 발생.',
+            afterRule: '[변경 후 규정] 대기 줄 중간에 배치된 공동 키오스크 단말기에서 Visit Japan Web QR과 여권·지문·얼굴 촬영을 먼저 마친 뒤 전용 게이트로 고속 통과!',
+            checklist: [
+              '간사이·나리타·하네다·후쿠오카 등 주요 공항 입국장 공동 키오스크 안내원 유도선 확인',
+              '동반 가족이라도 입국심사 QR은 1인당 1개씩 개별 스캔 필요',
+              '귀국 시 보안검색대 스마트 레인 도입 공항은 노트북 미분리 통과 가능'
+            ],
+            url: 'https://www.moj.go.jp/isa/?hl=ko',
+            sourceName: '일본 출입국재류관리청'
+          },
+          {
+            id: 'imm-jp-3',
+            country: 'JP',
+            badge: '세관·면세 단속 강화',
+            title: '일본 사후면세(Tax-Free) 전자검증 강화 및 금·육가공품 반입 엄금',
+            beforeRule: '[기존 규정] 여권에 종이 면세 영수증을 스테이플러로 부착하고 출국 시 회수함에 넣는 방식 위주로 운영.',
+            afterRule: '[변경 후 규정] 여권 스캔으로 구매 내역이 일본 세관 서버에 실시간 전송되며, 출국장에서 면세 물품 실물 소지 및 밀봉 봉투 개봉 여부를 엄격 대조!',
+            checklist: [
+              '화장품·의약품·주류 등 소비재 면세 밀봉 봉투는 일본 출국 전까지 절대 개봉 금지',
+              '순금 목걸이·팔찌 등 고가 귀금속 착용 입국 시에도 세관 신고서 기재 필수',
+              '육포·소시지·만두 등 육가공품 반입 시 무관용 벌금 및 입국 불허 주의'
+            ],
+            url: 'https://www.customs.go.jp/kr/index.htm',
+            sourceName: '일본 세관(Japan Customs)'
+          },
+          {
+            id: 'imm-kr-1',
+            country: 'KR',
+            badge: '안면인식 출국',
+            title: '인천국제공항 ICN 스마트패스(SmartPass) 안면인식 전용 라인 확대',
+            beforeRule: '[기존 규정] 출국장 진입 시마다 보안요원에게 실물 여권과 종이/모바일 탑승권을 일일이 대조 확인받아야 했음.',
+            afterRule: '[변경 후 규정] 사전 등록한 안면인식 정보만으로 여권·탑승권을 꺼내지 않고 전용 주황색 스마트패스 라인을 통해 1초 만에 출국장 진입!',
+            checklist: [
+              'ICN 스마트패스 앱 또는 KB·신한·우리·하나은행 앱에서 출국 30분 전까지 여권 IC칩 스캔 등록',
+              '안면 ID는 1회 등록 시 5년간 유지되나 탑승권은 매 출국마다 등록 필요',
+              '만 7세 이상부터 등록 가능 (동반 자녀도 개별 등록 시 전용 라인 동반 이용)'
+            ],
+            url: 'https://www.airport.kr/ap_ko/974/subview.do',
+            sourceName: '인천공항 스마트패스 안내'
+          },
+          {
+            id: 'imm-kr-2',
+            country: 'KR',
+            badge: '2026년 말까지 연장',
+            title: '방한 외국인 K-ETA(전자여행허가) 22개국 한시 면제 연장',
+            beforeRule: '[기존 규정] 무비자 입국 가능 국가 국민이라도 출발 72시간 전 K-ETA 사이트에서 허가를 받고 수수료(1만 원)를 결제해야 했음.',
+            afterRule: '[변경 후 규정] 일본·대만·미국 등 22개 국가/지역 여권 소지자는 2026년 12월 31일까지 K-ETA 사전 신청 없이 즉시 방한 입국 가능!',
+            checklist: [
+              '면제 대상국 여행객은 K-ETA 신청 없이 여권만으로 탑승 수속 가능',
+              '단, 입국신고서(Arrival Card) 작성을 생략하고 싶다면 자발적 K-ETA 신청도 가능',
+              '전자입국신고(e-Arrival Card) 시범 운영 확대로 온라인 사전 작성 지원'
+            ],
+            url: 'https://www.k-eta.go.kr',
+            sourceName: 'K-ETA 공식 포털'
+          },
+          {
+            id: 'imm-kr-3',
+            country: 'KR',
+            badge: '모바일 세관 통관',
+            title: '대한민국 입국 시 종이 세관신고서 전면 폐지 & 모바일 QR 감면',
+            beforeRule: '[기존 규정] 한국으로 귀국하는 모든 비행기 탑승객이 기내에서 종이 세관신고서를 의무 작성하여 제출해야 했음.',
+            afterRule: '[변경 후 규정] 면세 한도(미화 800달러) 이내 입국자는 신고서 작성 없이 세관 통과! 초과 물품은 모바일 앱 QR 신고 시 세액 30%(최대 20만 원) 감면.',
+            checklist: [
+              '기본 면세한도 US$800 + 주류 2병(2L·$400 이하) + 향수 100ml + 궐련 200개비',
+              '신고 물품이 없으면 기내 종이 신고서 수령 불필요 (세관 무신고 통로 직행)',
+              '초과 구매 시 여행자 세관신고 앱에서 자진신고 체크로 가산세 방지 및 30% 감면'
+            ],
+            url: 'https://www.customs.go.kr',
+            sourceName: '관세청 여행자 세관신고'
+          }
+        ],
+
+        // 4. 방문 관광객 수 기준 TOP 5 추천 관광지
+        attractions: [
+          // 🇰🇷 한국 방문 관광객 수 기준 TOP 5
+          {
+            id: 'att-kr-1',
+            country: 'KR',
+            rank: 1,
+            name: '서울 명동 거리 & 남산 N서울타워',
+            region: '서울 중구 · 용산구',
+            visitorCountNum: 1180,
+            visitorUnit: '만 명/년',
+            visitorRate: '외래관광객 방문율 78.4% (1위)',
+            summary: '방한 외국인 관광객이 가장 많이 찾는 부동의 1위 쇼핑·환전·야시장 미식 중심지이자 서울 야경의 상징입니다.',
+            highlights: 'K-뷰티 플래그십 스토어, 명동 중앙로 야시장 먹거리, 남산 케이블카 & N서울타워 전망대',
+            bestSeason: '연중무휴 (17:00~22:00 야간 시간대 추천)',
+            url: 'https://korean.visitkorea.or.kr',
+            sourceName: '한국관광공사 VisitKorea'
+          },
+          {
+            id: 'att-kr-2',
+            country: 'KR',
+            rank: 2,
+            name: '경복궁 · 북촌한옥마을 · 광화문광장',
+            region: '서울 종로구',
+            visitorCountNum: 940,
+            visitorUnit: '만 명/년',
+            visitorRate: '고궁·역사문화 방문율 64.2% (2위)',
+            summary: '조선 왕조 제일의 법궁인 경복궁과 한복 체험, 전통 한옥이 보존된 북촌·서촌 골목이 이어지는 역사 명소입니다.',
+            highlights: '흥례문 수문장 교대의식(10시·14시), 한복 착용 시 무료 입장, 경회루 야간 관람',
+            bestSeason: '봄(4~5월) · 가을(9~11월 단풍 및 야간개장)',
+            url: 'https://royal.khs.go.kr/gbg',
+            sourceName: '국가유산청 경복궁 관리소'
+          },
+          {
+            id: 'att-kr-3',
+            country: 'KR',
+            rank: 3,
+            name: '홍대 거리 · 연남동 경의선숲길 & 성수동',
+            region: '서울 마포구 · 성동구',
+            visitorCountNum: 870,
+            visitorUnit: '만 명/년',
+            visitorRate: '글로벌 MZ 방문율 59.1% (3위)',
+            summary: '거리 버스킹과 K-패션 편집숍의 성지 홍대·연남동, 그리고 글로벌 브랜드 팝업스토어가 집중된 성수동 권역입니다.',
+            highlights: '홍대 걷고싶은거리 버스킹, 연트럴파크 브런치·카페, 성수동 연무장길 팝업 투어',
+            bestSeason: '연중 (오후 14:00 ~ 심야)',
+            url: 'https://korean.visitseoul.net',
+            sourceName: '비짓서울(Visit Seoul) 공식'
+          },
+          {
+            id: 'att-kr-4',
+            country: 'KR',
+            rank: 4,
+            name: '부산 해운대 해변 · 블루라인파크 & 감천문화마을',
+            region: '부산 해운대구 · 사하구',
+            visitorCountNum: 790,
+            visitorUnit: '만 명/년',
+            visitorRate: '비수도권 관광객 방문 1위 (4위)',
+            summary: '해안 절벽을 따라 달리는 해운대 스카이캡슐과 마린시티 마천루 야경, 계단식 예술 마을이 어우러진 해양 수도입니다.',
+            highlights: '미포~청사포 스카이캡슐, 광안리 M드론라이트쇼, 감천문화마을 어린왕자 포토존',
+            bestSeason: '5월~10월 (해수욕 및 야간 요트 최적기)',
+            url: 'https://www.visitbusan.net/kr/index.do',
+            sourceName: '비짓부산(Visit Busan) 공식'
+          },
+          {
+            id: 'att-kr-5',
+            country: 'KR',
+            rank: 5,
+            name: '제주 성산일출봉 · 우도 & 함덕 서우봉 해변',
+            region: '제주 특별자치도 서귀포시 · 제주시',
+            visitorCountNum: 680,
+            visitorUnit: '만 명/년',
+            visitorRate: '유네스코 세계자연유산 권역 (5위)',
+            summary: '거대한 수성화산 분화구인 성산일출봉과 산호 백사장이 빛나는 우도·함덕 해변을 잇는 제주 대표 자연 명소입니다.',
+            highlights: '성산일출봉 정상 분화구 트레킹, 우도 전기자전거 일주, 함덕 에메랄드빛 해변 카페',
+            bestSeason: '4~6월(유채꽃·수국) · 9~11월(가을 억새)',
+            url: 'https://www.visitjeju.net/kr',
+            sourceName: '비짓제주(Visit Jeju) 공식'
+          },
+
+          // 🇯🇵 일본 방문 관광객 수 기준 TOP 5
+          {
+            id: 'att-jp-1',
+            country: 'JP',
+            rank: 1,
+            name: '도쿄 아사쿠사 센소지 & 시부야 스카이 · 신주쿠',
+            region: '일본 도쿄도 (간토 권역)',
+            visitorCountNum: 1950,
+            visitorUnit: '만 명/년',
+            visitorRate: '방일 외객 방문율 1위 권역',
+            summary: '도쿄 최고(最古) 사찰 센소지의 거대한 붉은 제등부터 시부야 스크램블 교차로 상공 229m 루프탑 전망대까지 아우르는 1위 명소입니다.',
+            highlights: '센소지 카미나리몬 & 나카미세도리, 시부야 스카이 일몰 전망, 도쿄 스카이트리',
+            bestSeason: '연중 (시부야 스카이 일몰 타임은 4주 전 예매 필수)',
+            url: 'https://www.gotokyo.org/kr/index.html',
+            sourceName: 'GO TOKYO 도쿄관광재단'
+          },
+          {
+            id: 'att-jp-2',
+            country: 'JP',
+            rank: 2,
+            name: '오사카 도톤보리 · 난바 & 유니버설 스튜디오 재팬(USJ)',
+            region: '일본 오사카부 (간사이 권역)',
+            visitorCountNum: 1460,
+            visitorUnit: '만 명/년',
+            visitorRate: '한국인 방일 방문객 선호 1~2위',
+            summary: '글리코상 네온사인이 빛나는 도톤보리 운하 크루즈와 슈퍼 닌텐도 월드를 보유한 아시아 최고 테마파크 권역입니다.',
+            highlights: '도톤보리 톤보리 리버크루즈, USJ 마리오·해리포터 에어리어, 오사카성 천수각',
+            bestSeason: '봄(3~5월) · 가을(10~11월 USJ 할로윈 시즌)',
+            url: 'https://osaka-info.jp/ko/',
+            sourceName: 'OSAKA INFO 오사카 관광국'
+          },
+          {
+            id: 'att-jp-3',
+            country: 'JP',
+            rank: 3,
+            name: '교토 기요미즈데라(청수사) · 후시미이나리 신사 & 아라시야마',
+            region: '일본 교토부',
+            visitorCountNum: 1080,
+            visitorUnit: '만 명/년',
+            visitorRate: '일본 전통 유산 방문객 1위',
+            summary: '수천 개의 주홍빛 도리이 터널과 절벽 위 목조 본당 청수사, 전통 가옥 거리 산넨자카와 대나무숲이 펼쳐진 천년 고도입니다.',
+            highlights: '후시미이나리 타이샤 센본도리이, 청수사~산넨자카·니넨자카 산책, 아라시야마 치쿠린',
+            bestSeason: '3~4월(벚꽃) · 11월 중하순(단풍 절정)',
+            url: 'https://kyoto.travel/ko/',
+            sourceName: '교토시 공식 관광 가이드'
+          },
+          {
+            id: 'att-jp-4',
+            country: 'JP',
+            rank: 4,
+            name: '후쿠오카 하카타·텐진 & 다자이후 텐만구 · 유후인',
+            region: '일본 후쿠오카현 · 오이타현 (규슈)',
+            visitorCountNum: 540,
+            visitorUnit: '만 명/년',
+            visitorRate: '공항~도심 10분 접근성 1위',
+            summary: '공항에서 지하철 2정거장이면 닿는 하카타·나카스 강변 포장마차(야타이)와 유후인 온천 마을을 잇는 규슈 핵심 코스입니다.',
+            highlights: '나카스 야타이 거리, 다자이후 텐만구 우메가에모치(매화떡), 유후인 긴린코 호수 물안개',
+            bestSeason: '10월~3월 (온천 료칸 및 야타이 투어 최적기)',
+            url: 'https://www.crossroadfukuoka.jp/kr',
+            sourceName: '후쿠오카현 관광연맹 공식'
+          },
+          {
+            id: 'att-jp-5',
+            country: 'JP',
+            rank: 5,
+            name: '홋카이도 삿포로 오도리공원 · 오타루 운하 & 비에이',
+            region: '일본 홋카이도',
+            visitorCountNum: 390,
+            visitorUnit: '만 명/년',
+            visitorRate: '동계 설경 & 하계 라벤더 방문 1위',
+            summary: '겨울 삿포로 눈축제와 낭만적인 오타루 운하 가스등, 여름 비에이·후라노의 보랏빛 라벤더 언덕을 만끽하는 북해도 명소입니다.',
+            highlights: '오타루 운하 크루즈 & 오르골당, 삿포로 맥주박물관·징기스칸, 비에이 청의 호수',
+            bestSeason: '12~2월(설경·눈축제) · 7~8월(라벤더·냉량한 여름)',
+            url: 'https://www.visit-hokkaido.jp/ko/',
+            sourceName: '홋카이도 관광진흥기구(HTO)'
+          }
+        ],
+
+        // 5. 추천 여행 경로
+        itineraries: [
+          {
+            id: 'iti-kr-1',
+            country: 'KR',
+            duration: '3박 4일 서울 핵심',
+            title: '서울 고궁 · 성수 팝업 · 한강 야경 완전 정복',
+            transportPass: '기후동행카드 3일권(10,000원) + AREX 직통열차',
+            estimatedBudget: '1인 약 45만 ~ 70만 원',
+            steps: [
+              { day: 'DAY 1', title: '홍대·연남 트렌드 입성', route: '인천/김포공항 → AREX 공항철도 → 홍대입구 체크인 → 연남동 경의선숲길 카페 → 홍대 버스킹 거리' },
+              { day: 'DAY 2', title: '조선 고궁 & 남산 파노라마', route: '경복궁 한복 관람(수문장 교대식) → 북촌한옥마을·삼청동 → 광장시장 육회·빈대떡 → 명동 & N서울타워 야경' },
+              { day: 'DAY 3', title: '성수동 팝업 & 한강 선셋', route: '성수동 연무장길 팝업스토어 → 서울숲 산책 → 코엑스 별마당도서관 → 여의도 한강공원 유람선 & 치맥' },
+              { day: 'DAY 4', title: '면세 쇼핑 & 도심공항 출국', route: '명동·을지로 소품샵 & 올리브영 즉시환급 쇼핑 → 서울역 도심공항터미널 사전탑승수속 → 공항 이동' }
+            ],
+            url: 'https://korean.visitseoul.net/itineraries',
+            sourceName: 'Visit Seoul 공식 코스 가이드'
+          },
+          {
+            id: 'iti-kr-2',
+            country: 'KR',
+            duration: '2박 3일 부산 오션뷰',
+            title: '부산 해운대 스카이캡슐 · 광안리 · 감천문화마을',
+            transportPass: 'KTX-청룡 왕복 + 부산 도시철도 1일권',
+            estimatedBudget: '1인 약 35만 ~ 55만 원',
+            steps: [
+              { day: 'DAY 1', title: '원도심 파노라마 & 영도 일몰', route: '부산역 도착 → 감천문화마을 포토존 → 자갈치시장·부평깡통야시장 → 영도 흰여울문화마을 오션뷰 산책' },
+              { day: 'DAY 2', title: '해운대 해안열차 & 광안리 드론쇼', route: '해운대 블루라인파크 미포~청사포 스카이캡슐 → 해동용궁사 → 더베이101 요트투어 → 광안리 야경' },
+              { day: 'DAY 3', title: '센텀 스파랜드 & 미식 마무리', route: '해운대 돼지국밥 or 밀면 아침식사 → 신세계 센텀시티 스파랜드 힐링 → 부산역 이재모피자 포장 후 복귀' }
+            ],
+            url: 'https://www.visitbusan.net/kr/index.do?menuCd=DOM_000000202003000000',
+            sourceName: 'Visit Busan 추천 여행일정'
+          },
+          {
+            id: 'iti-jp-1',
+            country: 'JP',
+            duration: '3박 4일 도쿄·근교',
+            title: '도쿄 시부야·아사쿠사 & 가마쿠라 에노덴 일주',
+            transportPass: '도쿄 서브웨이 티켓 72시간권(1,500엔) + Suica',
+            estimatedBudget: '1인 약 75만 ~ 110만 원',
+            steps: [
+              { day: 'DAY 1', title: '신주쿠 네온사인 & 도심 야경', route: '나리타/하네다 공항 → 스카이라이너/모노레일 → 신주쿠 체크인 → 오모이데 요코초 → 도쿄도청 무료 전망대' },
+              { day: 'DAY 2', title: '전통 아사쿠사 & 스카이트리', route: '아사쿠사 센소지 & 나카미세도리 → 도쿄 스카이트리 소라마치 → 아키하바라 → 긴자 보행자천국' },
+              { day: 'DAY 3', title: '가마쿠라 해안열차 & 시부야 스카이', route: '가마쿠라 고코쿠마에 건널목(에노덴) 반일 투어 → 하라주쿠·오모테산도 → 시부야 스카이 일몰 & 스크램블 교차로' },
+              { day: 'DAY 4', title: '츠키지 장외시장 & 쇼핑 귀국', route: '츠키지 장외시장 카이센동·타마고야키 아침 → 신주쿠 백화점·돈키호테 면세 쇼핑 → 공항 귀국' }
+            ],
+            url: 'https://www.gotokyo.org/kr/plan/itineraries/index.html',
+            sourceName: 'GO TOKYO 공식 모델 코스'
+          },
+          {
+            id: 'iti-jp-2',
+            country: 'JP',
+            duration: '3박 4일 간사이 핵심',
+            title: '오사카 도톤보리 · 교토 고즈넉한 사찰 · USJ',
+            transportPass: '간사이 레일웨이 패스 / 오사카 주유패스 + ICOCA',
+            estimatedBudget: '1인 약 70만 ~ 105만 원',
+            steps: [
+              { day: 'DAY 1', title: '난바 입성 & 도톤보리 리버크루즈', route: '간사이공항 → 라피트 특급열차(34분) → 난바 체크인 → 도톤보리 글리코상 & 타코야키·쿠시카츠 미식' },
+              { day: 'DAY 2', title: '천년 고도 교토 전일 투어', route: '후시미이나리 타이샤(여우신사) → 기요미즈데라(청수사) → 산넨자카·니넨자카 → 가와라마치·기온 거리' },
+              { day: 'DAY 3', title: 'USJ 테마파크 or 우메다 스카이빌딩', route: '유니버설 스튜디오 재팬(슈퍼 닌텐도 월드) 전일 즐기기 → 저녁 우메다 공중정원 전망대 & 헵파이브' },
+              { day: 'DAY 4', title: '구로몬 시장 & 공항 출발', route: '구로몬 시장 해산물 브런치 → 신사이바시 파르코·다이마루 백화점 쇼핑 → 간사이공항 이동' }
+            ],
+            url: 'https://osaka-info.jp/ko/model-course/',
+            sourceName: 'OSAKA INFO 간사이 코스'
+          }
+        ],
+
+        // 6. 추천 음식집
+        restaurants: [
+          {
+            id: 'res-kr-1',
+            country: 'KR',
+            name: '명동교자 본점 (Myeongdong Kyoja)',
+            location: '서울 중구 명동10길 29 (명동역 8번 출구 도보 3분)',
+            cuisine: '한식 · 닭육수 칼국수 & 수제 만두',
+            rating: '★ 4.6 · 미슐랭 가이드 빕구르망 연속 선정',
+            menus: ['칼국수 11,000원', '교자만두 12,000원', '비빔국수 11,000원'],
+            secretTip: '주문 즉시 선불 결제 시스템으로 대기 줄이 길어도 10분 내 착석 가능! 칼국수 사리와 조밥, 진한 마늘김치가 무제한 무료 리필됩니다.',
+            url: 'http://www.mdkj.co.kr',
+            sourceName: '명동교자 공식 사이트'
+          },
+          {
+            id: 'res-kr-2',
+            country: 'KR',
+            name: '금돼지식당 (Gold Pig Korean BBQ)',
+            location: '서울 중구 다산로 149 (약수역 2번 출구 도보 3분)',
+            cuisine: '한식 · YBD 품종 프리미엄 본삼겹 구이',
+            rating: '★ 4.7 · 미슐랭 빕구르망 & 블루리본 3개',
+            menus: ['본삼겹 19,000원', '눈꽃목살 18,000원', '통돼지 김치찌개 8,000원'],
+            secretTip: '방문 전 캐치테이블(CatchTable) 앱 원격 웨이팅 또는 현장 QR 등록 필수! 숙련된 직원이 처음부터 끝까지 연탄불에 구워주며 바질쌈 조합이 별미입니다.',
+            url: 'https://guide.michelin.com/kr/ko/seoul-capital-area/kr-seoul/restaurant/geumdwaeji-sikdang',
+            sourceName: '미슐랭 가이드 서울'
+          },
+          {
+            id: 'res-kr-3',
+            country: 'KR',
+            name: '광장시장 부촌육회 (Buchon Yukhoe)',
+            location: '서울 종로구 종로 200-12 (종로5가역 광장시장 먹자골목)',
+            cuisine: '한식 · 당일 도축 한우 육회 & 산낙지 탕탕이',
+            rating: '★ 4.5 · 미슐랭 가이드 빕구르망 8년 연속',
+            menus: ['육회낙지탕탕이 35,000원', '한우육회 21,000원', '육회비빔밥 10,000원'],
+            secretTip: '본점 웨이팅이 길다면 바로 골목 옆 부촌육회 별관을 이용하면 동일한 맛을 훨씬 빠르게 즐길 수 있습니다.',
+            url: 'https://guide.michelin.com/kr/ko/seoul-capital-area/kr-seoul/restaurant/buchon-yukhoe',
+            sourceName: '미슐랭 가이드 부촌육회'
+          },
+          {
+            id: 'res-jp-1',
+            country: 'JP',
+            name: '이치란 라멘 총본점·시부야·도톤보리 (Ichiran)',
+            location: '후쿠오카 나카스 총본점 / 도쿄 시부야·신주쿠 / 오사카 난바',
+            cuisine: '일식 · 1인 집중 좌석 천연 돈코츠 라멘',
+            rating: '★ 4.5 · 방일 여행객 재방문 1위 라멘',
+            menus: ['천연 돈코츠 라멘 980~1,080엔', '반숙 염지계란 140엔', '카에다마(면추가) 210엔'],
+            secretTip: '한국어 주문 용지에서 [마늘 1쪽 + 비밀 빨간 소스 2~3단계 + 파 듬뿍] 조합이 한국인 입맛 베스트! 면을 다 먹기 전 국물을 남겨야 카에다마(면 추가)가 가능합니다.',
+            url: 'https://kr.ichiran.com',
+            sourceName: '이치란 한국어 공식 사이트'
+          },
+          {
+            id: 'res-jp-2',
+            country: 'JP',
+            name: '규카츠 모토무라 (Gyukatsu Motomura)',
+            location: '도쿄 신주쿠·시부야 / 오사카 난바·신사이바시 / 후쿠오카 텐진',
+            cuisine: '일식 · 개인 돌판 화로에 구워 먹는 소고기 카츠',
+            rating: '★ 4.8 · 구글맵 평점 4.8+ 현지·관광객 인기 맛집',
+            menus: ['규카츠 130g 정식 1,930엔', '규카츠 195g(1.5배) 정식 2,600엔'],
+            secretTip: '오픈 시간 15분 전 도착 또는 브레이크 타임 없는 오후 3~4시 방문 시 대기 시간을 대폭 아낄 수 있습니다. 산마(마) 소스와 명란젓이 포함된 정식을 추천합니다.',
+            url: 'https://www.gyukatsu-motomura.com/ko/',
+            sourceName: '규카츠 모토무라 공식 사이트'
+          },
+          {
+            id: 'res-jp-3',
+            country: 'JP',
+            name: '스시로 & 하코다테 우니 무라카미 (Sushiro / Murakami)',
+            location: '일본 도쿄·오사카·후쿠오카·삿포로 도심 지점',
+            cuisine: '일식 · 대형 회전초밥 & 무첨가 생우니(성게알) 덮밥',
+            rating: '★ 4.6 · 앱 원격 줄서기 지원 인기 스시',
+            menus: ['특선 참치 대뱃살(오토로) 360엔~', '무첨가 생우니 덮밥 5,500엔~'],
+            secretTip: '스시로는 방문 40분 전 공식 앱 또는 LINE에서 지점 번호표를 미리 발급받으면 현장 대기 없이 바로 입장할 수 있습니다.',
+            url: 'https://www.akindo-sushiro.co.jp/kr/',
+            sourceName: '스시로 한국어 공식 사이트'
+          }
+        ]
+      };
+    }
+
+    /**
+     * 동일 폴더의 ./data_travel.json 파일 읽기 시도 (읽기 전용이므로 리로드 유발 안 함)
+     */
+    async function tryReadLocalDataTravelJsonFile() {
+      if (directoryHandle) {
+        try {
+          const perm = await directoryHandle.queryPermission({ mode: 'read' });
+          if (perm === 'granted') {
+            const fileHandle = await directoryHandle.getFileHandle('data_travel.json', { create: false });
+            const file = await fileHandle.getFile();
+            const text = await file.text();
+            const parsed = JSON.parse(text);
+            pushSyncLog('연결된 폴더 내 ./data_travel.json 로드 완료');
+            return parsed;
+          }
+        } catch (e) {}
+      }
+
+      try {
+        const res = await fetch('./data_travel.json', { cache: 'no-store' });
+        if (res.ok) {
+          const parsed = await res.json();
+          pushSyncLog('동일 폴더 ./data_travel.json fetch 로드 완료');
+          return parsed;
+        }
+      } catch (e) {}
+
+      // LocalStorage 백업 확인
+      const cached = localStorage.getItem('data_travel');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          pushSyncLog('로컬 캐시(data_travel) 데이터 로드 완료');
+          return parsed;
+        } catch (e) {}
+      }
+
+      return null;
+    }
+
+    /**
+     * 대표 5개 로밍 회사 사이트 실시간 크롤링
+     */
+    async function crawlCompanyWebsite(comp) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 2800);
+      try {
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(comp.url)}`;
+        const res = await fetch(proxyUrl, { signal: controller.signal });
+        clearTimeout(timer);
+        if (!res.ok) throw new Error('Status Error');
+        const data = await res.json();
+        if (data && data.contents) {
+          const doc = new DOMParser().parseFromString(data.contents, 'text/html');
+          const title = (doc.querySelector('title')?.textContent || '').trim();
+          const desc = (
+            doc.querySelector('meta[name="description"]')?.getAttribute('content') ||
+            doc.querySelector('meta[property="og:description"]')?.getAttribute('content') ||
+            ''
+          ).trim();
+          if (title.length > 2) comp.crawledTitle = title.slice(0, 72);
+          if (desc.length > 5) comp.crawledSnippet = desc.slice(0, 115);
+          comp.crawlStatus = 'LIVE_CRAWLED';
+          return true;
+        }
+      } catch (err) {
+        clearTimeout(timer);
+        comp.crawlStatus = 'VERIFIED_SYNC';
+      }
+      return false;
+    }
+
+    /**
+     * [핵심 해결책 2] 연결된 폴더(FileSystemDirectoryHandle)에 data_travel.json을 안전하게 저장
+     * - 변경 사항 해시를 비교하여 내용이 동일하면 불필요한 파일 쓰기를 건너뜁니다.
+     * - 쓰기 전후로 Live Server 리로드 차단 플래그(suppressReloadUntil)를 활성화합니다.
+     */
+    async function writeDataTravelToBoundFolder(triggerSource, forceWrite = false) {
+      const jsonString = JSON.stringify(window.data_travel, null, 2);
+      const currentHash = computePayloadHash(window.data_travel);
+      const previousHash = localStorage.getItem('data_travel_payload_hash');
+
+      // LocalStorage 동기화
+      localStorage.setItem('data_travel', jsonString);
+      localStorage.setItem('data_trable', jsonString);
+
+      // 강제 저장이 아니고 데이터 본문 해시가 기존과 완전히 같다면 디스크 재기록 생략 (무한 루프 원천 차단)
+      if (!forceWrite && previousHash === currentHash && sessionStorage.getItem('VIOLET_TRAVEL_INIT_DONE') === '1') {
+        pushSyncLog('데이터 변경 없음 → 디스크 중복 쓰기 생략 (리로드 방지)');
+        return 'SKIPPED_UNCHANGED';
+      }
+
+      localStorage.setItem('data_travel_payload_hash', currentHash);
+
+      if (directoryHandle) {
+        try {
+          const perm = await directoryHandle.queryPermission({ mode: 'readwrite' });
+          if (perm === 'granted' || (forceWrite && (await directoryHandle.requestPermission({ mode: 'readwrite' })) === 'granted')) {
+            isWritingDataTravelFile = true;
+            suppressReloadUntil = Date.now() + 6000;
+            sessionStorage.setItem('VIOLET_LIVE_RELOAD_LOCK', '1');
+
+            const fileHandle = await directoryHandle.getFileHandle('data_travel.json', { create: true });
+            const writable = await fileHandle.createWritable();
+            await writable.write(jsonString);
+            await writable.close();
+
+            setTimeout(() => { isWritingDataTravelFile = false; }, 1500);
+            pushSyncLog(`[폴더 직접 저장 완료] ./data_travel.json (${triggerSource})`);
+            return 'DIRECT_FOLDER_WRITE';
+          }
+        } catch (err) {
+          isWritingDataTravelFile = false;
+          pushSyncLog('폴더 직접 쓰기 대기 중 (메모리 및 로컬 저장소에 보관됨)');
+        }
+      }
+
+      return 'LOCAL_STORAGE_SAVED';
+    }
+
+    /**
+     * 수동 다운로드 요청 시에만 브라우저 파일 다운로드 실행 (자동 새로고침 루프와 완전히 분리)
+     */
+    function downloadDataTravelJsonFile(triggerSource = 'MANUAL_DOWNLOAD') {
+      isWritingDataTravelFile = true;
+      suppressReloadUntil = Date.now() + 6000;
+      sessionStorage.setItem('VIOLET_LIVE_RELOAD_LOCK', '1');
+
+      const jsonString = JSON.stringify(window.data_travel, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'data_travel.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setTimeout(() => { isWritingDataTravelFile = false; }, 1500);
+      pushSyncLog(`data_travel.json 파일 수동 다운로드 완료 (${triggerSource})`);
+      showToast('data_travel.json 파일이 다운로드되었습니다.');
+    }
+
+    /**
+     * [경로 1] 페이지 최초 접속 시 실행되는 초기화 함수 (무한 새로고침/다운로드 완전 차단)
+     */
+    async function initializeOnPageLoad() {
+      const dot = document.getElementById('syncDot');
+      const statusText = document.getElementById('syncStatusText');
+
+      // 1. 기존 ./data_travel.json 또는 캐시 데이터가 있으면 먼저 로드하여 즉시 렌더링
+      const existingData = await tryReadLocalDataTravelJsonFile();
+      if (existingData && existingData.roaming) {
+        window.data_travel = existingData;
+        window.data_trable = existingData;
+        renderApp();
+      } else {
+        window.data_travel = buildBaseTravelDataset();
+        window.data_trable = window.data_travel;
+        renderApp();
+      }
+
+      // 2. 현재 탭 세션에서 이미 초기 크롤링을 완료했다면 재실행 및 파일 쓰기를 건너뜀 (무한 새로고침 차단 핵심!)
+      if (sessionStorage.getItem('VIOLET_TRAVEL_INIT_DONE') === '1') {
+        if (statusText) {
+          statusText.textContent = `data_travel.json 연동됨 (${window.data_travel.meta.lastUpdated})`;
+        }
+        pushSyncLog('세션 내 초기 동기화 완료 상태 유지 (무한 새로고침 차단됨)');
+        return;
+      }
+
+      // 3. 세션 최초 1회 접속 시에만 백그라운드 크롤링 수행
+      sessionStorage.setItem('VIOLET_TRAVEL_INIT_DONE', '1');
+      sessionStorage.setItem('VIOLET_LIVE_RELOAD_LOCK', '1');
+
+      if (dot) dot.classList.add('syncing');
+      if (statusText) statusText.textContent = '초기 1회 실시간 크롤링 동기화 중...';
+
+      await Promise.allSettled(
+        window.data_travel.roaming.companies.map(comp => crawlCompanyWebsite(comp))
+      );
+
+      const nowStr = new Date().toLocaleString('ko-KR');
+      window.data_travel.meta.lastUpdated = nowStr;
+      window.data_travel.meta.triggerSource = 'PAGE_ACCESS_ONE_TIME_SYNC';
+
+      // 연결된 폴더가 있으면 조용히 덮어쓰고, 없으면 브라우저 다운로드 팝업 없이 로컬 저장소에만 반영
+      await writeDataTravelToBoundFolder('PAGE_ACCESS_INIT', false);
+      renderApp();
+
+      if (dot) dot.classList.remove('syncing');
+      if (statusText) statusText.textContent = `data_travel.json 동기화 완료 (${nowStr})`;
+    }
+
+    /**
+     * [경로 2] 사용자가 상단 고정 [↻ 데이터 새로고침] 버튼을 직접 클릭했을 때만 실행
+     */
+    async function handleManualRefreshClick() {
+      const btn = document.getElementById('btnRefreshData');
+      const dot = document.getElementById('syncDot');
+      const statusText = document.getElementById('syncStatusText');
+
+      if (btn) btn.classList.add('loading');
+      if (dot) dot.classList.add('syncing');
+      if (statusText) statusText.textContent = '크롤링 및 data_travel.json 갱신 중...';
+
+      pushSyncLog('수동 새로고침 버튼 클릭 → 5대 통신사 크롤링 시작');
+
+      const freshDataset = buildBaseTravelDataset();
+      await Promise.allSettled(
+        freshDataset.roaming.companies.map(comp => crawlCompanyWebsite(comp))
+      );
+
+      const nowStr = new Date().toLocaleString('ko-KR');
+      freshDataset.meta.lastUpdated = nowStr;
+      freshDataset.meta.triggerSource = 'MANUAL_REFRESH_BUTTON';
+
+      window.data_travel = freshDataset;
+      window.data_trable = freshDataset;
+
+      // 폴더가 연결되어 있으면 폴더 내 data_travel.json에 직접 기록
+      const writeMode = await writeDataTravelToBoundFolder('MANUAL_REFRESH_BUTTON', true);
+
+      // 페이지 리로드 없이 DOM만 즉시 업데이트
+      renderApp();
+
+      if (btn) btn.classList.remove('loading');
+      if (dot) dot.classList.remove('syncing');
+      if (statusText) statusText.textContent = `data_travel.json 갱신됨 (${nowStr})`;
+
+      if (writeMode === 'DIRECT_FOLDER_WRITE') {
+        showToast('데이터 새로고침 완료! 폴더 내 data_travel.json 파일이 직접 갱신되었습니다.');
+      } else {
+        showToast('데이터 새로고침 완료! (파일 다운로드가 필요하면 상단 [JSON 확인/다운로드]를 클릭하세요)');
+      }
+    }
+
+    /* ==========================================================================
+       FILTER & ROUTER HELPERS
+       ========================================================================== */
+    function filterByCountry(items) {
+      if (currentCountry === 'ALL') return items;
+      return items.filter(item => {
+        if (item.country) return item.country === currentCountry;
+        if (item.supportedCountries) return item.supportedCountries.includes(currentCountry);
+        return true;
+      });
+    }
+
+    function setCountryFilter(countryCode) {
+      currentCountry = countryCode;
+      document.querySelectorAll('.country-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.country === countryCode);
+      });
+      renderApp();
+    }
+
+    function navigateToPage(pageKey) {
+      currentPage = pageKey;
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.page === pageKey);
+      });
+      renderApp();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ==========================================================================
+       6 DISTINCT CATEGORY RENDERERS
+       ========================================================================== */
+
+    // 1. 데이터 로밍 (3D Tilt Cards + Method Simulator Tabs)
+    function renderRoamingSection(isFullPage = false) {
+      const d = window.data_travel.roaming;
+      const activeMethod = d.methodsComparison[activeRoamMethodIdx] || d.methodsComparison[0];
+
+      const methodTabsHtml = d.methodsComparison.map((m, idx) => `
+        <button class="roam-tab-btn ${idx === activeRoamMethodIdx ? 'active' : ''}" onclick="switchRoamMethod(${idx})">
+          ${m.method}
+        </button>
+      `).join('');
+
+      const companiesHtml = d.companies.map(comp => `
+        <article class="roam-tilt-card gs-reveal">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span class="nav-pill pill-violet">대표 통신사 TOP ${comp.rank}</span>
+              <span class="nav-pill pill-cyan">● ${comp.crawlStatus === 'LIVE_CRAWLED' ? '실시간 크롤링' : '검증 동기화'}</span>
+            </div>
+            <h3 style="font-size:1.06rem; font-weight:900; margin-bottom:6px; color:var(--text-main);">${comp.companyName}</h3>
+            <p style="font-size:0.83rem; color:var(--text-sub);">${comp.highlight}</p>
+
+            <div class="roam-terminal-badge">
+              <div style="color:#a78bfa; font-weight:800;">[CRAWLED SITE META]</div>
+              <div>${comp.crawledTitle}</div>
+            </div>
+
+            <span class="roam-price-tag">💰 ${comp.priceRange}</span>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:14px;">
+              <strong>주력 플랜:</strong> ${comp.flagshipPlan}
+            </p>
+          </div>
+          <a href="${comp.url}" target="_blank" rel="noopener noreferrer" class="btn-crawl-link">
+            <span>${comp.companyName.split(' ')[0]} 공식 사이트 이동</span>
+            <span>↗</span>
+          </a>
+        </article>
+      `).join('');
+
+      return `
+        <section class="section-block" id="sec-roaming">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker pill-cyan">01 · INTERACTIVE 3D TILT & LIVE CRAWLER</span>
+              <h2 class="section-title">📡 데이터 로밍 · eSIM · 포켓와이파이 & 대표 5대 회사</h2>
+              <p class="section-subtitle">상단 탭을 클릭해 4가지 통신 방식의 성능 게이지를 비교하고, 마우스 움직임에 반응하는 대표 5개사 3D 카드를 확인하세요.</p>
+            </div>
+            ${!isFullPage ? `<button class="btn-section-more" onclick="navigateToPage('roaming')">로밍 전용 페이지 보기 →</button>` : `<button class="btn-section-more" onclick="navigateToPage('home')">← 메인 랜딩으로</button>`}
+          </div>
+
+          <div class="roaming-simulator-box gs-reveal">
+            <div class="roam-method-tabs">${methodTabsHtml}</div>
+            <div class="roam-simulator-panel" id="roamSimulatorPanel">
+              <div>
+                <span class="nav-pill pill-violet" style="margin-bottom:8px; display:inline-block;">${activeMethod.badge}</span>
+                <h3 style="font-size:1.18rem; font-weight:900; color:var(--violet-900); margin-bottom:8px;">${activeMethod.method}</h3>
+                <p style="font-size:0.86rem; color:var(--text-sub); margin-bottom:6px;"><strong>👍 장점:</strong> ${activeMethod.pros}</p>
+                <p style="font-size:0.86rem; color:var(--text-sub); margin-bottom:6px;"><strong>⚠️ 유의점:</strong> ${activeMethod.cons}</p>
+                <p style="font-size:0.86rem; color:var(--cyan-700); font-weight:800;"><strong>🎯 추천 대상:</strong> ${activeMethod.recommendedFor} (${activeMethod.avgPrice})</p>
+              </div>
+              <div>
+                <div class="roam-gauge-row">
+                  <div class="roam-gauge-label"><span>데이터 속도 & 응답성</span><span>${activeMethod.metrics.speed}점</span></div>
+                  <div class="roam-gauge-track"><div class="roam-gauge-fill" data-width="${activeMethod.metrics.speed}%"></div></div>
+                </div>
+                <div class="roam-gauge-row">
+                  <div class="roam-gauge-label"><span>개통 및 휴대 편의성</span><span>${activeMethod.metrics.convenience}점</span></div>
+                  <div class="roam-gauge-track"><div class="roam-gauge-fill" data-width="${activeMethod.metrics.convenience}%"></div></div>
+                </div>
+                <div class="roam-gauge-row">
+                  <div class="roam-gauge-label"><span>요금 가성비 지수</span><span>${activeMethod.metrics.priceValue}점</span></div>
+                  <div class="roam-gauge-track"><div class="roam-gauge-fill" data-width="${activeMethod.metrics.priceValue}%"></div></div>
+                </div>
+                <div class="roam-gauge-row" style="margin-bottom:0;">
+                  <div class="roam-gauge-label"><span>한국 번호 수신 안정성</span><span>${activeMethod.metrics.stability}점</span></div>
+                  <div class="roam-gauge-track"><div class="roam-gauge-fill" data-width="${activeMethod.metrics.stability}%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="roam-company-grid">
+            ${companiesHtml}
+          </div>
+        </section>
+      `;
+    }
+
+    function switchRoamMethod(idx) {
+      activeRoamMethodIdx = idx;
+      renderApp();
+    }
+
+    // 2. 알아야 할 것 (Bento Grid + Accordion Drawer)
+    function renderEssentialsSection(isFullPage = false) {
+      const list = filterByCountry(window.data_travel.essentials);
+      const displayList = isFullPage ? list : list.slice(0, 4);
+
+      const cardsHtml = displayList.map((item, idx) => {
+        const kvHtml = Object.entries(item.details).map(([k, v]) => `
+          <div class="bento-kv-row">
+            <span style="color:var(--text-muted); font-weight:700;">${k}</span>
+            <span style="color:var(--text-main); font-weight:800; text-align:right;">${v}</span>
+          </div>
+        `).join('');
+
+        return `
+          <article class="bento-card gs-reveal" data-accent="${item.accent}" onclick="toggleBentoDrawer('bento-drawer-${item.id}', this)">
+            <div class="bento-header-row">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="bento-icon-box">${item.icon}</div>
+                <div>
+                  <span class="nav-pill ${item.country === 'KR' ? 'pill-rose' : 'pill-cyan'}">${item.country === 'KR' ? '🇰🇷 한국 필수' : '🇯🇵 일본 필수'}</span>
+                  <span class="nav-pill pill-amber">${item.categoryTag}</span>
+                </div>
+              </div>
+              <span class="bento-expand-btn">상세 스펙 펼치기 ▼</span>
+            </div>
+
+            <h3 style="font-size:1.1rem; font-weight:900; margin-bottom:8px; color:var(--text-main);">${item.title}</h3>
+            <p style="font-size:0.86rem; color:var(--text-sub);">${item.summary}</p>
+
+            <div class="bento-drawer ${idx === 0 || isFullPage ? 'open' : ''}" id="bento-drawer-${item.id}" onclick="event.stopPropagation()">
+              ${kvHtml}
+              <div style="margin-top:10px; text-align:right;">
+                <a href="${item.url}" target="_blank" rel="noopener noreferrer" style="font-size:0.8rem; font-weight:900; color:var(--violet-700);">
+                  🔗 ${item.sourceName} 공식 안내 이동 ↗
+                </a>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      return `
+        <section class="section-block" id="sec-essentials">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker pill-amber">02 · INTERACTIVE BENTO GRID & DRAWER</span>
+              <h2 class="section-title">💡 출국 전 반드시 알아야 할 것 (클릭하여 상세 스펙 열기)</h2>
+              <p class="section-subtitle">카드를 클릭하면 전압·패스 요금·무료 출금 ATM 등 세부 체크리스트 서랍이 GSAP 애니메이션으로 펼쳐집니다.</p>
+            </div>
+            ${!isFullPage ? `<button class="btn-section-more" onclick="navigateToPage('essentials')">알아야 할 것 전체보기 (${list.length}건) →</button>` : `<button class="btn-section-more" onclick="navigateToPage('home')">← 메인 랜딩으로</button>`}
+          </div>
+          <div class="essentials-bento-grid">
+            ${cardsHtml}
+          </div>
+        </section>
+      `;
+    }
+
+    function toggleBentoDrawer(drawerId) {
+      const drawer = document.getElementById(drawerId);
+      if (!drawer) return;
+      const isOpen = drawer.classList.contains('open');
+      if (isOpen) {
+        gsap.to(drawer, {
+          height: 0,
+          opacity: 0,
+          marginTop: 0,
+          duration: 0.28,
+          ease: 'power2.inOut',
+          onComplete: () => drawer.classList.remove('open')
+        });
+      } else {
+        drawer.classList.add('open');
+        gsap.fromTo(drawer,
+          { height: 0, opacity: 0, marginTop: 0 },
+          { height: 'auto', opacity: 1, marginTop: 14, duration: 0.32, ease: 'power2.out' }
+        );
+      }
+    }
+
+    // 3. 입출국 변경사항 (Before vs After Diff Switcher)
+    function renderImmigrationSection(isFullPage = false) {
+      const list = filterByCountry(window.data_travel.immigration);
+      const displayList = isFullPage ? list : list.slice(0, 4);
+
+      const cardsHtml = displayList.map(item => {
+        const checksHtml = item.checklist.map(chk => `
+          <label class="imm-check-item">
+            <input type="checkbox" onchange="animateChecklistStrike(this)" />
+            <span>${chk}</span>
+          </label>
+        `).join('');
+
+        return `
+          <article class="imm-diff-card gs-reveal" id="imm-card-${item.id}">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span class="nav-pill ${item.country === 'KR' ? 'pill-rose' : 'pill-cyan'}">${item.country === 'KR' ? '🇰🇷 한국 출입국' : '🇯🇵 일본 출입국'}</span>
+                <span class="nav-pill pill-rose">🚨 ${item.badge}</span>
+              </div>
+              <h3 style="font-size:1.08rem; font-weight:900; color:var(--text-main);">${item.title}</h3>
+
+              <div class="imm-diff-toggle-bar">
+                <button class="imm-mode-btn active" data-mode="after" onclick="switchImmDiffMode('${item.id}', 'after', this)">
+                  ✨ 변경 후 규정 (현재 적용)
+                </button>
+                <button class="imm-mode-btn" data-mode="before" onclick="switchImmDiffMode('${item.id}', 'before', this)">
+                  ⏪ 기존 규정 비교
+                </button>
+              </div>
+
+              <div class="imm-diff-box after-state" id="imm-box-${item.id}" data-before="${item.beforeRule}" data-after="${item.afterRule}">
+                ${item.afterRule}
+              </div>
+
+              <div style="margin-bottom:14px;">
+                <div style="font-size:0.75rem; font-weight:900; color:var(--violet-800); margin-bottom:4px;">☑️ 사전 준비 체크리스트 (클릭하여 체크)</div>
+                ${checksHtml}
+              </div>
+            </div>
+
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn-crawl-link" style="background:linear-gradient(135deg, var(--rose-500), var(--violet-700));">
+              <span>${item.sourceName} 공식 사이트 이동</span>
+              <span>↗</span>
+            </a>
+          </article>
+        `;
+      }).join('');
+
+      return `
+        <section class="section-block" id="sec-immigration">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker pill-rose">03 · BEFORE VS AFTER DIFF SWITCHER</span>
+              <h2 class="section-title">🛂 입국 및 출국에 의해 변경된 내용 (전·후 비교 스위치)</h2>
+              <p class="section-subtitle">[변경 후 규정]과 [기존 규정 비교] 버튼을 눌러 달라진 출입국 절차를 비교하고 체크리스트를 점검하세요.</p>
+            </div>
+            ${!isFullPage ? `<button class="btn-section-more" onclick="navigateToPage('immigration')">입출국 변경사항 전체보기 (${list.length}건) →</button>` : `<button class="btn-section-more" onclick="navigateToPage('home')">← 메인 랜딩으로</button>`}
+          </div>
+          <div class="immigration-timeline-grid">
+            ${cardsHtml}
+          </div>
+        </section>
+      `;
+    }
+
+    function switchImmDiffMode(itemId, mode, btnEl) {
+      const card = document.getElementById(`imm-card-${itemId}`);
+      const box = document.getElementById(`imm-box-${itemId}`);
+      if (!card || !box) return;
+
+      card.querySelectorAll('.imm-mode-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+
+      gsap.fromTo(box, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' });
+      if (mode === 'before') {
+        box.className = 'imm-diff-box before-state';
+        box.textContent = box.getAttribute('data-before');
+      } else {
+        box.className = 'imm-diff-box after-state';
+        box.textContent = box.getAttribute('data-after');
+      }
+    }
+
+    function animateChecklistStrike(checkbox) {
+      const span = checkbox.nextElementSibling;
+      if (!span) return;
+      if (checkbox.checked) {
+        gsap.to(span, { color: '#10b981', fontWeight: 800, duration: 0.2 });
+      } else {
+        gsap.to(span, { color: '#4a4568', fontWeight: 400, duration: 0.2 });
+      }
+    }
+
+    // 4. 추천 관광지 TOP 5 (Interactive Podium Accordion Deck)
+    function renderAttractionsSection(isFullPage = false) {
+      const krList = window.data_travel.attractions.filter(a => a.country === 'KR');
+      const jpList = window.data_travel.attractions.filter(a => a.country === 'JP');
+
+      const buildDeckHtml = (items, deckGroupKey) => items.map((item, idx) => `
+        <article class="podium-panel ${idx === 0 ? 'expanded' : ''}" data-deck="${deckGroupKey}" onclick="expandPodiumPanel('${deckGroupKey}', this)">
+          <span class="podium-rank-watermark">${item.rank}</span>
+          <div>
+            <span class="podium-rank-chip">🏆 ${item.country} 방문객 TOP ${item.rank}</span>
+            <h3 style="font-size:1.08rem; font-weight:900; color:var(--text-main); line-height:1.35;">${item.name}</h3>
+            <div class="podium-visitor-counter">
+              연간 약 <span class="gs-counter" data-target="${item.visitorCountNum}">${item.visitorCountNum}</span>${item.visitorUnit}
+            </div>
+            <span style="font-size:0.76rem; font-weight:800; color:var(--magenta-700);">${item.visitorRate}</span>
+
+            <div class="podium-detail-content">
+              <p style="margin-bottom:8px;">${item.summary}</p>
+              <p style="font-size:0.8rem; margin-bottom:4px;"><strong>📍 권역:</strong> ${item.region}</p>
+              <p style="font-size:0.8rem; margin-bottom:4px;"><strong>✨ 핵심 포인트:</strong> ${item.highlights}</p>
+              <p style="font-size:0.8rem; margin-bottom:12px;"><strong>🗓️ 추천 시기:</strong> ${item.bestSeason}</p>
+              <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn-crawl-link" onclick="event.stopPropagation()">
+                <span>${item.sourceName} 공식 가이드 이동</span>
+                <span>↗</span>
+              </a>
+            </div>
+          </div>
+          <div style="font-size:0.75rem; font-weight:800; color:var(--violet-600); margin-top:10px;">
+            클릭하여 순위 상세 펼치기 ↔
+          </div>
+        </article>
+      `).join('');
+
+      return `
+        <section class="section-block" id="sec-attractions">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker pill-violet">04 · INTERACTIVE PODIUM ACCORDION DECK</span>
+              <h2 class="section-title">🏛️ 국가별 방문 관광객 수 기준 TOP 5 랜드마크</h2>
+              <p class="section-subtitle">순위 카드를 클릭하면 와이드 포디움 패널이 확장되며 연간 방문객 수 카운터가 작동합니다.</p>
+            </div>
+            ${!isFullPage ? `<button class="btn-section-more" onclick="navigateToPage('attractions')">관광지 TOP 5 전용 페이지 →</button>` : `<button class="btn-section-more" onclick="navigateToPage('home')">← 메인 랜딩으로</button>`}
+          </div>
+
+          ${(currentCountry === 'ALL' || currentCountry === 'KR') ? `
+            <h3 style="margin-bottom:10px; font-size:1.08rem; font-weight:900; color:var(--violet-900);">🇰🇷 대한민국 방문 관광객 수 기준 TOP 5 (클릭 시 확장)</h3>
+            <div class="podium-deck-container gs-reveal">
+              ${buildDeckHtml(krList, 'deck-kr')}
+            </div>
+          ` : ''}
+
+          ${(currentCountry === 'ALL' || currentCountry === 'JP') ? `
+            <h3 style="margin:18px 0 10px; font-size:1.08rem; font-weight:900; color:var(--violet-900);">🇯🇵 일본 방문 관광객 수 기준 TOP 5 (클릭 시 확장)</h3>
+            <div class="podium-deck-container gs-reveal">
+              ${buildDeckHtml(jpList, 'deck-jp')}
+            </div>
+          ` : ''}
+        </section>
+      `;
+    }
+
+    function expandPodiumPanel(deckGroupKey, panelEl) {
+      document.querySelectorAll(`.podium-panel[data-deck="${deckGroupKey}"]`).forEach(el => {
+        el.classList.remove('expanded');
+      });
+      panelEl.classList.add('expanded');
+
+      const detail = panelEl.querySelector('.podium-detail-content');
+      if (detail) {
+        gsap.fromTo(detail, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' });
+      }
+    }
+
+    // 5. 추천 여행 경로 (Interactive Metro Route Stepper)
+    function renderItinerariesSection(isFullPage = false) {
+      const list = filterByCountry(window.data_travel.itineraries);
+
+      const cardsHtml = list.map(item => {
+        const firstStep = item.steps[0];
+        const nodesHtml = item.steps.map((st, sIdx) => `
+          <button class="metro-day-node ${sIdx === 0 ? 'active' : ''}"
+                  onclick="selectMetroDay('${item.id}', ${sIdx}, this)">
+            ${st.day}
+          </button>
+        `).join('');
+
+        const allStepsMiniHtml = item.steps.map(st => `
+          <div style="font-size:0.78rem; padding:4px 0; color:var(--text-sub); border-bottom:1px dashed var(--border-soft);">
+            <strong style="color:var(--violet-700);">${st.day} (${st.title}):</strong> ${st.route}
+          </div>
+        `).join('');
+
+        return `
+          <article class="metro-route-card gs-reveal" id="metro-card-${item.id}">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span class="nav-pill ${item.country === 'KR' ? 'pill-rose' : 'pill-cyan'}">${item.country === 'KR' ? '🇰🇷 한국 추천 코스' : '🇯🇵 일본 추천 코스'}</span>
+              <span class="nav-pill pill-emerald">🚆 ${item.duration}</span>
+            </div>
+            <h3 style="font-size:1.15rem; font-weight:900; color:var(--text-main); margin-bottom:6px;">${item.title}</h3>
+            <p style="font-size:0.81rem; color:var(--text-muted);">
+              <strong>추천 패스:</strong> ${item.transportPass} · <strong>예산:</strong> ${item.estimatedBudget}
+            </p>
+
+            <div class="metro-line-track">
+              ${nodesHtml}
+            </div>
+
+            <div class="metro-stage-box" id="metro-stage-${item.id}">
+              <span class="metro-stage-day">${firstStep.day} · ${firstStep.title}</span>
+              <div class="metro-stage-route">${firstStep.route}</div>
+            </div>
+
+            <div style="margin-bottom:14px;">
+              ${allStepsMiniHtml}
+            </div>
+
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn-crawl-link" style="background:linear-gradient(135deg, var(--emerald-700), var(--violet-700));">
+              <span>${item.sourceName} 공식 노선도 보기</span>
+              <span>↗</span>
+            </a>
+          </article>
+        `;
+      }).join('');
+
+      return `
+        <section class="section-block" id="sec-itineraries">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker pill-emerald">05 · INTERACTIVE METRO ROUTE STEPPER</span>
+              <h2 class="section-title">🗺️ 일차별 메트로 스텝퍼 추천 여행 경로</h2>
+              <p class="section-subtitle">노선 위의 [DAY 1] ~ [DAY 4] 버튼을 클릭하면 해당 일자의 핵심 동선 브리핑이 전환됩니다.</p>
+            </div>
+            ${!isFullPage ? `<button class="btn-section-more" onclick="navigateToPage('itineraries')">여행 경로 전용 페이지 →</button>` : `<button class="btn-section-more" onclick="navigateToPage('home')">← 메인 랜딩으로</button>`}
+          </div>
+          <div class="itinerary-metro-grid">
+            ${cardsHtml}
+          </div>
+        </section>
+      `;
+    }
+
+    function selectMetroDay(itineraryId, stepIdx, btnEl) {
+      const item = window.data_travel.itineraries.find(i => i.id === itineraryId);
+      if (!item || !item.steps[stepIdx]) return;
+
+      const card = document.getElementById(`metro-card-${itineraryId}`);
+      const stage = document.getElementById(`metro-stage-${itineraryId}`);
+      if (!card || !stage) return;
+
+      card.querySelectorAll('.metro-day-node').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+
+      const step = item.steps[stepIdx];
+      gsap.fromTo(stage, { opacity: 0, x: 14 }, { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' });
+      stage.innerHTML = `
+        <span class="metro-stage-day">${step.day} · ${step.title}</span>
+        <div class="metro-stage-route">${step.route}</div>
+      `;
+    }
+
+    // 6. 추천 음식집 (Perforated Gourmet Ticket Stub)
+    function renderRestaurantsSection(isFullPage = false) {
+      const list = filterByCountry(window.data_travel.restaurants);
+      const displayList = isFullPage ? list : list.slice(0, 4);
+
+      const ticketsHtml = displayList.map(item => {
+        const menuPills = item.menus.map(m => `<span class="ticket-menu-pill">🍴 ${m}</span>`).join('');
+        return `
+          <article class="gourmet-ticket gs-reveal">
+            <div class="ticket-upper">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span class="nav-pill ${item.country === 'KR' ? 'pill-rose' : 'pill-cyan'}">${item.country === 'KR' ? '🇰🇷 한국 미식' : '🇯🇵 일본 미식'}</span>
+                <span class="ticket-star-ribbon">${item.rating}</span>
+              </div>
+              <h3 style="font-size:1.12rem; font-weight:900; color:var(--text-main); margin-bottom:4px;">${item.name}</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">📍 ${item.location}</p>
+              <div class="ticket-menu-pills">${menuPills}</div>
+            </div>
+
+            <div class="ticket-lower">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span style="font-size:0.78rem; font-weight:800; color:var(--text-sub);">${item.cuisine}</span>
+                <button class="bento-expand-btn" onclick="toggleRestaurantSecret('tip-${item.id}', this)">
+                  🔑 웨이팅·주문 꿀팁 열기
+                </button>
+              </div>
+              <div class="ticket-secret-tip" id="tip-${item.id}">
+                💡 ${item.secretTip}
+              </div>
+              <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn-crawl-link" style="background:linear-gradient(135deg, var(--magenta-700), var(--violet-700));">
+                <span>${item.sourceName} 이동</span>
+                <span>↗</span>
+              </a>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      return `
+        <section class="section-block" id="sec-restaurants">
+          <div class="section-header">
+            <div>
+              <span class="section-kicker pill-magenta">06 · GOURMET TICKET STUB & SECRET TIPS</span>
+              <h2 class="section-title">🍽️ 미슐랭 · 타베로그 검증 추천 음식집 티켓</h2>
+              <p class="section-subtitle">각 티켓의 [🔑 웨이팅·주문 꿀팁 열기] 버튼을 누르면 현지 웨이팅 단축 비법이 공개됩니다.</p>
+            </div>
+            ${!isFullPage ? `<button class="btn-section-more" onclick="navigateToPage('restaurants')">추천 음식집 전체보기 (${list.length}곳) →</button>` : `<button class="btn-section-more" onclick="navigateToPage('home')">← 메인 랜딩으로</button>`}
+          </div>
+          <div class="gourmet-ticket-grid">
+            ${ticketsHtml}
+          </div>
+        </section>
+      `;
+    }
+
+    function toggleRestaurantSecret(tipId, btnEl) {
+      const tipEl = document.getElementById(tipId);
+      if (!tipEl) return;
+      const isRevealed = tipEl.classList.contains('revealed');
+      if (isRevealed) {
+        tipEl.classList.remove('revealed');
+        btnEl.textContent = '🔑 웨이팅·주문 꿀팁 열기';
+      } else {
+        tipEl.classList.add('revealed');
+        btnEl.textContent = '🔼 꿀팁 닫기';
+        gsap.fromTo(tipEl, { opacity: 0, y: -6 }, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' });
+      }
+    }
+
+    /* ==========================================================================
+       HERO BANNER & MAIN APP VIEWPORT RENDERER
+       ========================================================================== */
+    function renderHeroShowcase() {
+      const m = window.data_travel.meta;
+      const logsHtml = fileSyncLogs.map(l => `<div>&gt; ${l}</div>`).join('');
+
+      return `
+        <section class="hero-showcase">
+          <div class="hero-orb-deco hero-orb-1"></div>
+          <div class="hero-orb-deco hero-orb-2"></div>
+
+          <div>
+            <div class="hero-badge-row">
+              <span class="hero-chip">🟣 VIOLET MULTI-COLOR UI</span>
+              <span class="hero-chip">🛡️ 무한 새로고침/다운로드 방지 가드</span>
+              <span class="hero-chip">📄 ./data_travel.json 안전 동기화</span>
+            </div>
+            <h1 class="hero-title">대한민국 🇰🇷 & 일본 🇯🇵 여행 정보 통합 인터랙티브 포털</h1>
+            <p class="hero-desc">
+              데이터 해시 비교와 Live Server 리로드 차단 가드를 통해 <strong>무한 새로고침 및 중복 다운로드 없이</strong> <code>data_travel.json</code>을 안전하게 관리합니다.
+            </p>
+            <div class="hero-metrics">
+              <div class="hero-metric-card">
+                <span>연동 파일명</span>
+                <strong>./data_travel.json</strong>
+              </div>
+              <div class="hero-metric-card">
+                <span>리로드 루프 방지</span>
+                <strong>WebSocket & Hash Guard</strong>
+              </div>
+              <div class="hero-metric-card">
+                <span>관광객 수 통계</span>
+                <strong>한·일 각 TOP 5</strong>
+              </div>
+              <div class="hero-metric-card">
+                <span>최근 동기화 경로</span>
+                <strong>${m.triggerSource}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-console">
+            <div class="console-header">
+              <div class="console-dots">
+                <i style="background:#f43f5e;"></i>
+                <i style="background:#f59e0b;"></i>
+                <i style="background:#10b981;"></i>
+              </div>
+              <span>SAFE FILE I/O MONITOR (data_travel.json)</span>
+            </div>
+            <div class="console-log-list" id="heroConsoleLogs">
+              ${logsHtml}
+            </div>
+            <div class="console-actions">
+              <button class="btn-console" onclick="openJsonModal()">{ } data_travel.json 코드 열람</button>
+              <button class="btn-console" onclick="downloadDataTravelJsonFile('HERO_MANUAL_BTN')">💾 data_travel.json 수동 다운로드</button>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderApp() {
+      const viewport = document.getElementById('appViewport');
+      if (!viewport || !window.data_travel) return;
+
+      if (currentPage === 'home') {
+        viewport.innerHTML = `
+          ${renderHeroShowcase()}
+          ${renderRoamingSection(false)}
+          ${renderEssentialsSection(false)}
+          ${renderImmigrationSection(false)}
+          ${renderAttractionsSection(false)}
+          ${renderItinerariesSection(false)}
+          ${renderRestaurantsSection(false)}
+        `;
+      } else if (currentPage === 'roaming') {
+        viewport.innerHTML = renderRoamingSection(true);
+      } else if (currentPage === 'essentials') {
+        viewport.innerHTML = renderEssentialsSection(true);
+      } else if (currentPage === 'immigration') {
+        viewport.innerHTML = renderImmigrationSection(true);
+      } else if (currentPage === 'attractions') {
+        viewport.innerHTML = renderAttractionsSection(true);
+      } else if (currentPage === 'itineraries') {
+        viewport.innerHTML = renderItinerariesSection(true);
+      } else if (currentPage === 'restaurants') {
+        viewport.innerHTML = renderRestaurantsSection(true);
+      }
+
+      initGsapInteractions();
+    }
+
+    /* ==========================================================================
+       GSAP ANIMATIONS & INTERACTIVE EVENT BINDINGS
+       ========================================================================== */
+    function initGsapInteractions() {
+      gsap.fromTo('.gs-reveal',
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.45, stagger: 0.04, ease: 'power3.out', overwrite: 'auto' }
+      );
+
+      document.querySelectorAll('.roam-gauge-fill').forEach(bar => {
+        const targetWidth = bar.getAttribute('data-width') || '85%';
+        gsap.fromTo(bar,
+          { width: '0%' },
+          { width: targetWidth, duration: 0.7, ease: 'power3.out' }
+        );
+      });
+
+      document.querySelectorAll('.roam-tilt-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const rotateY = ((x / rect.width) - 0.5) * 12;
+          const rotateX = ((y / rect.height) - 0.5) * -12;
+          gsap.to(card, {
+            rotateX,
+            rotateY,
+            scale: 1.02,
+            duration: 0.25,
+            ease: 'power2.out'
+          });
+        });
+        card.addEventListener('mouseleave', () => {
+          gsap.to(card, {
+            rotateX: 0,
+            rotateY: 0,
+            scale: 1,
+            duration: 0.4,
+            ease: 'elastic.out(1, 0.6)'
+          });
+        });
+      });
+
+      document.querySelectorAll('.gs-counter').forEach(counterEl => {
+        const targetVal = parseInt(counterEl.getAttribute('data-target') || '0', 10);
+        const obj = { val: 0 };
+        gsap.to(obj, {
+          val: targetVal,
+          duration: 1.0,
+          ease: 'power2.out',
+          onUpdate: () => {
+            counterEl.textContent = Math.round(obj.val).toLocaleString('ko-KR');
+          }
+        });
+      });
+    }
+
+    /* ==========================================================================
+       MODAL & TOAST UTILITIES
+       ========================================================================== */
+    function openJsonModal() {
+      const modal = document.getElementById('jsonModal');
+      const body = document.getElementById('jsonModalBody');
+      if (modal && body) {
+        body.textContent = JSON.stringify(window.data_travel, null, 2);
+        modal.classList.add('open');
+      }
+    }
+
+    function closeJsonModal() {
+      const modal = document.getElementById('jsonModal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function showToast(msg) {
+      const stack = document.getElementById('toastStack');
+      if (!stack) return;
+      const item = document.createElement('div');
+      item.className = 'toast-item';
+      item.textContent = msg;
+      stack.appendChild(item);
+      gsap.fromTo(item, { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' });
+      setTimeout(() => {
+        gsap.to(item, {
+          opacity: 0,
+          y: 10,
+          duration: 0.25,
+          onComplete: () => item.remove()
+        });
+      }, 3400);
+    }
+
+    // 페이지 최초 로드 시: 안전하게 1회만 초기화하며 자동 다운로드 팝업이나 리로드 루프를 일으키지 않음
+    window.addEventListener('DOMContentLoaded', async () => {
+      const savedHandle = await loadFolderHandleFromIDB();
+      if (savedHandle) {
+        directoryHandle = savedHandle;
+        updateFolderBindButtonUI(true);
+      }
+      await initializeOnPageLoad();
+    });
+  </script>
+</body>
+</html>

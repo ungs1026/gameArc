@@ -1,0 +1,726 @@
+{
+  "meta": {
+    "fileName": "data_travel.json",
+    "version": "2026.11.v3",
+    "lastUpdated": "2026. 11. 16. 오후 5:38:58",
+    "triggerSource": "MANUAL_REFRESH_BUTTON",
+    "countries": [
+      "KR",
+      "JP"
+    ]
+  },
+  "roaming": {
+    "methodsComparison": [
+      {
+        "id": "m-roam",
+        "method": "통신사 직영 로밍 (SKT·KT·LGU+)",
+        "badge": "통화·문자 완벽 유지",
+        "pros": "한국 번호 그대로 전화·금융 인증문자 수신, 유심 교체 불필요",
+        "cons": "장기 체류 시 로컬 eSIM 대비 요금이 다소 높음",
+        "recommendedFor": "업무 연락·은행 OTP 수신이 필수인 직장인 및 가족 여행객",
+        "avgPrice": "패스형 29,000원 ~ 79,000원",
+        "metrics": {
+          "speed": 95,
+          "convenience": 98,
+          "priceValue": 74,
+          "stability": 99
+        }
+      },
+      {
+        "id": "m-esim",
+        "method": "eSIM (QR 디지털 심)",
+        "badge": "가성비 & 간편함 1위",
+        "pros": "실물 칩 배송 없이 구매 즉시 QR 스캔 개통, 한국 유심과 듀얼 사용 가능",
+        "cons": "구형 스마트폰 미지원 가능 (아이폰 XS, 갤럭시 S23 이후 지원)",
+        "recommendedFor": "빠른 개통과 합리적 요금을 선호하는 2030 자유여행객",
+        "avgPrice": "일 1,500원 ~ 3,800원 (무제한)",
+        "metrics": {
+          "speed": 92,
+          "convenience": 94,
+          "priceValue": 98,
+          "stability": 90
+        }
+      },
+      {
+        "id": "m-usim",
+        "method": "실물 USIM (현지·공항 유심)",
+        "badge": "단말기 호환성 최고",
+        "pros": "eSIM 미지원 기종에서도 완벽 작동, 현지 음성 번호 부여 옵션 다양",
+        "cons": "핀으로 트레이를 열어 기존 한국 유심을 분리·보관해야 함 (분실 주의)",
+        "recommendedFor": "eSIM 미지원 스마트폰 이용자 및 중장기 여행자",
+        "avgPrice": "3~5일권 11,000원 ~ 19,000원",
+        "metrics": {
+          "speed": 93,
+          "convenience": 76,
+          "priceValue": 92,
+          "stability": 94
+        }
+      },
+      {
+        "id": "m-wifi",
+        "method": "포켓 와이파이 (도시락 단말기)",
+        "badge": "다인 동시접속 & 노트북",
+        "pros": "단말기 1대로 최대 5명 동시 연결, 태블릿·노트북 와이파이 즉시 연동",
+        "cons": "단말기 대여·반납 절차 및 배터리 충전 필요, 일행과 떨어지면 연결 해제",
+        "recommendedFor": "3~4인 가족·친구 단체 여행 및 노트북 지참 사용자",
+        "avgPrice": "일 3,900원 ~ 6,900원 (N분의 1 최저가)",
+        "metrics": {
+          "speed": 88,
+          "convenience": 72,
+          "priceValue": 89,
+          "stability": 87
+        }
+      }
+    ],
+    "companies": [
+      {
+        "id": "comp-skt",
+        "rank": 1,
+        "companyName": "SKT T로밍 (baro 요금제)",
+        "serviceType": "통신사 직영 로밍 · 에이닷 baro 무료통화",
+        "supportedCountries": [
+          "KR",
+          "JP"
+        ],
+        "flagshipPlan": "baro 3GB/6GB/12GB/24GB & 가족로밍 (+3,000원 공유)",
+        "priceRange": "29,000원 ~ 79,000원 (0청년 50% 상시 할인)",
+        "highlight": "일본 SoftBank·KDDI 5G 듀얼망 연동 및 에이닷 앱을 통한 한국/현지 무료 음성통화 지원",
+        "url": "https://troaming.tworld.co.kr",
+        "crawlStatus": "VERIFIED_SYNC",
+        "crawledTitle": "SK텔레콤 T로밍 공식 포털 - baro 요금제 & 가족로밍",
+        "crawledSnippet": "가족 대표 1명만 가입해도 3,000원만 추가하면 최대 5명까지 데이터를 함께 쓰는 SKT 로밍"
+      },
+      {
+        "id": "comp-kt",
+        "rank": 2,
+        "companyName": "KT 로밍 (함께 쓰는 로밍)",
+        "serviceType": "통신사 직영 로밍 · 추가요금 없는 공유",
+        "supportedCountries": [
+          "KR",
+          "JP"
+        ],
+        "flagshipPlan": "함께 쓰는 로밍 4GB / 8GB / 12GB (최대 5회선 무료 결합)",
+        "priceRange": "33,000원 ~ 66,000원",
+        "highlight": "일본 NTT 도코모·KDDI 망 직결 및 KT 가입자 간 추가 비용 없이 데이터 쉐어링 가능",
+        "url": "https://roaming.kt.com",
+        "crawlStatus": "VERIFIED_SYNC",
+        "crawledTitle": "KT 글로벌 로밍 - 함께 쓰는 로밍 & 하루종일 로밍",
+        "crawledSnippet": "복잡한 유심 교체 없이 쓰던 번호 그대로! 함께 갈수록 더 아끼는 KT 로밍 혜택"
+      },
+      {
+        "id": "comp-lgu",
+        "rank": 3,
+        "companyName": "LG U+ 로밍 (유플러스 로밍패스)",
+        "serviceType": "통신사 직영 로밍 · 데이터 2배 혜택",
+        "supportedCountries": [
+          "KR",
+          "JP"
+        ],
+        "flagshipPlan": "로밍패스 3GB / 8GB / 13GB / 25GB (온라인 +1GB)",
+        "priceRange": "29,000원 ~ 79,000원",
+        "highlight": "데이터 소진 후에도 400kbps 속도로 카카오톡·구글맵·네이버지도 무제한 이용 보장",
+        "url": "https://www.lguplus.com/plan/roaming",
+        "crawlStatus": "VERIFIED_SYNC",
+        "crawledTitle": "LG U+ 해외로밍 공식 안내 - 로밍패스 및 제로 프리미엄",
+        "crawledSnippet": "아시아·일본 포함 83개국 어디서나 넉넉한 데이터와 나눠쓰기 혜택을 제공하는 로밍패스"
+      },
+      {
+        "id": "comp-dosirak",
+        "rank": 4,
+        "companyName": "와이파이도시락 & 도시락eSIM",
+        "serviceType": "포켓 와이파이 & 로컬망 eSIM 통합",
+        "supportedCountries": [
+          "KR",
+          "JP"
+        ],
+        "flagshipPlan": "일본·한국 5G 무제한 포켓와이파이 / 도시락eSIM 일 무제한",
+        "priceRange": "eSIM 일 1,800원~ / 와이파이 일 3,900원~",
+        "highlight": "인천·김포·김해·나리타·간사이·후쿠오카 공항 직영 카운터 수령 및 QR 즉시 개통 eSIM",
+        "url": "https://www.wifidosirak.com",
+        "crawlStatus": "VERIFIED_SYNC",
+        "crawledTitle": "와이파이도시락 공식 사이트 - 포켓와이파이 · 도시락eSIM · 도시락유심",
+        "crawledSnippet": "국가별 최적의 현지 통신망 자동 선택! 멤버십 제휴 할인 및 무료 보조배터리 대여 이벤트"
+      },
+      {
+        "id": "comp-maaltalk",
+        "rank": 5,
+        "companyName": "말톡 (Maaltalk) 유심·eSIM",
+        "serviceType": "현지 로컬 네이티브망 eSIM · 유심",
+        "supportedCountries": [
+          "KR",
+          "JP"
+        ],
+        "flagshipPlan": "일본 소프트뱅크·도코모 로컬망 eSIM / 방한 외국인 무제한 유심",
+        "priceRange": "3일권 4,900원 ~ 5일권 9,500원",
+        "highlight": "로밍 우회망이 아닌 현지 통신사 네이티브 직결망으로 낮은 핑(Ping)과 빠른 속도 제공",
+        "url": "https://www.maaltalk.com",
+        "crawlStatus": "VERIFIED_SYNC",
+        "crawledTitle": "말톡(Maaltalk) - 해외유심, eSIM, 포켓와이파이 전문 스토어",
+        "crawledSnippet": "결제 후 3분 내 이메일·카카오톡 QR코드 즉시 발송 및 24시간 실시간 한국어 기술 상담"
+      }
+    ]
+  },
+  "essentials": [
+    {
+      "id": "ess-kr-1",
+      "country": "KR",
+      "accent": "amber",
+      "icon": "💳",
+      "categoryTag": "교통 · 무현금 결제",
+      "title": "기후동행카드 관광권 & WOWPASS · 티머니",
+      "summary": "서울 지하철·버스를 무제한 탑승하는 기후동행카드 단기권(1·2·3·5·7일)과 환전·결제·교통카드가 하나로 합쳐진 WOWPASS가 필수입니다.",
+      "details": {
+        "전압 및 콘센트": "220V / 60Hz (C·F타입 둥근 2구 콘센트)",
+        "기후동행카드 가격": "1일권 5,000원 / 2일권 8,000원 / 3일권 10,000원 / 5일권 15,000원",
+        "결제 환경": "신용카드·애플페이·삼성페이 결제율 99% (전통시장 일부 현금)"
+      },
+      "url": "https://www.t-money.co.kr",
+      "sourceName": "티머니 & 기후동행카드 안내"
+    },
+    {
+      "id": "ess-kr-2",
+      "country": "KR",
+      "accent": "emerald",
+      "icon": "🗺️",
+      "categoryTag": "지도 · 모빌리티",
+      "title": "네이버 지도(Naver Map) · 카카오맵 & 카카오 T",
+      "summary": "한국은 안보 규정상 구글 지도 도보·자전거 내비게이션이 작동하지 않으므로 다국어(한·영·일·중)를 지원하는 네이버 지도 설치가 필수입니다.",
+      "details": {
+        "실시간 교통": "초 단위 시내버스 위치, 지하철 최단 환승 칸 번호 안내",
+        "맛집 예약 연동": "네이버 스마트플레이스 예약 및 캐치테이블(CatchTable) 원격 줄서기",
+        "택시 호출": "카카오 T 또는 외국인 전용 K.ride / Uber(UT) 즉시 호출"
+      },
+      "url": "https://map.naver.com",
+      "sourceName": "네이버 지도 바로가기"
+    },
+    {
+      "id": "ess-kr-3",
+      "country": "KR",
+      "accent": "rose",
+      "icon": "🛍️",
+      "categoryTag": "즉시 면세 · 1330 통역",
+      "title": "사후면세 즉시환급(Tax Refund) & 1330 관광통역 핫라인",
+      "summary": "올리브영·백화점·대형마트 등에서 실물 여권 제시 시 건당 15,000원 이상 구매하면 현장에서 부가세가 차감된 금액으로 바로 결제됩니다.",
+      "details": {
+        "즉시환급 한도": "1회 100만 원 미만 (총 체류기간 500만 원 한도)",
+        "1330 관광통역": "국번 없이 1330 (24시간 한·영·일·중 무료 통역 및 분실물 지원)",
+        "긴급 연락처": "범죄신고 112 / 화재·구급차 119"
+      },
+      "url": "https://korean.visitkorea.or.kr",
+      "sourceName": "한국관광공사 VisitKorea"
+    },
+    {
+      "id": "ess-jp-1",
+      "country": "JP",
+      "accent": "cyan",
+      "icon": "🔌",
+      "categoryTag": "전압 · 기내 반입 규정",
+      "title": "일본 100V 전압(110V 돼지코) & 보조배터리 기내 소지 규정",
+      "summary": "일본은 100V 납작한 11자형(A타입) 플러그를 사용합니다. 프리볼트(100~240V) 스마트폰 충전기는 돼지코 어댑터만 끼우면 바로 작동합니다.",
+      "details": {
+        "전압 주의사항": "220V 전용 한국 고데기·드라이기는 변압기 없이 일본에서 사용 불가",
+        "보조배터리 규정": "위탁수하물 위탁 절대 금지! 기내 직접 소지 및 기내 선반 보관 제한 준수",
+        "무선 고데기": "배터리 일체형(분리 불가) 리튬이온 무선 고데기는 일본 출국 시 기내·위탁 모두 반입 불가"
+      },
+      "url": "https://www.japan.travel/ko/plan/electricity/",
+      "sourceName": "일본정부관광국(JNTO) 안내"
+    },
+    {
+      "id": "ess-jp-2",
+      "country": "JP",
+      "accent": "amber",
+      "icon": "🚆",
+      "categoryTag": "교통 IC카드 · 패스",
+      "title": "애플페이 스이카(Suica)·파스모 & JR/사철 교통패스 조합",
+      "summary": "아이폰 사용자는 지갑 앱에서 실물 카드 없이 Suica·PASMO·ICOCA를 즉시 발급하고 트래블카드나 현대카드로 엔화를 바로 충전할 수 있습니다.",
+      "details": {
+        "모바일 교통카드": "iOS 지갑 앱 → 스이카 추가 → 마스터/아멕스 트래블카드로 수수료 없이 충전",
+        "안드로이드/실물": "공항 자동발매기에서 Welcome Suica 또는 관서 ICOCA 발급",
+        "편의점/코인로커": "일본 전국 편의점, 자판기, 코인로커에서 스이카 터치 결제 완벽 호환"
+      },
+      "url": "https://www.jreast.co.jp/multi/kr/pass/suica.html",
+      "sourceName": "JR동일본 스이카 공식 가이드"
+    },
+    {
+      "id": "ess-jp-3",
+      "country": "JP",
+      "accent": "emerald",
+      "icon": "💴",
+      "categoryTag": "환전 · QR 간편결제",
+      "title": "트래블카드 세븐일레븐 ATM 출금 & PayPay QR 결제",
+      "summary": "환율 우대 100% 트래블월렛·트래블로그·토스뱅크 카드로 일본 현지 ATM에서 필요할 때마다 엔화를 인출하고, PayPay 가맹점에선 한국 페이 앱으로 결제합니다.",
+      "details": {
+        "수수료 무료 ATM": "세븐일레븐(7-Bank ATM), 이온(AEON) ATM 인출 수수료 면제",
+        "PayPay 연동": "PayPay 스티커가 붙은 일본 식당·상점에서 카카오페이·네이버페이 QR 결제 가능",
+        "동전 소진 팁": "귀국 전 공항 세븐일레븐 셀프 계산대에 남은 동전을 한꺼번에 투입 후 차액만 카드 결제"
+      },
+      "url": "https://paypay.ne.jp",
+      "sourceName": "일본 PayPay 공식 안내"
+    }
+  ],
+  "immigration": [
+    {
+      "id": "imm-jp-1",
+      "country": "JP",
+      "badge": "통합 QR 전면 시행",
+      "title": "Visit Japan Web 입국심사 + 세관신고 단일 QR코드 일원화",
+      "beforeRule": "[기존 규정] 외국인 입국기록(파란색 QR)과 휴대품·별송품 세관신고(노란색 QR) 2개를 각각 따로 발급받아 심사대마다 전환 제시해야 했음.",
+      "afterRule": "[변경 후 규정] 입국심사와 세관신고 데이터가 1개의 단일 통합 QR코드로 합쳐져 공항 공동 키오스크 및 게이트에서 한 번에 스캔 통과!",
+      "checklist": [
+        "출국 최소 6시간 전 Visit Japan Web 공식 사이트(.go.jp)에서 여권·항공편·숙소 입력 완료",
+        "통합 QR코드 화면을 미리 스마트폰 사진첩에 스크린샷 저장 (공항 와이파이 지연 대비)",
+        "유료 대행 피싱 사이트 주의: 공식 서비스는 100% 무료 운영"
+      ],
+      "url": "https://services.digital.go.jp/ko/visit-japan-web/",
+      "sourceName": "Visit Japan Web 공식 포털"
+    },
+    {
+      "id": "imm-jp-2",
+      "country": "JP",
+      "badge": "사전 심사 & 키오스크",
+      "title": "일본 주요 공항 통합 공동 키오스크(지문·안면 등록) 패스트트랙",
+      "beforeRule": "[기존 규정] 비행기 착륙 후 입국심사관 대면 부스 앞에서 지문 채취·사진 촬영·질의응답을 모두 진행하여 1~2시간 대기 발생.",
+      "afterRule": "[변경 후 규정] 대기 줄 중간에 배치된 공동 키오스크 단말기에서 Visit Japan Web QR과 여권·지문·얼굴 촬영을 먼저 마친 뒤 전용 게이트로 고속 통과!",
+      "checklist": [
+        "간사이·나리타·하네다·후쿠오카 등 주요 공항 입국장 공동 키오스크 안내원 유도선 확인",
+        "동반 가족이라도 입국심사 QR은 1인당 1개씩 개별 스캔 필요",
+        "귀국 시 보안검색대 스마트 레인 도입 공항은 노트북 미분리 통과 가능"
+      ],
+      "url": "https://www.moj.go.jp/isa/?hl=ko",
+      "sourceName": "일본 출입국재류관리청"
+    },
+    {
+      "id": "imm-jp-3",
+      "country": "JP",
+      "badge": "세관·면세 단속 강화",
+      "title": "일본 사후면세(Tax-Free) 전자검증 강화 및 금·육가공품 반입 엄금",
+      "beforeRule": "[기존 규정] 여권에 종이 면세 영수증을 스테이플러로 부착하고 출국 시 회수함에 넣는 방식 위주로 운영.",
+      "afterRule": "[변경 후 규정] 여권 스캔으로 구매 내역이 일본 세관 서버에 실시간 전송되며, 출국장에서 면세 물품 실물 소지 및 밀봉 봉투 개봉 여부를 엄격 대조!",
+      "checklist": [
+        "화장품·의약품·주류 등 소비재 면세 밀봉 봉투는 일본 출국 전까지 절대 개봉 금지",
+        "순금 목걸이·팔찌 등 고가 귀금속 착용 입국 시에도 세관 신고서 기재 필수",
+        "육포·소시지·만두 등 육가공품 반입 시 무관용 벌금 및 입국 불허 주의"
+      ],
+      "url": "https://www.customs.go.jp/kr/index.htm",
+      "sourceName": "일본 세관(Japan Customs)"
+    },
+    {
+      "id": "imm-kr-1",
+      "country": "KR",
+      "badge": "안면인식 출국",
+      "title": "인천국제공항 ICN 스마트패스(SmartPass) 안면인식 전용 라인 확대",
+      "beforeRule": "[기존 규정] 출국장 진입 시마다 보안요원에게 실물 여권과 종이/모바일 탑승권을 일일이 대조 확인받아야 했음.",
+      "afterRule": "[변경 후 규정] 사전 등록한 안면인식 정보만으로 여권·탑승권을 꺼내지 않고 전용 주황색 스마트패스 라인을 통해 1초 만에 출국장 진입!",
+      "checklist": [
+        "ICN 스마트패스 앱 또는 KB·신한·우리·하나은행 앱에서 출국 30분 전까지 여권 IC칩 스캔 등록",
+        "안면 ID는 1회 등록 시 5년간 유지되나 탑승권은 매 출국마다 등록 필요",
+        "만 7세 이상부터 등록 가능 (동반 자녀도 개별 등록 시 전용 라인 동반 이용)"
+      ],
+      "url": "https://www.airport.kr/ap_ko/974/subview.do",
+      "sourceName": "인천공항 스마트패스 안내"
+    },
+    {
+      "id": "imm-kr-2",
+      "country": "KR",
+      "badge": "2026년 말까지 연장",
+      "title": "방한 외국인 K-ETA(전자여행허가) 22개국 한시 면제 연장",
+      "beforeRule": "[기존 규정] 무비자 입국 가능 국가 국민이라도 출발 72시간 전 K-ETA 사이트에서 허가를 받고 수수료(1만 원)를 결제해야 했음.",
+      "afterRule": "[변경 후 규정] 일본·대만·미국 등 22개 국가/지역 여권 소지자는 2026년 12월 31일까지 K-ETA 사전 신청 없이 즉시 방한 입국 가능!",
+      "checklist": [
+        "면제 대상국 여행객은 K-ETA 신청 없이 여권만으로 탑승 수속 가능",
+        "단, 입국신고서(Arrival Card) 작성을 생략하고 싶다면 자발적 K-ETA 신청도 가능",
+        "전자입국신고(e-Arrival Card) 시범 운영 확대로 온라인 사전 작성 지원"
+      ],
+      "url": "https://www.k-eta.go.kr",
+      "sourceName": "K-ETA 공식 포털"
+    },
+    {
+      "id": "imm-kr-3",
+      "country": "KR",
+      "badge": "모바일 세관 통관",
+      "title": "대한민국 입국 시 종이 세관신고서 전면 폐지 & 모바일 QR 감면",
+      "beforeRule": "[기존 규정] 한국으로 귀국하는 모든 비행기 탑승객이 기내에서 종이 세관신고서를 의무 작성하여 제출해야 했음.",
+      "afterRule": "[변경 후 규정] 면세 한도(미화 800달러) 이내 입국자는 신고서 작성 없이 세관 통과! 초과 물품은 모바일 앱 QR 신고 시 세액 30%(최대 20만 원) 감면.",
+      "checklist": [
+        "기본 면세한도 US$800 + 주류 2병(2L·$400 이하) + 향수 100ml + 궐련 200개비",
+        "신고 물품이 없으면 기내 종이 신고서 수령 불필요 (세관 무신고 통로 직행)",
+        "초과 구매 시 여행자 세관신고 앱에서 자진신고 체크로 가산세 방지 및 30% 감면"
+      ],
+      "url": "https://www.customs.go.kr",
+      "sourceName": "관세청 여행자 세관신고"
+    }
+  ],
+  "attractions": [
+    {
+      "id": "att-kr-1",
+      "country": "KR",
+      "rank": 1,
+      "name": "서울 명동 거리 & 남산 N서울타워",
+      "region": "서울 중구 · 용산구",
+      "visitorCountNum": 1180,
+      "visitorUnit": "만 명/년",
+      "visitorRate": "외래관광객 방문율 78.4% (1위)",
+      "summary": "방한 외국인 관광객이 가장 많이 찾는 부동의 1위 쇼핑·환전·야시장 미식 중심지이자 서울 야경의 상징입니다.",
+      "highlights": "K-뷰티 플래그십 스토어, 명동 중앙로 야시장 먹거리, 남산 케이블카 & N서울타워 전망대",
+      "bestSeason": "연중무휴 (17:00~22:00 야간 시간대 추천)",
+      "url": "https://korean.visitkorea.or.kr",
+      "sourceName": "한국관광공사 VisitKorea"
+    },
+    {
+      "id": "att-kr-2",
+      "country": "KR",
+      "rank": 2,
+      "name": "경복궁 · 북촌한옥마을 · 광화문광장",
+      "region": "서울 종로구",
+      "visitorCountNum": 940,
+      "visitorUnit": "만 명/년",
+      "visitorRate": "고궁·역사문화 방문율 64.2% (2위)",
+      "summary": "조선 왕조 제일의 법궁인 경복궁과 한복 체험, 전통 한옥이 보존된 북촌·서촌 골목이 이어지는 역사 명소입니다.",
+      "highlights": "흥례문 수문장 교대의식(10시·14시), 한복 착용 시 무료 입장, 경회루 야간 관람",
+      "bestSeason": "봄(4~5월) · 가을(9~11월 단풍 및 야간개장)",
+      "url": "https://royal.khs.go.kr/gbg",
+      "sourceName": "국가유산청 경복궁 관리소"
+    },
+    {
+      "id": "att-kr-3",
+      "country": "KR",
+      "rank": 3,
+      "name": "홍대 거리 · 연남동 경의선숲길 & 성수동",
+      "region": "서울 마포구 · 성동구",
+      "visitorCountNum": 870,
+      "visitorUnit": "만 명/년",
+      "visitorRate": "글로벌 MZ 방문율 59.1% (3위)",
+      "summary": "거리 버스킹과 K-패션 편집숍의 성지 홍대·연남동, 그리고 글로벌 브랜드 팝업스토어가 집중된 성수동 권역입니다.",
+      "highlights": "홍대 걷고싶은거리 버스킹, 연트럴파크 브런치·카페, 성수동 연무장길 팝업 투어",
+      "bestSeason": "연중 (오후 14:00 ~ 심야)",
+      "url": "https://korean.visitseoul.net",
+      "sourceName": "비짓서울(Visit Seoul) 공식"
+    },
+    {
+      "id": "att-kr-4",
+      "country": "KR",
+      "rank": 4,
+      "name": "부산 해운대 해변 · 블루라인파크 & 감천문화마을",
+      "region": "부산 해운대구 · 사하구",
+      "visitorCountNum": 790,
+      "visitorUnit": "만 명/년",
+      "visitorRate": "비수도권 관광객 방문 1위 (4위)",
+      "summary": "해안 절벽을 따라 달리는 해운대 스카이캡슐과 마린시티 마천루 야경, 계단식 예술 마을이 어우러진 해양 수도입니다.",
+      "highlights": "미포~청사포 스카이캡슐, 광안리 M드론라이트쇼, 감천문화마을 어린왕자 포토존",
+      "bestSeason": "5월~10월 (해수욕 및 야간 요트 최적기)",
+      "url": "https://www.visitbusan.net/kr/index.do",
+      "sourceName": "비짓부산(Visit Busan) 공식"
+    },
+    {
+      "id": "att-kr-5",
+      "country": "KR",
+      "rank": 5,
+      "name": "제주 성산일출봉 · 우도 & 함덕 서우봉 해변",
+      "region": "제주 특별자치도 서귀포시 · 제주시",
+      "visitorCountNum": 680,
+      "visitorUnit": "만 명/년",
+      "visitorRate": "유네스코 세계자연유산 권역 (5위)",
+      "summary": "거대한 수성화산 분화구인 성산일출봉과 산호 백사장이 빛나는 우도·함덕 해변을 잇는 제주 대표 자연 명소입니다.",
+      "highlights": "성산일출봉 정상 분화구 트레킹, 우도 전기자전거 일주, 함덕 에메랄드빛 해변 카페",
+      "bestSeason": "4~6월(유채꽃·수국) · 9~11월(가을 억새)",
+      "url": "https://www.visitjeju.net/kr",
+      "sourceName": "비짓제주(Visit Jeju) 공식"
+    },
+    {
+      "id": "att-jp-1",
+      "country": "JP",
+      "rank": 1,
+      "name": "도쿄 아사쿠사 센소지 & 시부야 스카이 · 신주쿠",
+      "region": "일본 도쿄도 (간토 권역)",
+      "visitorCountNum": 1950,
+      "visitorUnit": "만 명/년",
+      "visitorRate": "방일 외객 방문율 1위 권역",
+      "summary": "도쿄 최고(最古) 사찰 센소지의 거대한 붉은 제등부터 시부야 스크램블 교차로 상공 229m 루프탑 전망대까지 아우르는 1위 명소입니다.",
+      "highlights": "센소지 카미나리몬 & 나카미세도리, 시부야 스카이 일몰 전망, 도쿄 스카이트리",
+      "bestSeason": "연중 (시부야 스카이 일몰 타임은 4주 전 예매 필수)",
+      "url": "https://www.gotokyo.org/kr/index.html",
+      "sourceName": "GO TOKYO 도쿄관광재단"
+    },
+    {
+      "id": "att-jp-2",
+      "country": "JP",
+      "rank": 2,
+      "name": "오사카 도톤보리 · 난바 & 유니버설 스튜디오 재팬(USJ)",
+      "region": "일본 오사카부 (간사이 권역)",
+      "visitorCountNum": 1460,
+      "visitorUnit": "만 명/년",
+      "visitorRate": "한국인 방일 방문객 선호 1~2위",
+      "summary": "글리코상 네온사인이 빛나는 도톤보리 운하 크루즈와 슈퍼 닌텐도 월드를 보유한 아시아 최고 테마파크 권역입니다.",
+      "highlights": "도톤보리 톤보리 리버크루즈, USJ 마리오·해리포터 에어리어, 오사카성 천수각",
+      "bestSeason": "봄(3~5월) · 가을(10~11월 USJ 할로윈 시즌)",
+      "url": "https://osaka-info.jp/ko/",
+      "sourceName": "OSAKA INFO 오사카 관광국"
+    },
+    {
+      "id": "att-jp-3",
+      "country": "JP",
+      "rank": 3,
+      "name": "교토 기요미즈데라(청수사) · 후시미이나리 신사 & 아라시야마",
+      "region": "일본 교토부",
+      "visitorCountNum": 1080,
+      "visitorUnit": "만 명/년",
+      "visitorRate": "일본 전통 유산 방문객 1위",
+      "summary": "수천 개의 주홍빛 도리이 터널과 절벽 위 목조 본당 청수사, 전통 가옥 거리 산넨자카와 대나무숲이 펼쳐진 천년 고도입니다.",
+      "highlights": "후시미이나리 타이샤 센본도리이, 청수사~산넨자카·니넨자카 산책, 아라시야마 치쿠린",
+      "bestSeason": "3~4월(벚꽃) · 11월 중하순(단풍 절정)",
+      "url": "https://kyoto.travel/ko/",
+      "sourceName": "교토시 공식 관광 가이드"
+    },
+    {
+      "id": "att-jp-4",
+      "country": "JP",
+      "rank": 4,
+      "name": "후쿠오카 하카타·텐진 & 다자이후 텐만구 · 유후인",
+      "region": "일본 후쿠오카현 · 오이타현 (규슈)",
+      "visitorCountNum": 540,
+      "visitorUnit": "만 명/년",
+      "visitorRate": "공항~도심 10분 접근성 1위",
+      "summary": "공항에서 지하철 2정거장이면 닿는 하카타·나카스 강변 포장마차(야타이)와 유후인 온천 마을을 잇는 규슈 핵심 코스입니다.",
+      "highlights": "나카스 야타이 거리, 다자이후 텐만구 우메가에모치(매화떡), 유후인 긴린코 호수 물안개",
+      "bestSeason": "10월~3월 (온천 료칸 및 야타이 투어 최적기)",
+      "url": "https://www.crossroadfukuoka.jp/kr",
+      "sourceName": "후쿠오카현 관광연맹 공식"
+    },
+    {
+      "id": "att-jp-5",
+      "country": "JP",
+      "rank": 5,
+      "name": "홋카이도 삿포로 오도리공원 · 오타루 운하 & 비에이",
+      "region": "일본 홋카이도",
+      "visitorCountNum": 390,
+      "visitorUnit": "만 명/년",
+      "visitorRate": "동계 설경 & 하계 라벤더 방문 1위",
+      "summary": "겨울 삿포로 눈축제와 낭만적인 오타루 운하 가스등, 여름 비에이·후라노의 보랏빛 라벤더 언덕을 만끽하는 북해도 명소입니다.",
+      "highlights": "오타루 운하 크루즈 & 오르골당, 삿포로 맥주박물관·징기스칸, 비에이 청의 호수",
+      "bestSeason": "12~2월(설경·눈축제) · 7~8월(라벤더·냉량한 여름)",
+      "url": "https://www.visit-hokkaido.jp/ko/",
+      "sourceName": "홋카이도 관광진흥기구(HTO)"
+    }
+  ],
+  "itineraries": [
+    {
+      "id": "iti-kr-1",
+      "country": "KR",
+      "duration": "3박 4일 서울 핵심",
+      "title": "서울 고궁 · 성수 팝업 · 한강 야경 완전 정복",
+      "transportPass": "기후동행카드 3일권(10,000원) + AREX 직통열차",
+      "estimatedBudget": "1인 약 45만 ~ 70만 원",
+      "steps": [
+        {
+          "day": "DAY 1",
+          "title": "홍대·연남 트렌드 입성",
+          "route": "인천/김포공항 → AREX 공항철도 → 홍대입구 체크인 → 연남동 경의선숲길 카페 → 홍대 버스킹 거리"
+        },
+        {
+          "day": "DAY 2",
+          "title": "조선 고궁 & 남산 파노라마",
+          "route": "경복궁 한복 관람(수문장 교대식) → 북촌한옥마을·삼청동 → 광장시장 육회·빈대떡 → 명동 & N서울타워 야경"
+        },
+        {
+          "day": "DAY 3",
+          "title": "성수동 팝업 & 한강 선셋",
+          "route": "성수동 연무장길 팝업스토어 → 서울숲 산책 → 코엑스 별마당도서관 → 여의도 한강공원 유람선 & 치맥"
+        },
+        {
+          "day": "DAY 4",
+          "title": "면세 쇼핑 & 도심공항 출국",
+          "route": "명동·을지로 소품샵 & 올리브영 즉시환급 쇼핑 → 서울역 도심공항터미널 사전탑승수속 → 공항 이동"
+        }
+      ],
+      "url": "https://korean.visitseoul.net/itineraries",
+      "sourceName": "Visit Seoul 공식 코스 가이드"
+    },
+    {
+      "id": "iti-kr-2",
+      "country": "KR",
+      "duration": "2박 3일 부산 오션뷰",
+      "title": "부산 해운대 스카이캡슐 · 광안리 · 감천문화마을",
+      "transportPass": "KTX-청룡 왕복 + 부산 도시철도 1일권",
+      "estimatedBudget": "1인 약 35만 ~ 55만 원",
+      "steps": [
+        {
+          "day": "DAY 1",
+          "title": "원도심 파노라마 & 영도 일몰",
+          "route": "부산역 도착 → 감천문화마을 포토존 → 자갈치시장·부평깡통야시장 → 영도 흰여울문화마을 오션뷰 산책"
+        },
+        {
+          "day": "DAY 2",
+          "title": "해운대 해안열차 & 광안리 드론쇼",
+          "route": "해운대 블루라인파크 미포~청사포 스카이캡슐 → 해동용궁사 → 더베이101 요트투어 → 광안리 야경"
+        },
+        {
+          "day": "DAY 3",
+          "title": "센텀 스파랜드 & 미식 마무리",
+          "route": "해운대 돼지국밥 or 밀면 아침식사 → 신세계 센텀시티 스파랜드 힐링 → 부산역 이재모피자 포장 후 복귀"
+        }
+      ],
+      "url": "https://www.visitbusan.net/kr/index.do?menuCd=DOM_000000202003000000",
+      "sourceName": "Visit Busan 추천 여행일정"
+    },
+    {
+      "id": "iti-jp-1",
+      "country": "JP",
+      "duration": "3박 4일 도쿄·근교",
+      "title": "도쿄 시부야·아사쿠사 & 가마쿠라 에노덴 일주",
+      "transportPass": "도쿄 서브웨이 티켓 72시간권(1,500엔) + Suica",
+      "estimatedBudget": "1인 약 75만 ~ 110만 원",
+      "steps": [
+        {
+          "day": "DAY 1",
+          "title": "신주쿠 네온사인 & 도심 야경",
+          "route": "나리타/하네다 공항 → 스카이라이너/모노레일 → 신주쿠 체크인 → 오모이데 요코초 → 도쿄도청 무료 전망대"
+        },
+        {
+          "day": "DAY 2",
+          "title": "전통 아사쿠사 & 스카이트리",
+          "route": "아사쿠사 센소지 & 나카미세도리 → 도쿄 스카이트리 소라마치 → 아키하바라 → 긴자 보행자천국"
+        },
+        {
+          "day": "DAY 3",
+          "title": "가마쿠라 해안열차 & 시부야 스카이",
+          "route": "가마쿠라 고코쿠마에 건널목(에노덴) 반일 투어 → 하라주쿠·오모테산도 → 시부야 스카이 일몰 & 스크램블 교차로"
+        },
+        {
+          "day": "DAY 4",
+          "title": "츠키지 장외시장 & 쇼핑 귀국",
+          "route": "츠키지 장외시장 카이센동·타마고야키 아침 → 신주쿠 백화점·돈키호테 면세 쇼핑 → 공항 귀국"
+        }
+      ],
+      "url": "https://www.gotokyo.org/kr/plan/itineraries/index.html",
+      "sourceName": "GO TOKYO 공식 모델 코스"
+    },
+    {
+      "id": "iti-jp-2",
+      "country": "JP",
+      "duration": "3박 4일 간사이 핵심",
+      "title": "오사카 도톤보리 · 교토 고즈넉한 사찰 · USJ",
+      "transportPass": "간사이 레일웨이 패스 / 오사카 주유패스 + ICOCA",
+      "estimatedBudget": "1인 약 70만 ~ 105만 원",
+      "steps": [
+        {
+          "day": "DAY 1",
+          "title": "난바 입성 & 도톤보리 리버크루즈",
+          "route": "간사이공항 → 라피트 특급열차(34분) → 난바 체크인 → 도톤보리 글리코상 & 타코야키·쿠시카츠 미식"
+        },
+        {
+          "day": "DAY 2",
+          "title": "천년 고도 교토 전일 투어",
+          "route": "후시미이나리 타이샤(여우신사) → 기요미즈데라(청수사) → 산넨자카·니넨자카 → 가와라마치·기온 거리"
+        },
+        {
+          "day": "DAY 3",
+          "title": "USJ 테마파크 or 우메다 스카이빌딩",
+          "route": "유니버설 스튜디오 재팬(슈퍼 닌텐도 월드) 전일 즐기기 → 저녁 우메다 공중정원 전망대 & 헵파이브"
+        },
+        {
+          "day": "DAY 4",
+          "title": "구로몬 시장 & 공항 출발",
+          "route": "구로몬 시장 해산물 브런치 → 신사이바시 파르코·다이마루 백화점 쇼핑 → 간사이공항 이동"
+        }
+      ],
+      "url": "https://osaka-info.jp/ko/model-course/",
+      "sourceName": "OSAKA INFO 간사이 코스"
+    }
+  ],
+  "restaurants": [
+    {
+      "id": "res-kr-1",
+      "country": "KR",
+      "name": "명동교자 본점 (Myeongdong Kyoja)",
+      "location": "서울 중구 명동10길 29 (명동역 8번 출구 도보 3분)",
+      "cuisine": "한식 · 닭육수 칼국수 & 수제 만두",
+      "rating": "★ 4.6 · 미슐랭 가이드 빕구르망 연속 선정",
+      "menus": [
+        "칼국수 11,000원",
+        "교자만두 12,000원",
+        "비빔국수 11,000원"
+      ],
+      "secretTip": "주문 즉시 선불 결제 시스템으로 대기 줄이 길어도 10분 내 착석 가능! 칼국수 사리와 조밥, 진한 마늘김치가 무제한 무료 리필됩니다.",
+      "url": "http://www.mdkj.co.kr",
+      "sourceName": "명동교자 공식 사이트"
+    },
+    {
+      "id": "res-kr-2",
+      "country": "KR",
+      "name": "금돼지식당 (Gold Pig Korean BBQ)",
+      "location": "서울 중구 다산로 149 (약수역 2번 출구 도보 3분)",
+      "cuisine": "한식 · YBD 품종 프리미엄 본삼겹 구이",
+      "rating": "★ 4.7 · 미슐랭 빕구르망 & 블루리본 3개",
+      "menus": [
+        "본삼겹 19,000원",
+        "눈꽃목살 18,000원",
+        "통돼지 김치찌개 8,000원"
+      ],
+      "secretTip": "방문 전 캐치테이블(CatchTable) 앱 원격 웨이팅 또는 현장 QR 등록 필수! 숙련된 직원이 처음부터 끝까지 연탄불에 구워주며 바질쌈 조합이 별미입니다.",
+      "url": "https://guide.michelin.com/kr/ko/seoul-capital-area/kr-seoul/restaurant/geumdwaeji-sikdang",
+      "sourceName": "미슐랭 가이드 서울"
+    },
+    {
+      "id": "res-kr-3",
+      "country": "KR",
+      "name": "광장시장 부촌육회 (Buchon Yukhoe)",
+      "location": "서울 종로구 종로 200-12 (종로5가역 광장시장 먹자골목)",
+      "cuisine": "한식 · 당일 도축 한우 육회 & 산낙지 탕탕이",
+      "rating": "★ 4.5 · 미슐랭 가이드 빕구르망 8년 연속",
+      "menus": [
+        "육회낙지탕탕이 35,000원",
+        "한우육회 21,000원",
+        "육회비빔밥 10,000원"
+      ],
+      "secretTip": "본점 웨이팅이 길다면 바로 골목 옆 부촌육회 별관을 이용하면 동일한 맛을 훨씬 빠르게 즐길 수 있습니다.",
+      "url": "https://guide.michelin.com/kr/ko/seoul-capital-area/kr-seoul/restaurant/buchon-yukhoe",
+      "sourceName": "미슐랭 가이드 부촌육회"
+    },
+    {
+      "id": "res-jp-1",
+      "country": "JP",
+      "name": "이치란 라멘 총본점·시부야·도톤보리 (Ichiran)",
+      "location": "후쿠오카 나카스 총본점 / 도쿄 시부야·신주쿠 / 오사카 난바",
+      "cuisine": "일식 · 1인 집중 좌석 천연 돈코츠 라멘",
+      "rating": "★ 4.5 · 방일 여행객 재방문 1위 라멘",
+      "menus": [
+        "천연 돈코츠 라멘 980~1,080엔",
+        "반숙 염지계란 140엔",
+        "카에다마(면추가) 210엔"
+      ],
+      "secretTip": "한국어 주문 용지에서 [마늘 1쪽 + 비밀 빨간 소스 2~3단계 + 파 듬뿍] 조합이 한국인 입맛 베스트! 면을 다 먹기 전 국물을 남겨야 카에다마(면 추가)가 가능합니다.",
+      "url": "https://kr.ichiran.com",
+      "sourceName": "이치란 한국어 공식 사이트"
+    },
+    {
+      "id": "res-jp-2",
+      "country": "JP",
+      "name": "규카츠 모토무라 (Gyukatsu Motomura)",
+      "location": "도쿄 신주쿠·시부야 / 오사카 난바·신사이바시 / 후쿠오카 텐진",
+      "cuisine": "일식 · 개인 돌판 화로에 구워 먹는 소고기 카츠",
+      "rating": "★ 4.8 · 구글맵 평점 4.8+ 현지·관광객 인기 맛집",
+      "menus": [
+        "규카츠 130g 정식 1,930엔",
+        "규카츠 195g(1.5배) 정식 2,600엔"
+      ],
+      "secretTip": "오픈 시간 15분 전 도착 또는 브레이크 타임 없는 오후 3~4시 방문 시 대기 시간을 대폭 아낄 수 있습니다. 산마(마) 소스와 명란젓이 포함된 정식을 추천합니다.",
+      "url": "https://www.gyukatsu-motomura.com/ko/",
+      "sourceName": "규카츠 모토무라 공식 사이트"
+    },
+    {
+      "id": "res-jp-3",
+      "country": "JP",
+      "name": "스시로 & 하코다테 우니 무라카미 (Sushiro / Murakami)",
+      "location": "일본 도쿄·오사카·후쿠오카·삿포로 도심 지점",
+      "cuisine": "일식 · 대형 회전초밥 & 무첨가 생우니(성게알) 덮밥",
+      "rating": "★ 4.6 · 앱 원격 줄서기 지원 인기 스시",
+      "menus": [
+        "특선 참치 대뱃살(오토로) 360엔~",
+        "무첨가 생우니 덮밥 5,500엔~"
+      ],
+      "secretTip": "스시로는 방문 40분 전 공식 앱 또는 LINE에서 지점 번호표를 미리 발급받으면 현장 대기 없이 바로 입장할 수 있습니다.",
+      "url": "https://www.akindo-sushiro.co.jp/kr/",
+      "sourceName": "스시로 한국어 공식 사이트"
+    }
+  ]
+}
