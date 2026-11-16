@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우사기(Usagi) 인어섬 랩 3D 스테이지 - 0:00~1:12 전 구간 10종 안무 완벽 재현</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js r128 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #3589a8;
+            font-family: 'Pretendard', sans-serif;
+        }
+        #canvas-container {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+        #canvas-container:active {
+            cursor: grabbing;
+        }
+        .font-title {
+            font-family: 'Black Han Sans', sans-serif;
+        }
+        .font-cute {
+            font-family: 'Jua', sans-serif;
+        }
+        /* Glassmorphism panels */
+        .glass-panel {
+            background: rgba(24, 15, 10, 0.78);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(250, 204, 21, 0.45);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+        }
+        /* Move Button Active State */
+        .move-btn {
+            transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .move-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+        }
+        .move-btn.active {
+            background: linear-gradient(135deg, #facc15 0%, #f97316 100%);
+            color: #291507;
+            border-color: #fef08a;
+            box-shadow: 0 0 18px rgba(250, 204, 21, 0.8);
+            transform: translateY(-2px) scale(1.04);
+        }
+        .stage-btn.active {
+            background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+            color: #ffffff;
+            border-color: #bae6fd;
+            box-shadow: 0 0 14px rgba(56, 189, 248, 0.65);
+        }
+        /* Karaoke Lyric Pop Animation */
+        @keyframes lyricPop {
+            0% { transform: scale(0.85) rotate(-2deg); opacity: 0.4; }
+            50% { transform: scale(1.08) rotate(1deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .lyric-pop {
+            animation: lyricPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .text-stroke-dark {
+            -webkit-text-stroke: 2.5px #3b1d06;
+            paint-order: stroke fill;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.65);
+        }
+        /* Split-screen grid overlay borders (3-split & 3x3 9-grid) */
+        #split-overlay {
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+            z-index: 12;
+        }
+        .grid-3split {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            width: 100%;
+            height: 100%;
+        }
+        .grid-3split > div {
+            border-right: 4px solid #4E2709;
+            box-shadow: inset 0 0 24px rgba(0,0,0,0.22);
+        }
+        .grid-9split {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            width: 100%;
+            height: 100%;
+        }
+        .grid-9split > div {
+            border: 3px solid #4E2709;
+            box-shadow: inset 0 0 16px rgba(0,0,0,0.22);
+        }
+        /* Custom Range Slider */
+        input[type="range"] {
+            accent-color: #facc15;
+        }
+    </style>
+</head>
+<body class="text-white antialiased">
+
+    <!-- 3D WebGL Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <!-- Multi-panel Split Screen Frame Overlay (Used in Move 1 3-Split & Move 2 3x3 9-Grid) -->
+    <div id="split-overlay" class="hidden"></div>
+
+    <!-- Top Header & Camera HUD -->
+    <header class="fixed top-0 left-0 right-0 z-20 p-2.5 md:p-3.5 flex flex-wrap items-start justify-between gap-2 pointer-events-none">
+        <!-- Title Badge -->
+        <div class="glass-panel rounded-2xl px-3.5 py-2 pointer-events-auto flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-300 via-amber-400 to-orange-500 flex items-center justify-center shadow-lg border-2 border-[#4E2709] text-xl">
+                🕶️
+            </div>
+            <div>
+                <div class="flex items-center gap-1.5">
+                    <span class="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-amber-500 text-slate-950 rounded-full">FULL MV 0:00~1:12</span>
+                    <span id="bpm-badge" class="px-2 py-0.5 text-[10px] font-bold bg-yellow-400/20 text-yellow-300 border border-yellow-400/40 rounded-full">10 DANCES · 4 STAGES</span>
+                </div>
+                <h1 class="font-cute text-base md:text-lg text-yellow-300 tracking-wide mt-0.5 leading-tight">
+                    인어섬 우사기 랩 (전 구간 10종 안무 & 백댄서 완벽 재현)
+                </h1>
+                <p class="text-[11px] text-amber-100/90 hidden sm:block">
+                    마우스 드래그: 360° 카메라 회전 · 마우스 휠: 확대/축소 · 하단 시크바로 원하는 구간 이동
+                </p>
+            </div>
+        </div>
+
+        <!-- Camera Status & Quick Controls -->
+        <div class="flex flex-wrap items-center gap-2 pointer-events-auto">
+            <!-- Audio Visualizer Pill -->
+            <div class="glass-panel rounded-2xl px-3 py-1.5 flex items-center gap-2">
+                <button id="play-music-btn" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-slate-950 font-extrabold text-xs md:text-sm flex items-center gap-1.5 shadow-md hover:brightness-110 active:scale-95 transition">
+                    <span id="play-icon">▶</span>
+                    <span id="play-label">MV 비트 & 랩 재생</span>
+                </button>
+                <canvas id="audio-viz" width="76" height="26" class="rounded-lg bg-black/40 border border-white/15"></canvas>
+            </div>
+
+            <!-- Camera HUD & Zoom/Reset -->
+            <div class="glass-panel rounded-2xl px-3 py-1.5 flex items-center gap-1.5 text-xs">
+                <div class="hidden lg:flex flex-col pr-2 border-r border-white/15 text-[11px] leading-tight">
+                    <span class="text-yellow-300 font-bold">🎥 카메라 앵글</span>
+                    <span id="cam-status-text" class="text-white/90 font-mono">Yaw: 0° | Zoom: 100%</span>
+                </div>
+                <button id="zoom-in-btn" title="확대 (Wheel Up)" class="w-7 h-7 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center font-bold text-sm transition">＋</button>
+                <button id="zoom-out-btn" title="축소 (Wheel Down)" class="w-7 h-7 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center font-bold text-sm transition">－</button>
+                <button id="reset-cam-btn" title="정면 초기화" class="px-2.5 h-7 rounded-xl bg-amber-400/25 hover:bg-amber-400/40 border border-amber-300/50 text-amber-200 font-semibold transition">
+                    정면 보기
+                </button>
+            </div>
+
+            <!-- YouTube Sync Modal Toggle -->
+            <button id="yt-toggle-btn" class="glass-panel rounded-2xl px-3 py-2 text-xs font-bold text-red-300 hover:bg-red-500/20 border-red-400/40 flex items-center gap-1.5 transition">
+                <span>📺</span>
+                <span class="hidden sm:inline">원본 유튜브 싱크</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Collapsible YouTube Original Video Player Card (Top-Right Floating) -->
+    <aside id="yt-panel" class="fixed top-20 right-3 md:right-4 z-30 glass-panel rounded-2xl p-3 w-80 sm:w-96 hidden transition-all">
+        <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                <h2 class="font-cute text-sm text-yellow-200">원본 유튜브: 인어섬 우사기 랩 (1:12)</h2>
+            </div>
+            <button id="yt-close-btn" class="text-white/60 hover:text-white text-xs px-2 py-0.5 rounded-lg bg-white/10">닫기 ✕</button>
+        </div>
+        <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-white/15">
+            <iframe
+                id="yt-iframe"
+                class="w-full h-full"
+                src="https://www.youtube.com/embed/5754Al_1kQQ?enablejsapi=1&rel=0"
+                title="인어섬 우사기 랩"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+        <div class="mt-2 flex items-center justify-between text-[11px] text-amber-100/80">
+            <button id="sync-start-btn" class="px-2.5 py-1 rounded-lg bg-yellow-400 text-slate-950 font-bold hover:brightness-110 transition">
+                🔄 0:00부터 3D 타임라인 리셋
+            </button>
+            <a href="https://www.youtube.com/watch?v=5754Al_1kQQ" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline font-semibold">YouTube 열기 ↗</a>
+        </div>
+    </aside>
+
+    <!-- Left Side Stage, Props, Backup Dancers & Soundboard Panel -->
+    <aside class="fixed left-2.5 md:left-3.5 top-20 z-20 flex flex-col gap-2 pointer-events-none max-w-[235px] max-h-[calc(100vh-230px)] overflow-y-auto">
+        <div class="glass-panel rounded-2xl p-3 pointer-events-auto flex flex-col gap-2.5">
+            <!-- Stage Selector (4 Original MV Stages) -->
+            <div>
+                <div class="text-[11px] font-bold text-yellow-300 mb-1 flex items-center justify-between">
+                    <span>🏝️ 4대 배경 무대 선택</span>
+                    <span id="stage-auto-badge" class="text-[9px] px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-200">MV 연동</span>
+                </div>
+                <div class="grid grid-cols-2 gap-1 text-[11px]">
+                    <button data-stage="banana" class="stage-btn active px-2 py-1 rounded-lg bg-white/10 border border-white/20 font-cute text-left truncate">
+                        🍌 1. 바나나 트로피컬
+                    </button>
+                    <button data-stage="paint" class="stage-btn px-2 py-1 rounded-lg bg-white/10 border border-white/20 font-cute text-left truncate">
+                        🎨 2. 형광 페인트
+                    </button>
+                    <button data-stage="mandala" class="stage-btn px-2 py-1 rounded-lg bg-white/10 border border-white/20 font-cute text-left truncate">
+                        🌞 3. 오프닝 만다라
+                    </button>
+                    <button data-stage="purple" class="stage-btn px-2 py-1 rounded-lg bg-white/10 border border-white/20 font-cute text-left truncate">
+                        🟪 4. 보라 네온 타일
+                    </button>
+                </div>
+            </div>
+
+            <!-- Props & Backup Dancers & Director Cam Toggles -->
+            <div class="pt-1.5 border-t border-white/10">
+                <div class="text-[11px] font-bold text-yellow-300 mb-1">✨ 소품 · 백댄서 · 연출 카메라</div>
+                <div class="grid grid-cols-2 gap-1 text-[11px]">
+                    <button id="toggle-shades-btn" class="px-2 py-1 rounded-lg bg-yellow-400/25 border border-yellow-300/50 text-yellow-100 font-semibold hover:bg-yellow-400/35 transition truncate">
+                        🕶️ 선글라스 ON
+                    </button>
+                    <button id="toggle-chain-btn" class="px-2 py-1 rounded-lg bg-yellow-400/25 border border-yellow-300/50 text-yellow-100 font-semibold hover:bg-yellow-400/35 transition truncate">
+                        🏅 금목걸이 ON
+                    </button>
+                    <button id="toggle-sasumata-btn" class="px-2 py-1 rounded-lg bg-pink-500/25 border border-pink-300/50 text-pink-100 font-semibold hover:bg-pink-500/35 transition truncate">
+                        🔱 토벌봉 AUTO
+                    </button>
+                    <button id="toggle-dancers-btn" class="px-2 py-1 rounded-lg bg-emerald-500/25 border border-emerald-300/50 text-emerald-100 font-semibold hover:bg-emerald-500/35 transition truncate">
+                        👯 백댄서 ON
+                    </button>
+                    <button id="toggle-dircam-btn" class="px-2 py-1 rounded-lg bg-cyan-500/25 border border-cyan-300/50 text-cyan-100 font-semibold hover:bg-cyan-500/35 transition truncate">
+                        🎬 연출카메라 ON
+                    </button>
+                    <button id="toggle-outline-btn" class="px-2 py-1 rounded-lg bg-amber-500/25 border border-amber-300/50 text-amber-100 font-semibold hover:bg-amber-500/35 transition truncate">
+                        🖊️ 외곽선 ON
+                    </button>
+                </div>
+            </div>
+
+            <!-- Instant Vocal Shout Pad -->
+            <div class="pt-1.5 border-t border-white/10">
+                <div class="text-[11px] font-semibold text-amber-200/90 mb-1">🎤 우사기 추임새 사운드패드</div>
+                <div class="grid grid-cols-2 gap-1 text-[11px]">
+                    <button data-shout="iyaha" class="shout-btn py-1 px-2 rounded-lg bg-gradient-to-r from-amber-500/30 to-yellow-500/30 hover:from-amber-400/50 hover:to-yellow-400/50 border border-yellow-300/30 font-cute text-yellow-200 active:scale-95 transition">
+                        "이-야-!"
+                    </button>
+                    <button data-shout="puru" class="shout-btn py-1 px-2 rounded-lg bg-gradient-to-r from-pink-500/30 to-rose-500/30 hover:from-pink-400/50 hover:to-rose-400/50 border border-pink-300/30 font-cute text-pink-200 active:scale-95 transition">
+                        "푸루푸루!"
+                    </button>
+                    <button data-shout="ura" class="shout-btn py-1 px-2 rounded-lg bg-gradient-to-r from-cyan-500/30 to-blue-500/30 hover:from-cyan-400/50 hover:to-blue-400/50 border border-cyan-300/30 font-cute text-cyan-200 active:scale-95 transition">
+                        "우라라-!"
+                    </button>
+                    <button data-shout="scream" class="shout-btn py-1 px-2 rounded-lg bg-gradient-to-r from-red-500/30 to-orange-500/30 hover:from-red-400/50 hover:to-orange-400/50 border border-red-300/30 font-cute text-red-200 active:scale-95 transition">
+                        "이이얏하!!"
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Bottom Lyrics, MV Timeline Seekbar & All 10 Dance Moves Controller -->
+    <section class="fixed bottom-0 left-0 right-0 z-20 p-2 md:p-3.5 flex flex-col items-center gap-1.5 pointer-events-none">
+        <!-- Synchronized Rap Subtitle Overlay -->
+        <div class="text-center px-3 pointer-events-none">
+            <div id="lyric-sub-badge" class="inline-block px-3 py-0.5 rounded-full bg-[#3b1d06]/90 border border-yellow-400/60 text-yellow-300 text-[11px] font-bold tracking-wider uppercase mb-0.5">
+                🎬 FULL MV TIMELINE SYNC · 00:00 / 01:12
+            </div>
+            <div id="lyric-main-text" class="font-cute text-xl sm:text-3xl md:text-4xl text-yellow-300 text-stroke-dark tracking-wider lyric-pop">
+                이-야~ 야다야다~ 🕶️🏅
+            </div>
+        </div>
+
+        <!-- MV Timeline Progress & All 10 Moves Panel -->
+        <div class="glass-panel rounded-2xl p-2 md:p-2.5 pointer-events-auto flex flex-col gap-2 max-w-5xl w-full">
+            <!-- Timeline Seekbar Row (0:00 ~ 1:12) -->
+            <div class="flex items-center gap-2 px-1 text-xs">
+                <button data-mode="mv" id="mv-mode-btn" class="move-btn active px-2.5 py-1 rounded-xl bg-white/10 border border-white/25 font-cute text-xs flex items-center gap-1 shrink-0">
+                    <span>🎬</span>
+                    <span>풀 MV 타임라인 (0:00~1:12)</span>
+                </button>
+                <span id="time-current" class="font-mono text-[11px] text-yellow-300 w-9 text-right shrink-0">0:00</span>
+                <input id="mv-seekbar" type="range" min="0" max="72" step="0.1" value="0" class="w-full h-2 bg-white/20 rounded-lg cursor-pointer">
+                <span class="font-mono text-[11px] text-white/70 w-9 shrink-0">1:12</span>
+            </div>
+
+            <!-- 10 Individual Authentic Dance Move Buttons -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+                <button data-mode="move1" class="move-btn px-2 py-1.5 rounded-xl bg-white/10 border border-white/15 text-[11px] md:text-xs font-cute flex items-center gap-1 truncate" title="00:00 선글라스 벗고 분홍 토벌봉 파닥이는 만다라 오프닝">
+                    <span>🔱</span><span class="truncate">1. 만다라 사스마타(0:00)</span>
+                </button>
+                <button data-mode="move2" class="move-btn px-2 py-1.5 rounded-xl bg-white/10 border border-white/15 text-[11px] md:text-xs font-cute flex items-center gap-1 truncate" title="00:01 3x3 9분할 화면 엉덩이 & 솜꼬리 쉐이크">
+                    <span>🍑</span><span class="truncate">2. 9분할 엉덩이춤(0:01)</span>
+                </button>
+                <button data-mode="move3" class="move-btn px-2 py-1.5 rounded-xl bg-white/10 border border-white/15 text-[11px] md:text-xs font-cute flex items-center gap-1 truncate" title="00:02 카메라 코앞 초근접 엉덩이 & 등 목걸이 어택">
+                    <span>💥</span><span class="truncate">3. 초근접 엉덩이어택(0:02)</span>
+                </button>
+                <button data-mode="move4" class="move-btn px-2 py-1.5 rounded-xl bg-white/10 border border-white/15 text-[11px] md:text-xs font-cute flex items-center gap-1 truncate" title="00:03 금목걸이 잡고 좌우 스텝 & 고개 까딱 스웨그">
+                    <span>🏅</span><span class="truncate">4. 골드체인 그루브(0:03)</span>
+                </button>
+                <button data-mode="move5" class="move-btn px-2 py-1.5 rounded-xl bg-white/10 border border-white/15 text-[11px] md:text-xs font-cute flex items-center gap-1 truncate" title="00:04 선글라스 반사광 번쩍이며 하이 점프">
+                    <span>🚀</span><span class="truncate">5. 선글라스 하이점프(0:04)</span>
+                </button>
+                <button data-mode="move6" class="move-btn px-2 py-1.5 rounded-xl bg-white/10 border border-white/15 text-[11px] md:text-xs font-cute flex items-center gap-1 truncate" title="00:25 고개 90도 갸우뚱 & 동공 비침 + 분홍 혀 메롱">
+                    <span>👅</span><span class="truncate">6. 90° 갸우뚱 메롱(0:25)</span>
+                </button>
+                <button data-mode="move7" class="move-btn px-2 py-1.5 rounded-xl bg-white/10 border border-white/15 text-[11px] md:text-xs font-cute flex items-center gap-1 truncate" title="00:27 페인트 무대 사스마타 들고 백플립 & 점프">
+                    <span>🤸</span><span class="truncate">7. 사스마타 백플립(0:27)</span>
+                </button>
+                <button data-mode="move8" class="move-btn px-2 py-1.5 rounded-xl bg-white/10 border border-white/15 text-[11px] md:text-xs font-cute flex items-center gap-1 truncate" title="00:32 사스마타 쥐고 잔상 남는 광란의 헤드뱅잉">
+                    <span>🎸</span><span class="truncate">8. 광란의 헤드뱅잉(0:32)</span>
+                </button>
+                <button data-mode="move9" class="move-btn px-2 py-1.5 rounded-xl bg-white/10 border border-white/15 text-[11px] md:text-xs font-cute flex items-center gap-1 truncate" title="00:37 보라색 타일 위 그림자와 함께 현란한 풋워크">
+                    <span>🕺</span><span class="truncate">9. 보라타일 풋워크(0:37)</span>
+                </button>
+                <button data-mode="move10" class="move-btn px-2 py-1.5 rounded-xl bg-white/10 border border-white/15 text-[11px] md:text-xs font-cute flex items-center gap-1 truncate" title="00:39 카메라 돌진 C자 무릎 올리기(니업) & 괴성 피버">
+                    <span>🔥</span><span class="truncate">10. 돌진 니업 피버(0:39)</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        /**************************************************************************
+         * 1. COLOR PALETTE & ANIME CEL-SHADED MATERIALS (EXACT REFERENCE MATCH)
+         **************************************************************************/
+        const PALETTE = {
+            creamBody: 0xEFE0A6,       // Exact warm cream-yellow from reference image
+            outlineBrown: 0x4E2709,    // Thick hand-drawn dark brown outline
+            lensDark: 0x351A0C,        // Dark espresso brown sunglasses lens
+            frameBrown: 0x4E2709,      // Sunglasses frame dark brown
+            earPink: 0xF2A6B6,         // Soft pink inside ears
+            cheekPink: 0xE89CA5,       // Warm rose-pink cheek blush
+            goldYellow: 0xF8CA28,      // Bright anime gold chain color
+            sasumataPink: 0xF49AC2,    // Usagi's pink Sasumata weapon color
+            tailWhite: 0xFDF7DF,       // Warm cream-white fluffy tail
+            skyBlueBg: 0x48A6C2,       // Stage 1: Banana wall sky-blue
+            paintBg: 0x1E222D,         // Stage 2: Neon paint splatter dark slate
+            mandalaBg: 0xD97724,       // Stage 3: Tribal Mandala warm orange-gold
+            purpleBg: 0x2B194D         // Stage 4: Purple neon tile stage
+        };
+
+        function createCelGradientTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 4;
+            canvas.height = 1;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#D9CAA0';
+            ctx.fillRect(0, 0, 1, 1);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(1, 0, 3, 1);
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.minFilter = THREE.NearestFilter;
+            tex.magFilter = THREE.NearestFilter;
+            tex.needsUpdate = true;
+            return tex;
+        }
+        const celGradMap = createCelGradientTexture();
+
+        const bodyMat = new THREE.MeshToonMaterial({ color: PALETTE.creamBody, gradientMap: celGradMap });
+        const earPinkMat = new THREE.MeshBasicMaterial({ color: PALETTE.earPink });
+        const tailMat = new THREE.MeshToonMaterial({ color: PALETTE.tailWhite, gradientMap: celGradMap });
+        const goldMat = new THREE.MeshToonMaterial({ color: PALETTE.goldYellow, gradientMap: celGradMap });
+        const sasumataMat = new THREE.MeshToonMaterial({ color: PALETTE.sasumataPink, gradientMap: celGradMap });
+        const darkLineMat = new THREE.MeshBasicMaterial({ color: PALETTE.outlineBrown });
+        const lensMat = new THREE.MeshBasicMaterial({ color: PALETTE.lensDark, transparent: true, opacity: 1.0 });
+        const whiteGlareMat = new THREE.MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.0 });
+
+        const outlineMeshes = [];
+        let outlinesEnabled = true;
+
+        function addToonOutline(mesh, thickness = 0.048) {
+            const outlineMat = new THREE.MeshBasicMaterial({
+                color: PALETTE.outlineBrown,
+                side: THREE.BackSide
+            });
+            const outlineMesh = new THREE.Mesh(mesh.geometry, outlineMat);
+            outlineMesh.scale.set(1 + thickness, 1 + thickness, 1 + thickness);
+            outlineMesh.visible = outlinesEnabled;
+            mesh.add(outlineMesh);
+            outlineMeshes.push(outlineMesh);
+            return outlineMesh;
+        }
+
+        /**************************************************************************
+         * 2. PROCEDURAL TEXTURES FOR ALL 4 STAGES & USAGI FACIAL EXPRESSIONS
+         **************************************************************************/
+        // Stage 1: Banana, Pineapple & Peanut Tropical Wallpaper
+        function createOriginalBananaWallpaperTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#48A6C2';
+            ctx.fillRect(0, 0, 1024, 1024);
+
+            const drawTribalBand = (yCenter, height) => {
+                ctx.fillStyle = '#F7A436';
+                ctx.fillRect(0, yCenter - height / 2, 1024, height);
+                ctx.fillStyle = '#48A6C2';
+                const step = 48;
+                for (let x = 0; x < 1024; x += step) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + 6, yCenter + height / 2 - 6);
+                    ctx.lineTo(x + step / 2, yCenter - height / 2 + 6);
+                    ctx.lineTo(x + step - 6, yCenter + height / 2 - 6);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                ctx.strokeStyle = '#F8BE3D';
+                ctx.lineWidth = 6;
+                ctx.beginPath();
+                ctx.moveTo(0, yCenter - height / 2 - 8);
+                ctx.lineTo(1024, yCenter - height / 2 - 8);
+                ctx.moveTo(0, yCenter + height / 2 + 8);
+                ctx.lineTo(1024, yCenter + height / 2 + 8);
+                ctx.stroke();
+            };
+
+            drawTribalBand(65, 42);
+            drawTribalBand(445, 52);
+            drawTribalBand(900, 48);
+
+            const drawBananaBunch = (bx, by, scale = 1) => {
+                ctx.save();
+                ctx.translate(bx, by);
+                ctx.scale(scale, scale);
+                ctx.fillStyle = '#F9BE39';
+                ctx.strokeStyle = '#E09622';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.roundRect(45, -95, 48, 26, 8);
+                ctx.fill();
+                const curves = [{ yEnd: -20, cpY: -10 }, { yEnd: 20, cpY: 35 }, { yEnd: 58, cpY: 80 }];
+                curves.forEach((c) => {
+                    ctx.beginPath();
+                    ctx.moveTo(65, -75);
+                    ctx.quadraticCurveTo(10, c.cpY - 35, -95, c.yEnd);
+                    ctx.quadraticCurveTo(-10, c.cpY + 25, 78, -60);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                });
+                ctx.restore();
+            };
+
+            for (let x = 110; x < 1024; x += 250) drawBananaBunch(x, 240, 0.95);
+
+            const drawPeanutIsland = (px, py) => {
+                ctx.save();
+                ctx.translate(px, py);
+                ctx.rotate(0.18);
+                ctx.fillStyle = '#F69C33';
+                ctx.beginPath();
+                ctx.arc(0, -48, 52, 0, Math.PI * 2);
+                ctx.arc(0, 48, 62, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillRect(-44, -48, 88, 96);
+                ctx.fillStyle = '#E08224';
+                [[-18, -55], [16, -45], [-20, 40], [18, 52]].forEach(([dx, dy]) => {
+                    ctx.beginPath();
+                    ctx.arc(dx, dy, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                ctx.restore();
+            };
+
+            for (let x = 130; x < 1024; x += 250) drawPeanutIsland(x, 675);
+
+            ctx.fillStyle = '#1B2F7A';
+            ctx.fillRect(0, 935, 1024, 90);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.repeat.set(2, 1);
+            tex.needsUpdate = true;
+            return tex;
+        }
+
+        // Stage 2: Neon Yellow, Mint & Hot-Pink Paint Splatter Texture (0:25 ~ 0:36)
+        function createPaintSplatterTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#242938';
+            ctx.fillRect(0, 0, 1024, 1024);
+
+            const colors = ['#CCFF00', '#FF1493', '#00F5D4', '#FFBE0B', '#FF5400', '#9B5DE5'];
+            for (let i = 0; i < 75; i++) {
+                const cx = Math.random() * 1024;
+                const cy = Math.random() * 1024;
+                const r = 28 + Math.random() * 95;
+                const col = colors[i % colors.length];
+                ctx.fillStyle = col;
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Splat droplets radiating out
+                for (let d = 0; d < 9; d++) {
+                    const ang = (d / 9) * Math.PI * 2 + Math.random() * 0.5;
+                    const dist = r + 10 + Math.random() * 55;
+                    ctx.beginPath();
+                    ctx.arc(cx + Math.cos(ang) * dist, cy + Math.sin(ang) * dist, 5 + Math.random() * 14, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.repeat.set(2, 1);
+            tex.needsUpdate = true;
+            return tex;
+        }
+
+        // Stage 3: Opening Tribal Mandala Pattern Texture (0:00 & 0:51)
+        function createMandalaWallpaperTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#F3A833';
+            ctx.fillRect(0, 0, 1024, 1024);
+
+            const drawMandala = (cx, cy, maxR) => {
+                const rings = [
+                    { r: maxR, col: '#4E2709' },
+                    { r: maxR * 0.85, col: '#48A6C2' },
+                    { r: maxR * 0.68, col: '#F9BE39' },
+                    { r: maxR * 0.48, col: '#E85D44' },
+                    { r: maxR * 0.25, col: '#FDF7DF' }
+                ];
+                rings.forEach((ring) => {
+                    ctx.fillStyle = ring.col;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, ring.r, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Sunburst petals
+                ctx.strokeStyle = '#4E2709';
+                ctx.lineWidth = 6;
+                for (let a = 0; a < 16; a++) {
+                    const ang = (a / 16) * Math.PI * 2;
+                    ctx.beginPath();
+                    ctx.moveTo(cx + Math.cos(ang) * (maxR * 0.25), cy + Math.sin(ang) * (maxR * 0.25));
+                    ctx.lineTo(cx + Math.cos(ang) * maxR, cy + Math.sin(ang) * maxR);
+                    ctx.stroke();
+                }
+            };
+
+            for (let x = 160; x < 1024; x += 340) {
+                for (let y = 180; y < 1024; y += 340) {
+                    drawMandala(x, y, 145);
+                }
+            }
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.repeat.set(2, 1);
+            tex.needsUpdate = true;
+            return tex;
+        }
+
+        // Stage 4: Purple Neon Grid Tile Floor Texture (0:37 ~ 0:38)
+        function createPurpleGridTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#3B1E6D';
+            ctx.fillRect(0, 0, 512, 512);
+
+            const step = 64;
+            for (let y = 0; y < 512; y += step) {
+                for (let x = 0; x < 512; x += step) {
+                    ctx.fillStyle = ((x + y) / step) % 2 === 0 ? '#4C2889' : '#31165E';
+                    ctx.fillRect(x + 3, y + 3, step - 6, step - 6);
+                }
+            }
+
+            ctx.strokeStyle = '#A855F7';
+            ctx.lineWidth = 4;
+            for (let i = 0; i <= 512; i += step) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0); ctx.lineTo(i, 512);
+                ctx.moveTo(0, i); ctx.lineTo(512, i);
+                ctx.stroke();
+            }
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.wrapT = THREE.RepeatWrapping;
+            tex.repeat.set(3, 3);
+            tex.needsUpdate = true;
+            return tex;
+        }
+
+        // Usagi Mouth Decal Textures: 'smirk' (ω + chin line), 'puru' (ω + pink tongue), 'shout' (big open mouth), 'smile' (happy open)
+        function createUsagiMouthDecalTexture(mode = 'smirk') {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 512, 512);
+
+            ctx.strokeStyle = '#4E2709';
+            ctx.fillStyle = '#4E2709';
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = 22;
+
+            const cx = 256;
+            const cy = 210;
+
+            if (mode === 'smirk') {
+                ctx.beginPath();
+                ctx.moveTo(cx - 64, cy + 4);
+                ctx.quadraticCurveTo(cx - 34, cy + 44, cx - 12, cy + 6);
+                ctx.lineTo(cx, cy - 16);
+                ctx.lineTo(cx + 12, cy + 6);
+                ctx.quadraticCurveTo(cx + 36, cy + 40, cx + 66, cy - 4);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(cx - 12, cy + 32);
+                ctx.quadraticCurveTo(cx - 2, cy + 62, cx + 22, cy + 64);
+                ctx.stroke();
+            } else if (mode === 'puru') {
+                // Cheeky pink tongue sticking out under 'ω' lip (Move 6: 00:25 90-deg head tilt & blep!)
+                ctx.fillStyle = '#FF7E9D';
+                ctx.beginPath();
+                ctx.arc(cx + 4, cy + 46, 44, 0, Math.PI);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(cx - 66, cy + 4);
+                ctx.quadraticCurveTo(cx - 34, cy + 42, cx, cy - 12);
+                ctx.quadraticCurveTo(cx + 34, cy + 42, cx + 66, cy - 2);
+                ctx.stroke();
+            } else if (mode === 'shout') {
+                // Wide open shouting mouth ("이야하 푸루푸루 야하!" / "이이야아아앗하-!")
+                ctx.fillStyle = '#C94A63';
+                ctx.beginPath();
+                ctx.moveTo(cx - 72, cy - 4);
+                ctx.quadraticCurveTo(cx, cy - 24, cx + 72, cy - 4);
+                ctx.quadraticCurveTo(cx + 82, cy + 125, cx, cy + 128);
+                ctx.quadraticCurveTo(cx - 82, cy + 125, cx - 72, cy - 4);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#FF9EBB';
+                ctx.beginPath();
+                ctx.arc(cx, cy + 84, 48, Math.PI, 0);
+                ctx.fill();
+            }
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.needsUpdate = true;
+            return tex;
+        }
+
+        function createCheekBlushTexture(isRight = false) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 256, 256);
+
+            ctx.fillStyle = '#E89CA5';
+            ctx.beginPath();
+            ctx.ellipse(128, 136, 92, 58, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#4E2709';
+            ctx.lineCap = 'round';
+            ctx.lineWidth = 18;
+            [-46, 0, 46].forEach((ox) => {
+                ctx.beginPath();
+                const tilt = isRight ? 14 : 12;
+                ctx.moveTo(128 + ox + tilt, 88);
+                ctx.lineTo(128 + ox - tilt, 162);
+                ctx.stroke();
+            });
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.needsUpdate = true;
+            return tex;
+        }
+
+        function createUsagiMedallionFaceTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#F8CA28';
+            ctx.fillRect(0, 0, 256, 256);
+            ctx.strokeStyle = '#4E2709';
+            ctx.fillStyle = '#4E2709';
+            ctx.lineCap = 'round';
+            ctx.lineWidth = 14;
+            ctx.beginPath();
+            ctx.arc(92, 118, 12, 0, Math.PI * 2);
+            ctx.arc(164, 118, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(96, 162);
+            ctx.quadraticCurveTo(112, 184, 128, 160);
+            ctx.quadraticCurveTo(144, 184, 160, 162);
+            ctx.stroke();
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.needsUpdate = true;
+            return tex;
+        }
+
+        /**************************************************************************
+         * 3. THREE.JS SCENE, CAMERA & RENDERER SETUP
+         **************************************************************************/
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(PALETTE.skyBlueBg);
+
+        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xfff8e7, 0.35);
+        dirLight.position.set(3, 8, 7);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+
+        /**************************************************************************
+         * 4. BUILD EXACT 3D USAGI CHARACTER + PROPS (SASUMATA, GLARE, BARE EYES)
+         **************************************************************************/
+        const mouthTextures = {
+            smirk: createUsagiMouthDecalTexture('smirk'),
+            puru: createUsagiMouthDecalTexture('puru'),
+            shout: createUsagiMouthDecalTexture('shout')
+        };
+
+        const usagiRig = {
+            root: new THREE.Group(),
+            hips: new THREE.Group(),
+            spine: new THREE.Group(),
+            head: new THREE.Group(),
+            earL: new THREE.Group(),
+            earR: new THREE.Group(),
+            bareEyesGroup: new THREE.Group(), // Cute bare Usagi eyes (visible when shades are off OR peeking through lenses!)
+            sunglasses: new THREE.Group(),
+            glareStripL: null,
+            glareStripR: null,
+            mouthPlane: null,
+            goldChain: new THREE.Group(),
+            medallion: new THREE.Group(),
+            sasumata: new THREE.Group(),      // Pink Sasumata weapon held in right paw
+            armR: new THREE.Group(),
+            armL: new THREE.Group(),
+            legL: new THREE.Group(),
+            legR: new THREE.Group(),
+            tailGroup: new THREE.Group(),
+            buttL: null,
+            buttR: null,
+            floorShadow: null,
+            afterimageGroup: new THREE.Group() // Headbanging motion-blur afterimage ears (Move 8)
+        };
+
+        function buildAuthenticUsagi() {
+            scene.add(usagiRig.root);
+            usagiRig.root.position.set(0, 0.72, 0);
+
+            // A. CHUBBY BEAN BODY & BUTT CHEEKS
+            usagiRig.root.add(usagiRig.hips);
+            usagiRig.root.add(usagiRig.spine);
+
+            const torsoGeo = new THREE.SphereGeometry(0.84, 36, 32);
+            torsoGeo.scale(1.14, 0.92, 0.96);
+            const torsoMesh = new THREE.Mesh(torsoGeo, bodyMat);
+            torsoMesh.position.set(0.05, 0.22, 0);
+            addToonOutline(torsoMesh, 0.052);
+            usagiRig.spine.add(torsoMesh);
+
+            const hipBumpGeo = new THREE.SphereGeometry(0.56, 28, 24);
+            hipBumpGeo.scale(1.15, 0.92, 0.92);
+            const hipBumpMesh = new THREE.Mesh(hipBumpGeo, bodyMat);
+            hipBumpMesh.position.set(0.36, 0.14, -0.06);
+            addToonOutline(hipBumpMesh, 0.052);
+            usagiRig.spine.add(hipBumpMesh);
+
+            const buttGeo = new THREE.SphereGeometry(0.39, 24, 24);
+            usagiRig.buttL = new THREE.Mesh(buttGeo, bodyMat);
+            usagiRig.buttL.position.set(-0.22, 0.06, -0.62);
+            addToonOutline(usagiRig.buttL, 0.05);
+            usagiRig.hips.add(usagiRig.buttL);
+
+            usagiRig.buttR = new THREE.Mesh(buttGeo, bodyMat);
+            usagiRig.buttR.position.set(0.26, 0.06, -0.62);
+            addToonOutline(usagiRig.buttR, 0.05);
+            usagiRig.hips.add(usagiRig.buttR);
+
+            // B. LARGE WIDE SQUISHY HEAD (Facing +Z)
+            usagiRig.spine.add(usagiRig.head);
+            usagiRig.head.position.set(0, 1.12, 0.04);
+
+            const headGeo = new THREE.SphereGeometry(1.0, 48, 48);
+            headGeo.scale(1.28, 1.02, 1.04);
+            const headMesh = new THREE.Mesh(headGeo, bodyMat);
+            addToonOutline(headMesh, 0.048);
+            usagiRig.head.add(headMesh);
+
+            // C. CLOSELY-SPACED TOP EARS + PINK INNER OVALS + 2 EAR-BASE CREASE LINES
+            const createUsagiEar = (isRight) => {
+                const earGroup = new THREE.Group();
+                const xSign = isRight ? 1 : -1;
+                earGroup.position.set(xSign * 0.19 + 0.05, 0.90, -0.02);
+                earGroup.rotation.z = isRight ? -0.10 : -0.18;
+
+                const earGeo = new THREE.SphereGeometry(0.22, 28, 24);
+                earGeo.scale(0.82, 2.85, 0.58);
+                const earMesh = new THREE.Mesh(earGeo, bodyMat);
+                earMesh.position.y = 0.42;
+                addToonOutline(earMesh, 0.065);
+                earGroup.add(earMesh);
+
+                const innerGeo = new THREE.SphereGeometry(0.135, 20, 16);
+                innerGeo.scale(0.68, 2.25, 0.25);
+                const innerMesh = new THREE.Mesh(innerGeo, earPinkMat);
+                innerMesh.position.set(xSign * 0.03 + 0.02, 0.40, 0.115);
+                earGroup.add(innerMesh);
+
+                return earGroup;
+            };
+
+            usagiRig.earL = createUsagiEar(false);
+            usagiRig.earR = createUsagiEar(true);
+            usagiRig.head.add(usagiRig.earL);
+            usagiRig.head.add(usagiRig.earR);
+
+            // Two subtle dark-brown horizontal crease lines right below the ears
+            const earCreaseGeo1 = new THREE.CylinderGeometry(0.022, 0.022, 0.22, 12);
+            earCreaseGeo1.rotateZ(Math.PI / 2 - 0.14);
+            const earCreaseMesh1 = new THREE.Mesh(earCreaseGeo1, darkLineMat);
+            earCreaseMesh1.position.set(0.08, 0.96, 0.38);
+            usagiRig.head.add(earCreaseMesh1);
+
+            const earCreaseGeo2 = new THREE.CylinderGeometry(0.016, 0.016, 0.15, 10);
+            earCreaseGeo2.rotateZ(Math.PI / 2 - 0.12);
+            const earCreaseMesh2 = new THREE.Mesh(earCreaseGeo2, darkLineMat);
+            earCreaseMesh2.position.set(0.07, 0.91, 0.44);
+            usagiRig.head.add(earCreaseMesh2);
+
+            // Headbanging Afterimage Ghost Ears (visible during Move 8: 00:32 Headbang!)
+            usagiRig.afterimageGroup.visible = false;
+            const ghostMat = new THREE.MeshBasicMaterial({ color: PALETTE.creamBody, transparent: true, opacity: 0.42 });
+            [-0.45, 0.45].forEach((angOffset) => {
+                const gEar = new THREE.Mesh(new THREE.SphereGeometry(0.20, 16, 12), ghostMat);
+                gEar.scale.set(0.8, 2.7, 0.5);
+                gEar.position.set(angOffset * 0.8, 1.25, 0.35);
+                gEar.rotation.z = -angOffset * 0.9;
+                usagiRig.afterimageGroup.add(gEar);
+            });
+            usagiRig.head.add(usagiRig.afterimageGroup);
+
+            // D. CUTE BARE EYES (For Move 1 Opening without shades & Move 6 pupil peek-through!)
+            usagiRig.head.add(usagiRig.bareEyesGroup);
+            const whiteCatchMat = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+            [-0.40, 0.40].forEach((ex, i) => {
+                const eyeGroup = new THREE.Group();
+                eyeGroup.position.set(ex, 0.03, 0.98);
+                eyeGroup.rotation.y = (i === 0 ? -0.22 : 0.22);
+
+                const pupilGeo = new THREE.SphereGeometry(0.115, 20, 20);
+                pupilGeo.scale(0.95, 1.12, 0.45);
+                const pupilMesh = new THREE.Mesh(pupilGeo, darkLineMat);
+                eyeGroup.add(pupilMesh);
+
+                // Upper white catchlight dot
+                const catchGeo = new THREE.SphereGeometry(0.042, 12, 12);
+                const catchMesh = new THREE.Mesh(catchGeo, whiteCatchMat);
+                catchMesh.position.set(-0.025, 0.045, 0.045);
+                eyeGroup.add(catchMesh);
+
+                usagiRig.bareEyesGroup.add(eyeGroup);
+            });
+
+            // E. ROUNDED-SQUARE DARK-BROWN SUNGLASSES + TOP WHITE GLARE STRIPS
+            usagiRig.head.add(usagiRig.sunglasses);
+            usagiRig.sunglasses.position.set(-0.02, 0.02, 1.02);
+            usagiRig.sunglasses.rotation.z = 0.05;
+
+            function createRoundedRectShape(w, h, r) {
+                const s = new THREE.Shape();
+                s.moveTo(-w / 2 + r, -h / 2);
+                s.lineTo(w / 2 - r, -h / 2);
+                s.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r);
+                s.lineTo(w / 2, h / 2 - r);
+                s.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2);
+                s.lineTo(-w / 2 + r, h / 2);
+                s.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r);
+                s.lineTo(-w / 2, -h / 2 + r);
+                s.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2);
+                return s;
+            }
+
+            const buildSunglassLens = (xOffset, rotZ) => {
+                const lensHolder = new THREE.Group();
+                lensHolder.position.set(xOffset, 0, 0);
+                lensHolder.rotation.z = rotZ;
+
+                const frameShape = createRoundedRectShape(0.68, 0.48, 0.18);
+                const frameGeo = new THREE.ExtrudeGeometry(frameShape, {
+                    depth: 0.06,
+                    bevelEnabled: true,
+                    bevelThickness: 0.02,
+                    bevelSize: 0.02,
+                    bevelSegments: 4
+                });
+                frameGeo.center();
+                const frameMesh = new THREE.Mesh(frameGeo, darkLineMat);
+                lensHolder.add(frameMesh);
+
+                const innerShape = createRoundedRectShape(0.58, 0.38, 0.14);
+                const innerGeo = new THREE.ExtrudeGeometry(innerShape, { depth: 0.075, bevelEnabled: false });
+                innerGeo.center();
+                const innerMesh = new THREE.Mesh(innerGeo, lensMat);
+                innerMesh.position.z = 0.01;
+                lensHolder.add(innerMesh);
+
+                // Top white reflection glare bar (Flashes during Move 5 Jump & Move 10 Knee-up!)
+                const glareGeo = new THREE.PlaneGeometry(0.42, 0.085);
+                const glareMesh = new THREE.Mesh(glareGeo, whiteGlareMat);
+                glareMesh.position.set(0, 0.11, 0.055);
+                glareMesh.rotation.z = -0.12;
+                lensHolder.add(glareMesh);
+
+                return { lensHolder, glareMesh };
+            };
+
+            const leftL = buildSunglassLens(-0.42, 0.04);
+            leftL.lensHolder.rotation.y = -0.18;
+            usagiRig.glareStripL = leftL.glareMesh;
+
+            const rightL = buildSunglassLens(0.42, 0.03);
+            rightL.lensHolder.rotation.y = 0.18;
+            usagiRig.glareStripR = rightL.glareMesh;
+
+            usagiRig.sunglasses.add(leftL.lensHolder);
+            usagiRig.sunglasses.add(rightL.lensHolder);
+
+            const bridgeCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-0.14, 0.02, 0.02),
+                new THREE.Vector3(0, 0.06, 0.05),
+                new THREE.Vector3(0.14, 0.02, 0.02)
+            ]);
+            const bridgeGeo = new THREE.TubeGeometry(bridgeCurve, 12, 0.036, 8, false);
+            usagiRig.sunglasses.add(new THREE.Mesh(bridgeGeo, darkLineMat));
+
+            // F. ARCHED EYEBROWS, CHEEK BLUSH (///) & 'ω' MOUTH
+            const browLCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-0.34, 0.34, 0.98),
+                new THREE.Vector3(-0.58, 0.28, 0.93),
+                new THREE.Vector3(-0.76, 0.10, 0.85)
+            ]);
+            usagiRig.head.add(new THREE.Mesh(new THREE.TubeGeometry(browLCurve, 20, 0.028, 8, false), darkLineMat));
+
+            const browRCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0.14, 0.42, 1.00),
+                new THREE.Vector3(0.46, 0.40, 0.96),
+                new THREE.Vector3(0.68, 0.22, 0.88)
+            ]);
+            usagiRig.head.add(new THREE.Mesh(new THREE.TubeGeometry(browRCurve, 20, 0.028, 8, false), darkLineMat));
+
+            const cheekPlaneGeo = new THREE.PlaneGeometry(0.46, 0.34);
+            const cheekLMesh = new THREE.Mesh(cheekPlaneGeo, new THREE.MeshBasicMaterial({
+                map: createCheekBlushTexture(false), transparent: true, depthWrite: false
+            }));
+            cheekLMesh.position.set(-0.68, -0.22, 0.89);
+            cheekLMesh.rotation.set(0, -0.42, 0.08);
+            usagiRig.head.add(cheekLMesh);
+
+            const cheekRMesh = new THREE.Mesh(cheekPlaneGeo, new THREE.MeshBasicMaterial({
+                map: createCheekBlushTexture(true), transparent: true, depthWrite: false
+            }));
+            cheekRMesh.position.set(0.64, -0.15, 0.91);
+            cheekRMesh.rotation.set(0, 0.38, 0.05);
+            usagiRig.head.add(cheekRMesh);
+
+            const mouthMat = new THREE.MeshBasicMaterial({
+                map: mouthTextures.smirk, transparent: true, depthWrite: false
+            });
+            usagiRig.mouthPlane = new THREE.Mesh(new THREE.PlaneGeometry(0.50, 0.50), mouthMat);
+            usagiRig.mouthPlane.position.set(-0.02, -0.18, 1.055);
+            usagiRig.head.add(usagiRig.mouthPlane);
+
+            // G. WAVY GOLD CHAIN NECKLACE & USAGI MEDALLION
+            usagiRig.spine.add(usagiRig.goldChain);
+            usagiRig.goldChain.position.set(0, 0.42, 0.78);
+
+            const chainPoints = [
+                new THREE.Vector3(-0.74, -0.18, -0.05),
+                new THREE.Vector3(-0.66, -0.02, 0.04),
+                new THREE.Vector3(-0.52, 0.08, 0.10),
+                new THREE.Vector3(-0.34, 0.02, 0.14),
+                new THREE.Vector3(-0.18, -0.06, 0.16),
+                new THREE.Vector3(0.0, -0.10, 0.18),
+                new THREE.Vector3(0.18, -0.06, 0.16),
+                new THREE.Vector3(0.36, -0.01, 0.14),
+                new THREE.Vector3(0.54, 0.04, 0.08),
+                new THREE.Vector3(0.72, 0.08, -0.02),
+                new THREE.Vector3(0.88, 0.06, -0.14)
+            ];
+
+            chainPoints.forEach((pt, idx) => {
+                const linkGeo = new THREE.SphereGeometry(0.095, 16, 14);
+                linkGeo.scale(1.35, 0.88, 0.65);
+                const linkMesh = new THREE.Mesh(linkGeo, goldMat);
+                linkMesh.position.copy(pt);
+                linkMesh.rotation.z = (idx % 2 === 0 ? 0.25 : -0.25);
+                addToonOutline(linkMesh, 0.22);
+                usagiRig.goldChain.add(linkMesh);
+            });
+
+            usagiRig.goldChain.add(usagiRig.medallion);
+            usagiRig.medallion.position.set(-0.02, -0.10, 0.22);
+
+            const medCoinGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.05, 28);
+            medCoinGeo.rotateX(Math.PI / 2);
+            const medFaceMat = new THREE.MeshBasicMaterial({ map: createUsagiMedallionFaceTexture() });
+            const medCoinMesh = new THREE.Mesh(medCoinGeo, [goldMat, medFaceMat, goldMat]);
+            addToonOutline(medCoinMesh, 0.18);
+            usagiRig.medallion.add(medCoinMesh);
+
+            [-0.055, 0.055].forEach((ex) => {
+                const mEarGeo = new THREE.SphereGeometry(0.042, 12, 12);
+                mEarGeo.scale(0.85, 2.1, 0.6);
+                const mEarMesh = new THREE.Mesh(mEarGeo, goldMat);
+                mEarMesh.position.set(ex, 0.16, 0);
+                addToonOutline(mEarMesh, 0.22);
+                usagiRig.medallion.add(mEarMesh);
+            });
+
+            // H. SIGNATURE ARMS + PINK SASUMATA (토벌봉)
+            usagiRig.spine.add(usagiRig.armR);
+            usagiRig.armR.position.set(-0.48, 0.18, 0.68);
+
+            const armRCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-0.12, -0.12, -0.05),
+                new THREE.Vector3(-0.02, 0.12, 0.18),
+                new THREE.Vector3(0.14, 0.42, 0.28)
+            ]);
+            const armRMesh = new THREE.Mesh(new THREE.TubeGeometry(armRCurve, 20, 0.165, 16, false), bodyMat);
+            addToonOutline(armRMesh, 0.12);
+            usagiRig.armR.add(armRMesh);
+
+            const pawRMesh = new THREE.Mesh(new THREE.SphereGeometry(0.168, 20, 20), bodyMat);
+            pawRMesh.position.set(0.14, 0.42, 0.28);
+            addToonOutline(pawRMesh, 0.12);
+            usagiRig.armR.add(pawRMesh);
+
+            // Build Usagi's Pink Sasumata (토벌봉) attached to Right Paw!
+            usagiRig.armR.add(usagiRig.sasumata);
+            usagiRig.sasumata.position.set(-0.18, 0.35, 0.22);
+            usagiRig.sasumata.rotation.set(0.15, 0, 0.42);
+            usagiRig.sasumata.visible = false;
+
+            const poleMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 2.15, 16), sasumataMat);
+            poleMesh.position.y = 0.45;
+            addToonOutline(poleMesh, 0.18);
+            usagiRig.sasumata.add(poleMesh);
+
+            const forkCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-0.36, 1.88, 0),
+                new THREE.Vector3(-0.28, 1.52, 0),
+                new THREE.Vector3(0, 1.44, 0),
+                new THREE.Vector3(0.28, 1.52, 0),
+                new THREE.Vector3(0.36, 1.88, 0)
+            ]);
+            const forkMesh = new THREE.Mesh(new THREE.TubeGeometry(forkCurve, 24, 0.058, 14, false), sasumataMat);
+            addToonOutline(forkMesh, 0.18);
+            usagiRig.sasumata.add(forkMesh);
+
+            // Left Arm
+            usagiRig.spine.add(usagiRig.armL);
+            usagiRig.armL.position.set(0.76, 0.34, 0.56);
+
+            const armLCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0.14, 0.04, -0.12),
+                new THREE.Vector3(-0.04, -0.06, 0.16),
+                new THREE.Vector3(-0.28, -0.06, 0.24)
+            ]);
+            const armLMesh = new THREE.Mesh(new THREE.TubeGeometry(armLCurve, 20, 0.145, 16, false), bodyMat);
+            addToonOutline(armLMesh, 0.13);
+            usagiRig.armL.add(armLMesh);
+
+            const pawLMesh = new THREE.Mesh(new THREE.SphereGeometry(0.148, 20, 20), bodyMat);
+            pawLMesh.position.set(-0.28, -0.06, 0.24);
+            addToonOutline(pawLMesh, 0.13);
+            usagiRig.armL.add(pawLMesh);
+
+            // I. TINY FEET, FLUFFY TAIL & FLOOR SHADOW SILHOUETTE
+            const buildTinyFoot = (xPos) => {
+                const legGroup = new THREE.Group();
+                legGroup.position.set(xPos, -0.44, 0.08);
+
+                const footMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.125, 0.115, 0.32, 20), bodyMat);
+                footMesh.position.y = -0.10;
+                addToonOutline(footMesh, 0.16);
+                legGroup.add(footMesh);
+
+                const tipMesh = new THREE.Mesh(new THREE.SphereGeometry(0.12, 18, 16), bodyMat);
+                tipMesh.position.set(0, -0.25, 0.02);
+                addToonOutline(tipMesh, 0.16);
+                legGroup.add(tipMesh);
+
+                return legGroup;
+            };
+
+            usagiRig.legL = buildTinyFoot(-0.08);
+            usagiRig.legR = buildTinyFoot(0.20);
+            usagiRig.root.add(usagiRig.legL);
+            usagiRig.root.add(usagiRig.legR);
+
+            usagiRig.hips.add(usagiRig.tailGroup);
+            usagiRig.tailGroup.position.set(0.88, 0.12, -0.22);
+
+            const tailSphereMesh = new THREE.Mesh(new THREE.SphereGeometry(0.25, 24, 24), tailMat);
+            addToonOutline(tailSphereMesh, 0.12);
+            usagiRig.tailGroup.add(tailSphereMesh);
+
+            [0.6, 0.15, -0.35, -0.85].forEach((ang) => {
+                const tickGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.14, 8);
+                tickGeo.rotateZ(ang + Math.PI / 2);
+                const tickMesh = new THREE.Mesh(tickGeo, darkLineMat);
+                tickMesh.position.set(Math.cos(ang) * 0.24, Math.sin(ang) * 0.24, 0.05);
+                usagiRig.tailGroup.add(tickMesh);
+            });
+
+            // Floor Shadow Silhouette (Prominent during Move 9 Purple Tile Footwork!)
+            const shadowGeo = new THREE.CircleGeometry(1.15, 32);
+            shadowGeo.rotateX(-Math.PI / 2);
+            const shadowMat = new THREE.MeshBasicMaterial({ color: 0x140826, transparent: true, opacity: 0.38 });
+            usagiRig.floorShadow = new THREE.Mesh(shadowGeo, shadowMat);
+            usagiRig.floorShadow.position.set(0, 0.01, 0);
+            scene.add(usagiRig.floorShadow);
+        }
+
+        buildAuthenticUsagi();
+
+        /**************************************************************************
+         * 5. BUILD 3D BACKUP DANCERS (KURIMANJU, MOMONGA, 2 BABY MERMAIDS)
+         **************************************************************************/
+        const backupDancers = {
+            enabled: true,
+            tropicalGroup: new THREE.Group(), // Kurimanju (Left) + Momonga (Right)
+            kurimanju: new THREE.Group(),
+            momonga: new THREE.Group(),
+            momongaTail: new THREE.Group(),
+            mermaidGroup: new THREE.Group(),  // 2 Baby Mermaids for Paint Stage
+            mermaidL: new THREE.Group(),
+            mermaidR: new THREE.Group()
+        };
+
+        function buildBackupDancers() {
+            scene.add(backupDancers.tropicalGroup);
+            scene.add(backupDancers.mermaidGroup);
+            backupDancers.mermaidGroup.visible = false;
+
+            // 1. KURIMANJU (밤만쥬 - Left side of Tropical/Purple stages)
+            const kuri = backupDancers.kurimanju;
+            kuri.position.set(-2.35, 0.55, -0.85);
+            kuri.rotation.y = 0.35;
+            backupDancers.tropicalGroup.add(kuri);
+
+            const kuriCreamMat = new THREE.MeshToonMaterial({ color: 0xF5E6C4, gradientMap: celGradMap });
+            const kuriBrownMat = new THREE.MeshToonMaterial({ color: 0x6E3518, gradientMap: celGradMap });
+
+            // Head + Chestnut Brown Dome Top
+            const kHeadGeo = new THREE.SphereGeometry(0.62, 28, 24);
+            kHeadGeo.scale(1.15, 0.96, 1.0);
+            const kHead = new THREE.Mesh(kHeadGeo, kuriCreamMat);
+            kHead.position.y = 0.52;
+            addToonOutline(kHead, 0.055);
+            kuri.add(kHead);
+
+            const kTopGeo = new THREE.SphereGeometry(0.61, 28, 16, 0, Math.PI * 2, 0, Math.PI * 0.52);
+            kTopGeo.scale(1.14, 0.94, 0.99);
+            const kTop = new THREE.Mesh(kTopGeo, kuriBrownMat);
+            kTop.position.y = 0.55;
+            kuri.add(kTop);
+
+            // Round ears
+            [-0.58, 0.58].forEach((ex) => {
+                const kEar = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), kuriCreamMat);
+                kEar.position.set(ex, 0.62, 0);
+                addToonOutline(kEar, 0.12);
+                kuri.add(kEar);
+            });
+
+            // Chubby Body
+            const kBody = new THREE.Mesh(new THREE.SphereGeometry(0.48, 24, 20), kuriCreamMat);
+            kBody.scale.set(1.1, 0.95, 0.95);
+            kBody.position.y = -0.05;
+            addToonOutline(kBody, 0.06);
+            kuri.add(kBody);
+
+            // Eyes & 'ω' mouth
+            [-0.20, 0.20].forEach((ex) => {
+                const eye = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12), darkLineMat);
+                eye.position.set(ex, 0.48, 0.58);
+                kuri.add(eye);
+            });
+
+            // Drink Cup in Kurimanju's hand ("캬아~!")
+            const cupMat = new THREE.MeshBasicMaterial({ color: 0x38BDF8 });
+            const cupMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.08, 0.26, 14), cupMat);
+            cupMesh.position.set(0.52, 0.10, 0.35);
+            addToonOutline(cupMesh, 0.12);
+            kuri.add(cupMesh);
+
+            // 2. MOMONGA (모몽가 - Right side of Tropical/Purple stages)
+            const momo = backupDancers.momonga;
+            momo.position.set(2.35, 0.55, -0.85);
+            momo.rotation.y = -0.35;
+            backupDancers.tropicalGroup.add(momo);
+
+            const momoWhiteMat = new THREE.MeshToonMaterial({ color: 0xFFFFFF, gradientMap: celGradMap });
+            const momoBlueMat = new THREE.MeshToonMaterial({ color: 0x90CDF4, gradientMap: celGradMap });
+
+            const mHead = new THREE.Mesh(new THREE.SphereGeometry(0.60, 28, 24), momoWhiteMat);
+            mHead.scale.set(1.18, 0.98, 1.0);
+            mHead.position.y = 0.52;
+            addToonOutline(mHead, 0.055);
+            momo.add(mHead);
+
+            // Momonga's large ears
+            [-0.48, 0.48].forEach((ex) => {
+                const mEar = new THREE.Mesh(new THREE.SphereGeometry(0.22, 18, 16), momoBlueMat);
+                mEar.scale.set(0.85, 1.35, 0.5);
+                mEar.position.set(ex, 1.02, 0);
+                mEar.rotation.z = ex > 0 ? -0.25 : 0.25;
+                addToonOutline(mEar, 0.09);
+                momo.add(mEar);
+            });
+
+            const mBody = new THREE.Mesh(new THREE.SphereGeometry(0.46, 24, 20), momoWhiteMat);
+            mBody.position.y = -0.05;
+            addToonOutline(mBody, 0.06);
+            momo.add(mBody);
+
+            [-0.22, 0.22].forEach((ex) => {
+                const eye = new THREE.Mesh(new THREE.SphereGeometry(0.075, 14, 14), darkLineMat);
+                eye.position.set(ex, 0.50, 0.56);
+                momo.add(eye);
+            });
+
+            // Momonga's Huge Fluffy Sky-Blue Tail
+            momo.add(backupDancers.momongaTail);
+            backupDancers.momongaTail.position.set(0.35, 0.15, -0.45);
+            const bigTail = new THREE.Mesh(new THREE.SphereGeometry(0.55, 24, 24), momoBlueMat);
+            bigTail.scale.set(0.95, 1.35, 0.95);
+            addToonOutline(bigTail, 0.06);
+            backupDancers.momongaTail.add(bigTail);
+
+            // 3. TWO BABY MERMAIDS (꼬마 인어 2마리 - Left & Right on Paint Stage!)
+            const buildBabyMermaid = (xPos, rotY) => {
+                const mGroup = new THREE.Group();
+                mGroup.position.set(xPos, 0.58, -0.75);
+                mGroup.rotation.y = rotY;
+
+                const head = new THREE.Mesh(new THREE.SphereGeometry(0.54, 24, 24), momoWhiteMat);
+                head.scale.set(1.12, 0.96, 0.98);
+                head.position.y = 0.48;
+                addToonOutline(head, 0.055);
+                mGroup.add(head);
+
+                // Cute 'O' singing chorus mouth
+                const oMouth = new THREE.Mesh(new THREE.SphereGeometry(0.085, 14, 14), new THREE.MeshBasicMaterial({ color: 0xD9536F }));
+                oMouth.position.set(0, 0.38, 0.52);
+                mGroup.add(oMouth);
+
+                [-0.18, 0.18].forEach((ex) => {
+                    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12), darkLineMat);
+                    eye.position.set(ex, 0.52, 0.51);
+                    mGroup.add(eye);
+                });
+
+                // Pink/Coral Mermaid Tail Lower Body
+                const finMat = new THREE.MeshToonMaterial({ color: 0xF49AC2, gradientMap: celGradMap });
+                const tailBody = new THREE.Mesh(new THREE.ConeGeometry(0.42, 0.85, 20), finMat);
+                tailBody.rotation.x = Math.PI;
+                tailBody.position.y = -0.10;
+                addToonOutline(tailBody, 0.065);
+                mGroup.add(tailBody);
+
+                // Tail Fin Flukes
+                [-0.18, 0.18].forEach((fx) => {
+                    const fluke = new THREE.Mesh(new THREE.SphereGeometry(0.16, 14, 12), finMat);
+                    fluke.scale.set(1.2, 0.5, 0.6);
+                    fluke.position.set(fx, -0.45, -0.12);
+                    addToonOutline(fluke, 0.12);
+                    mGroup.add(fluke);
+                });
+
+                return mGroup;
+            };
+
+            backupDancers.mermaidL = buildBabyMermaid(-2.3, 0.35);
+            backupDancers.mermaidR = buildBabyMermaid(2.3, -0.35);
+            backupDancers.mermaidGroup.add(backupDancers.mermaidL);
+            backupDancers.mermaidGroup.add(backupDancers.mermaidR);
+        }
+
+        buildBackupDancers();
+
+        /**************************************************************************
+         * 6. 4 DISTINCT STAGE BACKDROPS & FLOORS
+         **************************************************************************/
+        const stageGroup = new THREE.Group();
+        scene.add(stageGroup);
+
+        const stageTextures = {
+            banana: createOriginalBananaWallpaperTexture(),
+            paint: createPaintSplatterTexture(),
+            mandala: createMandalaWallpaperTexture(),
+            purpleGrid: createPurpleGridTexture()
+        };
+
+        const backdropGeo = new THREE.CylinderGeometry(8.6, 8.6, 9.6, 48, 1, true, Math.PI * 0.62, Math.PI * 0.76);
+        const backdropMat = new THREE.MeshBasicMaterial({
+            map: stageTextures.banana,
+            side: THREE.BackSide
+        });
+        const backdropMesh = new THREE.Mesh(backdropGeo, backdropMat);
+        backdropMesh.position.set(0, 2.6, 0);
+        stageGroup.add(backdropMesh);
+
+        const floorGeo = new THREE.CylinderGeometry(4.9, 5.2, 0.26, 64);
+        const floorMat = new THREE.MeshToonMaterial({
+            color: 0x294496,
+            gradientMap: celGradMap
+        });
+        const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+        floorMesh.position.y = -0.14;
+        stageGroup.add(floorMesh);
+
+        const rimGeo = new THREE.TorusGeometry(4.92, 0.07, 16, 64);
+        rimGeo.rotateX(Math.PI / 2);
+        const rimMat = new THREE.MeshBasicMaterial({ color: 0xF8BE3D });
+        const rimMesh = new THREE.Mesh(rimGeo, rimMat);
+        rimMesh.position.y = 0.01;
+        stageGroup.add(rimMesh);
+
+        // Grass Tufts & Palm Trees for Banana Tropical Stage
+        const grassGroup = new THREE.Group();
+        stageGroup.add(grassGroup);
+        const grassMat = new THREE.MeshBasicMaterial({ color: 0x8CE063 });
+        for (let i = 0; i < 24; i++) {
+            const angle = (i / 24) * Math.PI * 2;
+            const gBlade = new THREE.ConeGeometry(0.14, 0.45, 5);
+            const gMesh = new THREE.Mesh(gBlade, grassMat);
+            gMesh.position.set(Math.cos(angle) * 4.55, 0.20, Math.sin(angle) * 4.55);
+            gMesh.rotation.z = (i % 2 === 0 ? 0.15 : -0.15);
+            addToonOutline(gMesh, 0.12);
+            grassGroup.add(gMesh);
+        }
+
+        function setStageTheme(stageName) {
+            choreoState.currentStage = stageName;
+            document.querySelectorAll('.stage-btn').forEach((btn) => {
+                btn.classList.toggle('active', btn.dataset.stage === stageName);
+            });
+
+            if (stageName === 'banana') {
+                scene.background.setHex(PALETTE.skyBlueBg);
+                backdropMat.map = stageTextures.banana;
+                floorMat.map = null;
+                floorMat.color.setHex(0x294496);
+                grassGroup.visible = true;
+                backupDancers.tropicalGroup.visible = backupDancers.enabled;
+                backupDancers.mermaidGroup.visible = false;
+            } else if (stageName === 'paint') {
+                scene.background.setHex(PALETTE.paintBg);
+                backdropMat.map = stageTextures.paint;
+                floorMat.map = stageTextures.paint;
+                floorMat.color.setHex(0xFFFFFF);
+                grassGroup.visible = false;
+                backupDancers.tropicalGroup.visible = false;
+                backupDancers.mermaidGroup.visible = backupDancers.enabled;
+            } else if (stageName === 'mandala') {
+                scene.background.setHex(PALETTE.mandalaBg);
+                backdropMat.map = stageTextures.mandala;
+                floorMat.map = null;
+                floorMat.color.setHex(0x8C3B10);
+                grassGroup.visible = false;
+                backupDancers.tropicalGroup.visible = false;
+                backupDancers.mermaidGroup.visible = false;
+            } else if (stageName === 'purple') {
+                scene.background.setHex(PALETTE.purpleBg);
+                backdropMat.map = stageTextures.banana;
+                floorMat.map = stageTextures.purpleGrid;
+                floorMat.color.setHex(0xFFFFFF);
+                grassGroup.visible = false;
+                backupDancers.tropicalGroup.visible = backupDancers.enabled;
+                backupDancers.mermaidGroup.visible = false;
+            }
+            backdropMat.needsUpdate = true;
+            floorMat.needsUpdate = true;
+        }
+
+        /**************************************************************************
+         * 7. MOUSE DRAG CAMERA ROTATION & WHEEL ZOOM + DIRECTOR CAM OFFSET
+         **************************************************************************/
+        const camState = {
+            isDragging: false,
+            prevX: 0,
+            prevY: 0,
+            yaw: 0,
+            pitch: 0.06,
+            targetYaw: 0,
+            targetPitch: 0.06,
+            distance: 5.2,
+            targetDistance: 5.2,
+            minDistance: 2.0,
+            maxDistance: 11.0,
+            lookAtY: 1.48,
+            directorCamEnabled: true,
+            dirZoomOffset: 0,
+            dirRollOffset: 0,
+            dirLookYOffset: 0
+        };
+
+        const camStatusEl = document.getElementById('cam-status-text');
+
+        function updateCameraHUD() {
+            const degYaw = Math.round(((camState.yaw * 180) / Math.PI) % 360);
+            const effDist = Math.max(1.6, camState.distance + (camState.directorCamEnabled ? camState.dirZoomOffset : 0));
+            const zoomPct = Math.round((5.2 / effDist) * 100);
+            if (camStatusEl) {
+                camStatusEl.textContent = `Yaw: ${degYaw}° | Zoom: ${zoomPct}%`;
+            }
+        }
+
+        container.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return;
+            camState.isDragging = true;
+            camState.prevX = e.clientX;
+            camState.prevY = e.clientY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!camState.isDragging) return;
+            const deltaX = e.clientX - camState.prevX;
+            const deltaY = e.clientY - camState.prevY;
+            camState.prevX = e.clientX;
+            camState.prevY = e.clientY;
+
+            const sensitivity = 0.0075;
+            camState.targetYaw -= deltaX * sensitivity;
+            camState.targetPitch = Math.max(-0.18, Math.min(1.15, camState.targetPitch + deltaY * sensitivity));
+        });
+
+        window.addEventListener('mouseup', () => { camState.isDragging = false; });
+
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            camState.targetDistance = Math.max(
+                camState.minDistance,
+                Math.min(camState.maxDistance, camState.targetDistance + e.deltaY * 0.0035)
+            );
+        }, { passive: false });
+
+        let lastTouchDist = null;
+        container.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                camState.isDragging = true;
+                camState.prevX = e.touches[0].clientX;
+                camState.prevY = e.touches[0].clientY;
+            } else if (e.touches.length === 2) {
+                lastTouchDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+            }
+        }, { passive: true });
+
+        container.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1 && camState.isDragging) {
+                const deltaX = e.touches[0].clientX - camState.prevX;
+                const deltaY = e.touches[0].clientY - camState.prevY;
+                camState.prevX = e.touches[0].clientX;
+                camState.prevY = e.touches[0].clientY;
+                camState.targetYaw -= deltaX * 0.0075;
+                camState.targetPitch = Math.max(-0.18, Math.min(1.15, camState.targetPitch + deltaY * 0.0075));
+            } else if (e.touches.length === 2 && lastTouchDist !== null) {
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                camState.targetDistance = Math.max(
+                    camState.minDistance,
+                    Math.min(camState.maxDistance, camState.targetDistance + (lastTouchDist - dist) * 0.02)
+                );
+                lastTouchDist = dist;
+            }
+        }, { passive: true });
+
+        container.addEventListener('touchend', () => {
+            camState.isDragging = false;
+            lastTouchDist = null;
+        });
+
+        document.getElementById('zoom-in-btn').addEventListener('click', () => {
+            camState.targetDistance = Math.max(camState.minDistance, camState.targetDistance - 0.75);
+        });
+        document.getElementById('zoom-out-btn').addEventListener('click', () => {
+            camState.targetDistance = Math.min(camState.maxDistance, camState.targetDistance + 0.75);
+        });
+        document.getElementById('reset-cam-btn').addEventListener('click', () => {
+            camState.targetYaw = 0;
+            camState.targetPitch = 0.06;
+            camState.targetDistance = 5.2;
+        });
+
+        /**************************************************************************
+         * 8. WEB AUDIO API: MERMAID ISLAND USAGI RAP BEAT & VOCAL SYNTHESIZER
+         **************************************************************************/
+        const soundEngine = {
+            ctx: null,
+            analyser: null,
+            dataArray: null,
+            isPlaying: false,
+            bpm: 128,
+            stepIndex: 0,
+            timerId: null
+        };
+
+        function initAudioContext() {
+            if (!soundEngine.ctx) {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                soundEngine.ctx = new AudioCtx();
+                soundEngine.analyser = soundEngine.ctx.createAnalyser();
+                soundEngine.analyser.fftSize = 64;
+                soundEngine.dataArray = new Uint8Array(soundEngine.analyser.frequencyBinCount);
+                soundEngine.analyser.connect(soundEngine.ctx.destination);
+            }
+            if (soundEngine.ctx.state === 'suspended') {
+                soundEngine.ctx.resume();
+            }
+        }
+
+        function triggerKick(time) {
+            const ctx = soundEngine.ctx;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(145, time);
+            osc.frequency.exponentialRampToValueAtTime(38, time + 0.14);
+            gain.gain.setValueAtTime(0.95, time);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.24);
+            osc.connect(gain);
+            gain.connect(soundEngine.analyser);
+            osc.start(time);
+            osc.stop(time + 0.25);
+        }
+
+        function triggerSnare(time) {
+            const ctx = soundEngine.ctx;
+            const bufferSize = ctx.sampleRate * 0.12;
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            const noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'highpass';
+            filter.frequency.setValueAtTime(950, time);
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.42, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.12);
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(soundEngine.analyser);
+            noise.start(time);
+        }
+
+        function triggerMarimba(time, freq) {
+            const ctx = soundEngine.ctx;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, time);
+            gain.gain.setValueAtTime(0.30, time);
+            gain.gain.exponentialRampToValueAtTime(0.008, time + 0.16);
+            osc.connect(gain);
+            gain.connect(soundEngine.analyser);
+            osc.start(time);
+            osc.stop(time + 0.17);
+        }
+
+        function triggerUsagiVocal(type = 'iyaha', time = null) {
+            initAudioContext();
+            const ctx = soundEngine.ctx;
+            const t = time || ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const formant = ctx.createBiquadFilter();
+            const gain = ctx.createGain();
+
+            osc.type = 'sawtooth';
+            formant.type = 'bandpass';
+            formant.Q.value = 4.5;
+
+            if (type === 'iyaha') {
+                osc.frequency.setValueAtTime(520, t);
+                osc.frequency.exponentialRampToValueAtTime(790, t + 0.14);
+                osc.frequency.exponentialRampToValueAtTime(640, t + 0.32);
+                formant.frequency.setValueAtTime(2300, t);
+                gain.gain.setValueAtTime(0.32, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.34);
+                osc.start(t);
+                osc.stop(t + 0.35);
+            } else if (type === 'puru') {
+                osc.frequency.setValueAtTime(480, t);
+                const lfo = ctx.createOscillator();
+                const lfoGain = ctx.createGain();
+                lfo.frequency.value = 28;
+                lfoGain.gain.value = 75;
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc.frequency);
+                lfo.start(t);
+                lfo.stop(t + 0.32);
+                formant.frequency.setValueAtTime(1400, t);
+                gain.gain.setValueAtTime(0.28, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.32);
+                osc.start(t);
+                osc.stop(t + 0.33);
+            } else if (type === 'ura') {
+                osc.frequency.setValueAtTime(380, t);
+                osc.frequency.linearRampToValueAtTime(540, t + 0.12);
+                osc.frequency.linearRampToValueAtTime(430, t + 0.26);
+                formant.frequency.setValueAtTime(1250, t);
+                gain.gain.setValueAtTime(0.30, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.28);
+                osc.start(t);
+                osc.stop(t + 0.29);
+            } else if (type === 'scream') {
+                // High-energy "이이야아아앗하-!!" climax scream
+                osc.frequency.setValueAtTime(580, t);
+                osc.frequency.exponentialRampToValueAtTime(980, t + 0.22);
+                osc.frequency.exponentialRampToValueAtTime(860, t + 0.45);
+                formant.frequency.setValueAtTime(2600, t);
+                gain.gain.setValueAtTime(0.36, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.46);
+                osc.start(t);
+                osc.stop(t + 0.48);
+            }
+
+            osc.connect(formant);
+            formant.connect(gain);
+            gain.connect(soundEngine.analyser);
+        }
+
+        const melodyNotes = [
+            261.63, 329.63, 392.00, 523.25,
+            392.00, 329.63, 293.66, 392.00,
+            261.63, 329.63, 440.00, 523.25,
+            493.88, 392.00, 329.63, 293.66
+        ];
+
+        function runSequencerStep() {
+            if (!soundEngine.isPlaying) return;
+            const ctx = soundEngine.ctx;
+            const now = ctx.currentTime;
+            const s = soundEngine.stepIndex % 16;
+
+            if ([0, 3, 6, 8, 10, 14].includes(s)) triggerKick(now);
+            if (s === 4 || s === 12) triggerSnare(now);
+            triggerMarimba(now, melodyNotes[s]);
+
+            if (s === 0) triggerUsagiVocal('iyaha', now);
+            if (s === 6) triggerUsagiVocal('puru', now);
+            if (s === 11) triggerUsagiVocal('ura', now);
+            if (s === 15 && (soundEngine.stepIndex % 32 === 15)) triggerUsagiVocal('scream', now);
+
+            soundEngine.stepIndex++;
+        }
+
+        const playBtn = document.getElementById('play-music-btn');
+        const playIcon = document.getElementById('play-icon');
+        const playLabel = document.getElementById('play-label');
+
+        playBtn.addEventListener('click', () => {
+            initAudioContext();
+            soundEngine.isPlaying = !soundEngine.isPlaying;
+            if (soundEngine.isPlaying) {
+                playIcon.textContent = '⏸';
+                playLabel.textContent = '비트 일시정지';
+                const stepMs = (60 / soundEngine.bpm / 4) * 1000;
+                runSequencerStep();
+                soundEngine.timerId = setInterval(runSequencerStep, stepMs);
+            } else {
+                playIcon.textContent = '▶';
+                playLabel.textContent = 'MV 비트 & 랩 재생';
+                clearInterval(soundEngine.timerId);
+            }
+        });
+
+        /**************************************************************************
+         * 9. FULL 0:00~1:12 (72s) MV TIMELINE & ALL 10 DANCE CHOREOGRAPHIES
+         **************************************************************************/
+        const choreoState = {
+            mode: 'mv',                // 'mv' (0:00~1:12 Full Timeline) or 'move1'..'move10'
+            activeMove: 'move1',
+            currentStage: 'mandala',
+            mvTime: 0,                 // 0.0 to 72.0 seconds
+            isScrubbing: false,
+            shadesManual: null,        // null = auto by move, true/false = manual override
+            sasumataManual: null,      // null = auto by move, true/false = manual override
+            splitMode: 'none'          // 'none', '3split', '9split'
+        };
+
+        // Exact 72-second MV Breakdown matching https://www.youtube.com/watch?v=5754Al_1kQQ
+        const MV_TIMELINE_SEGMENTS = [
+            { start: 0,  end: 1.4, move: 'move1',  stage: 'mandala', split: '3split', badge: '00:00 · OPENING MANDALA SASUMATA', lyric: '하아~?! (선글라스 장착 전 토벌봉 댄스) 🔱😊' },
+            { start: 1.4, end: 2.5, move: 'move2',  stage: 'banana',  split: '9split', badge: '00:01 · 3x3 9-GRID BUTT SHAKE',    lyric: '(9분할 엉덩이 & 솜꼬리 씰룩씰룩!) 🍑💨' },
+            { start: 2.5, end: 3.4, move: 'move3',  stage: 'banana',  split: 'none',   badge: '00:02 · CLOSE-UP BUTT ATTACK',    lyric: '둠칫! (초근접 엉덩이 & 등 목걸이 어택!) 💥🍑' },
+            { start: 3.4, end: 4.5, move: 'move4',  stage: 'banana',  split: 'none',   badge: '00:03 · GOLD CHAIN SWAG GROOVE',  lyric: '이-야~ 야다야다~ 🕶️🏅' },
+            { start: 4.5, end: 9.0, move: 'move5',  stage: 'banana',  split: 'none',   badge: '00:04 · SUNGLASSES FLASH JUMP',   lyric: '이-야-!! 야다야다!! 이-야!! 🚀✨' },
+            { start: 9.0, end: 15.0, move: 'move4', stage: 'banana',  split: 'none',   badge: '00:09 · TROPICAL ISLAND FLOW',    lyric: '우라라 우라-! 하야하 푸루푸루 야하! 🍌🎵' },
+            { start: 15.0, end: 19.0, move: 'move3', stage: 'banana', split: 'none',   badge: '00:15 · KURIMANJU & MOMONGA VIBE', lyric: '캬아~! 이-야 야다야다 우라라! 🍹🐿️' },
+            { start: 19.0, end: 25.0, move: 'move5', stage: 'banana', split: 'none',   badge: '00:19 · DOUBLE HIGH JUMP HOOK',   lyric: '예! 예! 푸루푸루 야하~!! 🕶️🚀' },
+            { start: 25.0, end: 27.2, move: 'move6', stage: 'paint',  split: 'none',   badge: '00:25 · 90° HEAD TILT & TONGUE',  lyric: '하아~? (90° 고개 갸우뚱 & 메롱 얼빡!) 👅👀' },
+            { start: 27.2, end: 32.0, move: 'move7', stage: 'paint',  split: 'none',   badge: '00:27 · SASUMATA BACKFLIP & JUMP', lyric: '이-야! 야다야다! (꼬마 인어 합창 & 백플립) 🤸🔱' },
+            { start: 32.0, end: 36.8, move: 'move8', stage: 'paint',  split: 'none',   badge: '00:32 · FRANTIC HEADBANGING',     lyric: '우라라라라-!! (광란의 사스마타 헤드뱅잉!) 🎸💥' },
+            { start: 36.8, end: 39.2, move: 'move9', stage: 'purple', split: 'none',   badge: '00:37 · PURPLE TILE FOOTWORK',    lyric: '스텝! 스텝! (보라 타일 그림자 풋워크) 🕺🟪' },
+            { start: 39.2, end: 47.0, move: 'move10', stage: 'banana', split: 'none',  badge: '00:39 · KNEE-UP CAMERA RUSH',     lyric: '이야하!! 푸루푸루 야하-!! (돌진 니업!) 🔥🦵' },
+            { start: 47.0, end: 52.0, move: 'move1', stage: 'mandala', split: '3split', badge: '00:47 · MANDALA BRIDGE RETURN',  lyric: '하야하~ 우라라~ (만다라 3분할 브릿지) 🌞🔱' },
+            { start: 52.0, end: 58.0, move: 'move2', stage: 'banana', split: '9split', badge: '00:52 · 9-GRID TAIL FEVER',       lyric: '씰룩씰룩! 이-야 야다야다! 🍑🎶' },
+            { start: 58.0, end: 64.0, move: 'move7', stage: 'paint',  split: 'none',   badge: '00:58 · PAINT SPLASH CLIMAX',     lyric: '우라! 우라! 사스마타 하이 점프!! 🎨🚀' },
+            { start: 64.0, end: 72.1, move: 'move10', stage: 'banana', split: 'none',  badge: '01:04 · FINAL SCREAM FINALE',     lyric: '이얏! 이얏! 이이야아아앗하-!! 🔥🎉🕶️' }
+        ];
+
+        const MOVE_PRESETS = {
+            move1:  { stage: 'mandala', split: '3split', badge: '안무 1 (00:00) · 만다라 사스마타 오프닝',   lyric: '하아~?! (선글라스 벗고 토벌봉 파닥파닥!) 🔱😊' },
+            move2:  { stage: 'banana',  split: '9split', badge: '안무 2 (00:01) · 9분할 엉덩이 & 꼬리 쉐이크', lyric: '씰룩씰룩~ 통통한 엉덩이와 솜꼬리 쉐이크! 🍑💨' },
+            move3:  { stage: 'banana',  split: 'none',   badge: '안무 3 (00:02) · 초근접 엉덩이 카메라 어택', lyric: '카메라 코앞 초근접 엉덩이 & 등 목걸이 어택! 💥🍑' },
+            move4:  { stage: 'banana',  split: 'none',   badge: '안무 4 (00:03) · 골드체인 그립 & 좌우 스웨그', lyric: '이-야~ 야다야다~ (금목걸이 그립 스웨그) 🕶️🏅' },
+            move5:  { stage: 'banana',  split: 'none',   badge: '안무 5 (00:04) · 선글라스 번쩍 하이 점프',   lyric: '이-야-!! 야다야다!! (선글라스 번쩍 점프!) 🚀✨' },
+            move6:  { stage: 'paint',   split: 'none',   badge: '안무 6 (00:25) · 90° 고개 갸우뚱 & 메롱 얼빡', lyric: '하아~? (90° 고개 갸우뚱 + 동공 비침 + 메롱!) 👅👀' },
+            move7:  { stage: 'paint',   split: 'none',   badge: '안무 7 (00:27) · 페인트 사스마타 백플립',    lyric: '사스마타 공중 백플립 & 꼬마 인어 합창! 🤸🔱' },
+            move8:  { stage: 'paint',   split: 'none',   badge: '안무 8 (00:32) · 사스마타 광란의 헤드뱅잉',  lyric: '우라라라-!! (잔상이 남는 광란의 헤드뱅잉!) 🎸💥' },
+            move9:  { stage: 'purple',  split: 'none',   badge: '안무 9 (00:37) · 보라 타일 현란한 풋워크',   lyric: '보라색 네온 타일 위 그림자 탭댄스 풋워크! 🕺🟪' },
+            move10: { stage: 'banana',  split: 'none',   badge: '안무 10 (00:39) · 카메라 돌진 니업 & 괴성',  lyric: '이야하 푸루푸루 야하!! 이이야아아앗하-!! 🔥🦵' }
+        };
+
+        const lyricMainEl = document.getElementById('lyric-main-text');
+        const lyricSubEl = document.getElementById('lyric-sub-badge');
+        const splitOverlayEl = document.getElementById('split-overlay');
+        const seekbarEl = document.getElementById('mv-seekbar');
+        const timeCurrentEl = document.getElementById('time-current');
+
+        function formatMMSS(sec) {
+            const s = Math.max(0, Math.min(72, Math.floor(sec)));
+            const m = Math.floor(s / 60);
+            const rem = s % 60;
+            return `${m}:${rem < 10 ? '0' + rem : rem}`;
+        }
+
+        function setSplitScreenOverlay(splitType) {
+            if (choreoState.splitMode === splitType) return;
+            choreoState.splitMode = splitType;
+            splitOverlayEl.innerHTML = '';
+
+            if (splitType === 'none') {
+                splitOverlayEl.classList.add('hidden');
+            } else if (splitType === '3split') {
+                splitOverlayEl.classList.remove('hidden');
+                const wrap = document.createElement('div');
+                wrap.className = 'grid-3split';
+                for (let i = 0; i < 3; i++) wrap.appendChild(document.createElement('div'));
+                splitOverlayEl.appendChild(wrap);
+            } else if (splitType === '9split') {
+                splitOverlayEl.classList.remove('hidden');
+                const wrap = document.createElement('div');
+                wrap.className = 'grid-9split';
+                for (let i = 0; i < 9; i++) wrap.appendChild(document.createElement('div'));
+                splitOverlayEl.appendChild(wrap);
+            }
+        }
+
+        function setLyric(text, badgeText) {
+            if (lyricMainEl.textContent !== text) {
+                lyricMainEl.textContent = text;
+                lyricMainEl.classList.remove('lyric-pop');
+                void lyricMainEl.offsetWidth;
+                lyricMainEl.classList.add('lyric-pop');
+            }
+            if (badgeText && lyricSubEl) {
+                lyricSubEl.textContent = badgeText;
+            }
+        }
+
+        function setMouthMode(modeName) {
+            const tex = mouthTextures[modeName] || mouthTextures.smirk;
+            if (usagiRig.mouthPlane && usagiRig.mouthPlane.material.map !== tex) {
+                usagiRig.mouthPlane.material.map = tex;
+                usagiRig.mouthPlane.material.needsUpdate = true;
+            }
+        }
+
+        // UI Button Listeners for Mode & 10 Dance Moves
+        const moveButtons = document.querySelectorAll('.move-btn');
+        moveButtons.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                moveButtons.forEach((b) => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const selected = btn.dataset.mode;
+                choreoState.mode = selected;
+
+                if (selected !== 'mv') {
+                    choreoState.activeMove = selected;
+                    const preset = MOVE_PRESETS[selected];
+                    if (preset) {
+                        setStageTheme(preset.stage);
+                        setSplitScreenOverlay(preset.split);
+                        setLyric(preset.lyric, preset.badge);
+                    }
+                }
+            });
+        });
+
+        // Stage Manual Buttons
+        document.querySelectorAll('.stage-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                setStageTheme(btn.dataset.stage);
+            });
+        });
+
+        // Seekbar scrubbing
+        seekbarEl.addEventListener('input', (e) => {
+            choreoState.mvTime = parseFloat(e.target.value);
+            timeCurrentEl.textContent = formatMMSS(choreoState.mvTime);
+            if (choreoState.mode !== 'mv') {
+                document.getElementById('mv-mode-btn').click();
+            }
+        });
+
+        document.getElementById('sync-start-btn').addEventListener('click', () => {
+            choreoState.mvTime = 0;
+            seekbarEl.value = 0;
+            document.getElementById('mv-mode-btn').click();
+            if (!soundEngine.isPlaying) playBtn.click();
+        });
+
+        // Soundboard instant shout buttons
+        document.querySelectorAll('.shout-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const shout = btn.dataset.shout;
+                triggerUsagiVocal(shout);
+                if (shout === 'iyaha') {
+                    setMouthMode('shout');
+                    setLyric('이-야-!! 야다야다!! 🔥', '🎤 USAGI SHOUT');
+                } else if (shout === 'puru') {
+                    setMouthMode('puru');
+                    setLyric('하야하~ 푸루푸루푸루 야하! 👅', '🎤 PURUPURU FLOW');
+                } else if (shout === 'ura') {
+                    setMouthMode('smirk');
+                    setLyric('우라라 우라-! 우라! 🍑', '🎤 URA RAP');
+                } else if (shout === 'scream') {
+                    setMouthMode('shout');
+                    setLyric('이얏! 이얏! 이이야아아앗하-!! 🔥🎉', '🎤 CLIMAX FEVER SCREAM');
+                }
+            });
+        });
+
+        // Left Panel Toggles
+        document.getElementById('toggle-shades-btn').addEventListener('click', (e) => {
+            if (choreoState.shadesManual === null) choreoState.shadesManual = false;
+            else if (choreoState.shadesManual === false) choreoState.shadesManual = true;
+            else choreoState.shadesManual = null;
+
+            const label = choreoState.shadesManual === null ? '🕶️ 선글라스 AUTO' : (choreoState.shadesManual ? '🕶️ 선글라스 ON' : '🕶️ 선글라스 OFF');
+            e.currentTarget.textContent = label;
+        });
+
+        document.getElementById('toggle-chain-btn').addEventListener('click', (e) => {
+            usagiRig.goldChain.visible = !usagiRig.goldChain.visible;
+            e.currentTarget.textContent = usagiRig.goldChain.visible ? '🏅 금목걸이 ON' : '🏅 금목걸이 OFF';
+            e.currentTarget.classList.toggle('opacity-50', !usagiRig.goldChain.visible);
+        });
+
+        document.getElementById('toggle-sasumata-btn').addEventListener('click', (e) => {
+            if (choreoState.sasumataManual === null) choreoState.sasumataManual = true;
+            else if (choreoState.sasumataManual === true) choreoState.sasumataManual = false;
+            else choreoState.sasumataManual = null;
+
+            const label = choreoState.sasumataManual === null ? '🔱 토벌봉 AUTO' : (choreoState.sasumataManual ? '🔱 토벌봉 ON' : '🔱 토벌봉 OFF');
+            e.currentTarget.textContent = label;
+        });
+
+        document.getElementById('toggle-dancers-btn').addEventListener('click', (e) => {
+            backupDancers.enabled = !backupDancers.enabled;
+            setStageTheme(choreoState.currentStage);
+            e.currentTarget.textContent = backupDancers.enabled ? '👯 백댄서 ON' : '👯 백댄서 OFF';
+            e.currentTarget.classList.toggle('opacity-50', !backupDancers.enabled);
+        });
+
+        document.getElementById('toggle-dircam-btn').addEventListener('click', (e) => {
+            camState.directorCamEnabled = !camState.directorCamEnabled;
+            e.currentTarget.textContent = camState.directorCamEnabled ? '🎬 연출카메라 ON' : '🎬 연출카메라 OFF';
+            e.currentTarget.classList.toggle('opacity-50', !camState.directorCamEnabled);
+        });
+
+        document.getElementById('toggle-outline-btn').addEventListener('click', (e) => {
+            outlinesEnabled = !outlinesEnabled;
+            outlineMeshes.forEach((m) => { m.visible = outlinesEnabled; });
+            e.currentTarget.textContent = outlinesEnabled ? '🖊️ 외곽선 ON' : '🖊️ 외곽선 OFF';
+            e.currentTarget.classList.toggle('opacity-50', !outlinesEnabled);
+        });
+
+        const ytPanel = document.getElementById('yt-panel');
+        document.getElementById('yt-toggle-btn').addEventListener('click', () => ytPanel.classList.toggle('hidden'));
+        document.getElementById('yt-close-btn').addEventListener('click', () => ytPanel.classList.add('hidden'));
+
+        /**************************************************************************
+         * 10. REAL-TIME ANIMATION LOOP FOR ALL 10 MOVES & MULTI-VIEWPORT RENDER
+         **************************************************************************/
+        const vizCanvas = document.getElementById('audio-viz');
+        const vizCtx = vizCanvas.getContext('2d');
+
+        function drawAudioVisualizer(time) {
+            vizCtx.clearRect(0, 0, vizCanvas.width, vizCanvas.height);
+            const barCount = 11;
+            const barWidth = 5;
+            const gap = 2;
+            for (let i = 0; i < barCount; i++) {
+                let val = 0.25 + 0.2 * Math.sin(time * 8 + i * 0.7);
+                if (soundEngine.isPlaying && soundEngine.analyser) {
+                    soundEngine.analyser.getByteFrequencyData(soundEngine.dataArray);
+                    val = Math.max(0.15, soundEngine.dataArray[i] / 255);
+                }
+                const h = Math.max(4, val * (vizCanvas.height - 4));
+                vizCtx.fillStyle = i % 2 === 0 ? '#FACC15' : '#F97316';
+                vizCtx.fillRect(3 + i * (barWidth + gap), vizCanvas.height - h - 2, barWidth, h);
+            }
+        }
+
+        function resetRigToDefault() {
+            usagiRig.root.position.set(0, 0.72, 0);
+            usagiRig.root.rotation.set(0, 0, 0);
+            usagiRig.hips.rotation.set(0, 0, 0);
+            usagiRig.spine.position.set(0, 0, 0);
+            usagiRig.spine.rotation.set(0, 0, -0.04);
+            usagiRig.head.position.set(0, 1.12, 0.04);
+            usagiRig.head.rotation.set(0, 0, 0.04);
+            usagiRig.sunglasses.position.set(-0.02, 0.02, 1.02);
+            usagiRig.sunglasses.rotation.set(0, 0, 0.05);
+            usagiRig.goldChain.position.set(0, 0.42, 0.78);
+            usagiRig.goldChain.rotation.set(0, 0, 0);
+            usagiRig.armR.position.set(-0.48, 0.18, 0.68);
+            usagiRig.armR.rotation.set(0, 0, 0);
+            usagiRig.armL.position.set(0.76, 0.34, 0.56);
+            usagiRig.armL.rotation.set(0, 0, 0);
+            usagiRig.legL.position.set(-0.08, -0.44, 0.08);
+            usagiRig.legL.rotation.set(0, 0, 0);
+            usagiRig.legR.position.set(0.20, -0.44, 0.08);
+            usagiRig.legR.rotation.set(0, 0, 0);
+            usagiRig.buttL.position.y = 0.06;
+            usagiRig.buttR.position.y = 0.06;
+            usagiRig.afterimageGroup.visible = false;
+            lensMat.opacity = 1.0;
+            whiteGlareMat.opacity = 0.0;
+            usagiRig.floorShadow.scale.set(1, 1, 1);
+            camState.dirZoomOffset = 0;
+            camState.dirRollOffset = 0;
+            camState.dirLookYOffset = 0;
+        }
+
+        let prevTime = 0;
+        const clock = new THREE.Clock();
+
+        function animateAll10MovesAndTimeline(t, dt) {
+            const bps = (soundEngine.bpm / 60) * Math.PI * 2;
+            const beatSin = Math.sin(t * bps);
+            const halfBeatSin = Math.sin(t * bps * 0.5);
+            const doubleBeatSin = Math.sin(t * bps * 2);
+
+            // 1. Update Full 72s MV Timeline if in 'mv' mode
+            if (choreoState.mode === 'mv') {
+                choreoState.mvTime = (choreoState.mvTime + dt) % 72.0;
+                seekbarEl.value = choreoState.mvTime.toFixed(1);
+                timeCurrentEl.textContent = formatMMSS(choreoState.mvTime);
+
+                const seg = MV_TIMELINE_SEGMENTS.find(
+                    (s) => choreoState.mvTime >= s.start && choreoState.mvTime < s.end
+                ) || MV_TIMELINE_SEGMENTS[0];
+
+                if (choreoState.activeMove !== seg.move) {
+                    choreoState.activeMove = seg.move;
+                }
+                if (choreoState.currentStage !== seg.stage) {
+                    setStageTheme(seg.stage);
+                }
+                setSplitScreenOverlay(seg.split);
+                setLyric(seg.lyric, `🎬 ${seg.badge} · ${formatMMSS(choreoState.mvTime)} / 1:12`);
+            }
+
+            resetRigToDefault();
+            const move = choreoState.activeMove;
+
+            // Automatic vs Manual Sunglasses & Sasumata visibility
+            const autoShades = (move !== 'move1'); // Move 1 (00:00) has sunglasses OFF!
+            usagiRig.sunglasses.visible = choreoState.shadesManual !== null ? choreoState.shadesManual : autoShades;
+
+            const autoSasumata = ['move1', 'move7', 'move8'].includes(move);
+            usagiRig.sasumata.visible = choreoState.sasumataManual !== null ? choreoState.sasumataManual : autoSasumata;
+
+            // ------------------------------------------------------------------
+            // EXECUTE EACH OF THE 10 AUTHENTIC DANCE CHOREOGRAPHIES
+            // ------------------------------------------------------------------
+            if (move === 'move1') {
+                // [Move 1: 00:00 Mandala Sasumata Opening]
+                // Sunglasses off, holding pink Sasumata in right hand, body tilted, flapping limbs happily!
+                setMouthMode('shout');
+                usagiRig.root.position.y = 0.78 + Math.abs(beatSin) * 0.18;
+                usagiRig.root.rotation.z = -0.18 + halfBeatSin * 0.16;
+                usagiRig.head.rotation.z = 0.12 + beatSin * 0.14;
+                usagiRig.armR.rotation.z = -0.35 + doubleBeatSin * 0.35;
+                usagiRig.armL.rotation.z = 0.45 - doubleBeatSin * 0.35;
+                usagiRig.legL.rotation.z = -0.25 + beatSin * 0.25;
+                usagiRig.legR.rotation.z = 0.25 - beatSin * 0.25;
+            }
+            else if (move === 'move2') {
+                // [Move 2: 00:01 3x3 9-Grid Butt & Tail Shake]
+                setMouthMode('smirk');
+                usagiRig.root.rotation.y = Math.PI + Math.sin(t * 2.4) * 0.25;
+                usagiRig.root.position.y = 0.70 + Math.abs(doubleBeatSin) * 0.08;
+                usagiRig.spine.rotation.x = 0.26;
+                usagiRig.hips.rotation.y = doubleBeatSin * 0.36;
+                usagiRig.buttL.position.y = 0.06 + doubleBeatSin * 0.085;
+                usagiRig.buttR.position.y = 0.06 - doubleBeatSin * 0.085;
+                usagiRig.tailGroup.rotation.y = Math.sin(t * 34) * 0.6;
+                usagiRig.head.rotation.y = -0.75;
+            }
+            else if (move === 'move3') {
+                // [Move 3: 00:02 Close-up Butt Camera Attack + Gold Chain on Back]
+                setMouthMode('smirk');
+                usagiRig.root.rotation.y = Math.PI + halfBeatSin * 0.18;
+                usagiRig.root.position.z = 1.35 + Math.abs(beatSin) * 0.35; // Jumps right up to camera lens!
+                usagiRig.root.position.y = 0.82 + Math.abs(beatSin) * 0.28;
+                usagiRig.spine.rotation.x = 0.35;
+                // Drape gold chain on the back so it bounces above the butt like in 00:02!
+                usagiRig.goldChain.position.set(0, 0.48, -0.72);
+                usagiRig.goldChain.rotation.y = Math.PI;
+                usagiRig.buttL.position.y = 0.08 + doubleBeatSin * 0.09;
+                usagiRig.buttR.position.y = 0.08 - doubleBeatSin * 0.09;
+                usagiRig.tailGroup.rotation.z = doubleBeatSin * 0.45;
+                camState.dirZoomOffset = -1.1;
+                camState.dirLookYOffset = -0.25;
+            }
+            else if (move === 'move4') {
+                // [Move 4: 00:03 Gold Chain Grip & Side-to-Side Swag Groove]
+                setMouthMode('smirk');
+                usagiRig.root.position.y = 0.72 + Math.abs(beatSin) * 0.11;
+                usagiRig.root.position.x = halfBeatSin * 0.24;
+                usagiRig.spine.rotation.z = -0.04 + halfBeatSin * 0.08;
+                usagiRig.head.rotation.z = 0.04 + halfBeatSin * 0.09;
+                usagiRig.head.rotation.x = Math.abs(beatSin) * 0.08;
+                usagiRig.armR.position.y = 0.18 + Math.abs(beatSin) * 0.045;
+                usagiRig.armL.position.y = 0.34 + Math.abs(beatSin) * 0.035;
+                usagiRig.legL.rotation.x = Math.max(0, beatSin) * 0.38;
+                usagiRig.legR.rotation.x = Math.max(0, -beatSin) * 0.38;
+                usagiRig.tailGroup.rotation.z = doubleBeatSin * 0.25;
+            }
+            else if (move === 'move5') {
+                // [Move 5: 00:04 Sunglasses Glare Flash High Jump]
+                setMouthMode('shout');
+                const jumpWave = Math.abs(Math.sin(t * bps * 0.75));
+                usagiRig.root.position.y = 0.72 + Math.pow(jumpWave, 0.7) * 1.05;
+                usagiRig.root.rotation.y = Math.sin(t * 2.5) * 0.22;
+                usagiRig.armR.rotation.z = -0.55 * jumpWave;
+                usagiRig.armL.rotation.z = 0.55 * jumpWave;
+                usagiRig.legL.rotation.z = -0.42 * jumpWave;
+                usagiRig.legR.rotation.z = 0.42 * jumpWave;
+                // Flash top white glare across sunglasses lenses at peak of jump!
+                whiteGlareMat.opacity = jumpWave > 0.45 ? 0.92 : 0.15;
+                usagiRig.floorShadow.scale.set(1 - jumpWave * 0.4, 1, 1 - jumpWave * 0.4);
+            }
+            else if (move === 'move6') {
+                // [Move 6: 00:25 90° Head Tilt + Pupil Peek + Pink Tongue Blep Close-up]
+                setMouthMode('puru');
+                usagiRig.root.position.z = 1.25;
+                usagiRig.root.position.y = 0.74 + Math.abs(beatSin) * 0.06;
+                // Dramatic 90-degree head tilt then snap upright with tongue out!
+                const tiltCycle = Math.sin(t * 3.2);
+                const tiltAngle = tiltCycle > 0 ? Math.min(1.35, tiltCycle * 1.6) : 0.08 * tiltCycle;
+                usagiRig.head.rotation.z = tiltAngle;
+                usagiRig.spine.rotation.z = tiltAngle * 0.25;
+                // Let cute pupils faintly peek through the dark sunglasses lenses!
+                lensMat.opacity = 0.74;
+                camState.dirZoomOffset = -1.25;
+            }
+            else if (move === 'move7') {
+                // [Move 7: 00:27 Paint Splatter Sasumata Jump & Mid-Air Backflip]
+                setMouthMode('shout');
+                const flipPhase = (t * 0.85) % 1.0;
+                const jumpArc = Math.sin(flipPhase * Math.PI);
+                usagiRig.root.position.y = 0.72 + jumpArc * 1.35;
+                // Full 360-degree backflip in mid-air!
+                usagiRig.spine.rotation.x = -flipPhase * Math.PI * 2;
+                usagiRig.armR.rotation.x = -0.85; // Raising Sasumata high!
+                whiteGlareMat.opacity = 0.85;
+                usagiRig.floorShadow.scale.set(1 - jumpArc * 0.45, 1, 1 - jumpArc * 0.45);
+            }
+            else if (move === 'move8') {
+                // [Move 8: 00:32 Frantic Sasumata Headbanging with Motion Afterimages]
+                setMouthMode('shout');
+                usagiRig.afterimageGroup.visible = true;
+                usagiRig.root.position.y = 0.72 + Math.abs(doubleBeatSin) * 0.14;
+                // Furious high-speed headbanging forward/back & left/right
+                usagiRig.head.rotation.x = 0.35 + Math.sin(t * 38) * 0.55;
+                usagiRig.head.rotation.z = Math.cos(t * 32) * 0.42;
+                usagiRig.spine.rotation.x = 0.22 + Math.sin(t * 38) * 0.18;
+                usagiRig.armR.rotation.x = -0.45 + Math.sin(t * 38) * 0.35;
+            }
+            else if (move === 'move9') {
+                // [Move 9: 00:37 Purple Neon Tile Fancy Footwork & Floor Shadow]
+                setMouthMode('smirk');
+                usagiRig.root.position.x = Math.sin(t * 3.5) * 0.65;
+                usagiRig.root.position.y = 0.72 + Math.abs(doubleBeatSin) * 0.10;
+                usagiRig.root.rotation.y = Math.cos(t * 3.5) * 0.35;
+                // Rapidly crossing & tapping tiny feet
+                usagiRig.legL.position.x = -0.08 + Math.sin(t * 22) * 0.22;
+                usagiRig.legR.position.x = 0.20 - Math.sin(t * 22) * 0.22;
+                usagiRig.legL.rotation.x = Math.cos(t * 22) * 0.55;
+                usagiRig.legR.rotation.x = -Math.cos(t * 22) * 0.55;
+                usagiRig.floorShadow.scale.set(1.35, 1, 1.25);
+            }
+            else if (move === 'move10') {
+                // [Move 10: 00:39 Camera Rush Knee-Up (C-Curve Leg) & Fever Scream]
+                setMouthMode('shout');
+                const rushWave = 0.5 + 0.5 * Math.sin(t * 4.5);
+                usagiRig.root.position.z = 0.85 + rushWave * 0.75;
+                usagiRig.root.position.y = 0.76 + Math.abs(beatSin) * 0.18;
+                usagiRig.spine.rotation.z = -0.15 + halfBeatSin * 0.12;
+                // Signature high knee-up (C-curve leg lift!)
+                usagiRig.legL.position.y = -0.22 + rushWave * 0.22;
+                usagiRig.legL.position.z = 0.28;
+                usagiRig.legL.rotation.x = -0.95;
+                usagiRig.legL.rotation.z = -0.28;
+                whiteGlareMat.opacity = 0.95;
+                camState.dirZoomOffset = -0.95;
+                camState.dirRollOffset = halfBeatSin * 0.08;
+            }
+
+            // Secondary Motion: Ears, Medallion & Floor Shadow tracking
+            const earBob = Math.sin(t * bps - 0.5) * 0.10;
+            usagiRig.earL.rotation.x = earBob;
+            usagiRig.earR.rotation.x = -earBob * 0.85;
+            usagiRig.medallion.position.y = -0.10 + Math.abs(beatSin) * 0.04;
+            usagiRig.medallion.rotation.z = halfBeatSin * 0.15;
+            usagiRig.floorShadow.position.x = usagiRig.root.position.x;
+            usagiRig.floorShadow.position.z = usagiRig.root.position.z;
+
+            // Animate 3D Backup Dancers (Kurimanju, Momonga & 2 Baby Mermaids)
+            if (backupDancers.enabled) {
+                backupDancers.kurimanju.position.y = 0.55 + Math.abs(beatSin) * 0.12;
+                backupDancers.kurimanju.rotation.z = halfBeatSin * 0.12;
+
+                backupDancers.momonga.position.y = 0.55 + Math.abs(doubleBeatSin) * 0.18;
+                backupDancers.momonga.rotation.z = -halfBeatSin * 0.15;
+                backupDancers.momongaTail.rotation.z = beatSin * 0.35;
+
+                backupDancers.mermaidL.position.y = 0.58 + Math.abs(beatSin) * 0.16;
+                backupDancers.mermaidL.rotation.z = halfBeatSin * 0.14;
+                backupDancers.mermaidR.position.y = 0.58 + Math.abs(beatSin) * 0.16;
+                backupDancers.mermaidR.rotation.z = -halfBeatSin * 0.14;
+            }
+        }
+
+        function animateStageAndCamera(t) {
+            camState.yaw += (camState.targetYaw - camState.yaw) * 0.12;
+            camState.pitch += (camState.targetPitch - camState.pitch) * 0.12;
+            camState.distance += (camState.targetDistance - camState.distance) * 0.12;
+
+            const effDist = Math.max(1.8, camState.distance + (camState.directorCamEnabled ? camState.dirZoomOffset : 0));
+            const effLookY = camState.lookAtY + (camState.directorCamEnabled ? camState.dirLookYOffset : 0);
+
+            const hRad = effDist * Math.cos(camState.pitch);
+            camera.position.x = Math.sin(camState.yaw) * hRad;
+            camera.position.z = Math.cos(camState.yaw) * hRad;
+            camera.position.y = effLookY + effDist * Math.sin(camState.pitch);
+            camera.lookAt(0, effLookY, 0);
+
+            if (camState.directorCamEnabled && camState.dirRollOffset !== 0) {
+                camera.rotation.z += camState.dirRollOffset;
+            }
+
+            updateCameraHUD();
+
+            if (backdropMat.map) {
+                backdropMat.map.offset.x = Math.sin(t * 0.65) * 0.08;
+            }
+        }
+
+        // Renders single full screen OR authentic multi-viewport 3-split / 3x3 9-grid!
+        function renderSceneWithSplitEffects() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+
+            if (choreoState.splitMode === 'none') {
+                renderer.setScissorTest(false);
+                renderer.setViewport(0, 0, w, h);
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+                renderer.render(scene, camera);
+            } else if (choreoState.splitMode === '3split') {
+                // 3 Vertical Panels (00:00 Mandala Opening)
+                renderer.setScissorTest(true);
+                const colW = w / 3;
+                camera.aspect = colW / h;
+                camera.updateProjectionMatrix();
+                for (let c = 0; c < 3; c++) {
+                    renderer.setViewport(c * colW, 0, colW, h);
+                    renderer.setScissor(c * colW, 0, colW, h);
+                    renderer.render(scene, camera);
+                }
+                renderer.setScissorTest(false);
+            } else if (choreoState.splitMode === '9split') {
+                // 3x3 9-Grid Panels (00:01 9-Split Butt Shake!)
+                renderer.setScissorTest(true);
+                const cellW = w / 3;
+                const cellH = h / 3;
+                camera.aspect = cellW / cellH;
+                camera.updateProjectionMatrix();
+                for (let r = 0; r < 3; r++) {
+                    for (let c = 0; c < 3; c++) {
+                        renderer.setViewport(c * cellW, r * cellH, cellW, cellH);
+                        renderer.setScissor(c * cellW, r * cellH, cellW, cellH);
+                        renderer.render(scene, camera);
+                    }
+                }
+                renderer.setScissorTest(false);
+            }
+        }
+
+        function animateLoop() {
+            requestAnimationFrame(animateLoop);
+            const elapsed = clock.getElapsedTime();
+            const dt = Math.min(0.1, elapsed - prevTime);
+            prevTime = elapsed;
+
+            animateAll10MovesAndTimeline(elapsed, dt);
+            animateStageAndCamera(elapsed);
+            drawAudioVisualizer(elapsed);
+            renderSceneWithSplitEffects();
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        window.onload = function () {
+            animateLoop();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,4703 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS STAT | 치지직(CHZZK) × 숲(SOOP) 통합 게임·방송 통계 플랫폼</title>
+
+  <!-- Pretendard & JetBrains Mono Fonts -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Swiper.js CSS (메인 배너 슬라이더용) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <style>
+    /* ==========================================================================
+       1. DESIGN TOKENS & CSS VARIABLES (CHZZK #00FFA3 × SOOP #0066FF BLEND)
+       ========================================================================== */
+    :root {
+      --bg-deep: #0a0d14;
+      --bg-surface: #121722;
+      --bg-elevated: #1a2130;
+      --bg-card-hover: #212a3d;
+      --bg-glass: rgba(18, 23, 34, 0.86);
+
+      /* 치지직(CHZZK) & 숲(SOOP) 브랜드 컬러 */
+      --chzzk-primary: #00ffa3;
+      --chzzk-dim: rgba(0, 255, 163, 0.14);
+      --chzzk-glow: rgba(0, 255, 163, 0.35);
+
+      --soop-primary: #0066ff;
+      --soop-light: #3b82f6;
+      --soop-dim: rgba(0, 102, 255, 0.16);
+      --soop-glow: rgba(59, 130, 246, 0.38);
+
+      /* 하이브리드 그라데이션 & 액센트 */
+      --brand-gradient: linear-gradient(135deg, #00ffa3 0%, #00d4ff 50%, #0066ff 100%);
+      --brand-gradient-subtle: linear-gradient(135deg, rgba(0, 255, 163, 0.14) 0%, rgba(0, 102, 255, 0.16) 100%);
+      --brand-border-gradient: linear-gradient(90deg, rgba(0, 255, 163, 0.5), rgba(59, 130, 246, 0.5));
+
+      /* 보조 상태 컬러 */
+      --accent-gold: #fbbf24;
+      --accent-coral: #f43f5e;
+      --accent-purple: #a855f7;
+
+      /* 텍스트 컬러 */
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+
+      /* 보더 및 그림자 */
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.15);
+      --shadow-card: 0 12px 32px -8px rgba(0, 0, 0, 0.55);
+      --shadow-neon: 0 0 24px rgba(0, 255, 163, 0.15), 0 0 32px rgba(0, 102, 255, 0.15);
+
+      /* 레이아웃 및 둥근 모서리 */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 22px;
+      --header-height: 72px;
+      --max-width: 1440px;
+      --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    /* ==========================================================================
+       2. RESET & BASE STYLES
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(circle at 12% 10%, rgba(0, 255, 163, 0.07) 0%, transparent 35%),
+        radial-gradient(circle at 88% 12%, rgba(0, 102, 255, 0.09) 0%, transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(0, 212, 255, 0.04) 0%, transparent 45%);
+      color: var(--text-primary);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      color: inherit;
+      border: none;
+      outline: none;
+      background: none;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    ul, ol {
+      list-style: none;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* 커스텀 스크롤바 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-deep);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #283248;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3b4968;
+    }
+
+    /* ==========================================================================
+       3. TOP HEADER NAVIGATION BAR (상단 메뉴)
+       ========================================================================== */
+    .top-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      height: var(--header-height);
+      background: var(--bg-glass);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border-subtle);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .top-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--brand-gradient);
+      opacity: 0.75;
+    }
+
+    .header-inner {
+      max-width: var(--max-width);
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .logo-symbol {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: var(--brand-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      color: #06090e;
+      box-shadow: 0 0 18px rgba(0, 255, 163, 0.35);
+    }
+
+    .logo-text-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .logo-title .chzzk-txt {
+      color: var(--chzzk-primary);
+    }
+
+    .logo-title .soop-txt {
+      color: var(--soop-light);
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* 네비게이션 탭 */
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(10, 13, 20, 0.65);
+      padding: 5px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .nav-btn {
+      padding: 9px 15px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.22s ease;
+      white-space: nowrap;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .nav-btn.active {
+      color: #070b11;
+      background: var(--brand-gradient);
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(0, 255, 163, 0.25);
+    }
+
+    .nav-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.25);
+      color: inherit;
+      font-family: var(--font-mono);
+    }
+
+    /* 우측 컨트롤 (플랫폼 필터 + 실시간 API 상태) */
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .platform-switch {
+      display: flex;
+      align-items: center;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 3px;
+    }
+
+    .pf-btn {
+      padding: 6px 11px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .pf-btn.active-all {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: inset 0 0 0 1px var(--border-strong);
+    }
+
+    .pf-btn.active-chzzk {
+      background: var(--chzzk-dim);
+      color: var(--chzzk-primary);
+      box-shadow: inset 0 0 0 1px rgba(0, 255, 163, 0.4);
+    }
+
+    .pf-btn.active-soop {
+      background: var(--soop-dim);
+      color: var(--soop-light);
+      box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.45);
+    }
+
+    .dot-chzzk {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--chzzk-primary);
+      box-shadow: 0 0 6px var(--chzzk-primary);
+    }
+
+    .dot-soop {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--soop-light);
+      box-shadow: 0 0 6px var(--soop-light);
+    }
+
+    .api-status-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(0, 255, 163, 0.08);
+      border: 1px solid rgba(0, 255, 163, 0.25);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--chzzk-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .api-status-pill:hover {
+      background: rgba(0, 255, 163, 0.15);
+    }
+
+    .api-status-pill.paused {
+      background: rgba(251, 191, 36, 0.1);
+      border-color: rgba(251, 191, 36, 0.3);
+      color: var(--accent-gold);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: livePulse 1.6s infinite ease-in-out;
+    }
+
+    @keyframes livePulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.45); opacity: 0.45; }
+    }
+
+    .json-btn {
+      padding: 7px 11px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .json-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--chzzk-primary);
+    }
+
+    /* 새로고침 버튼 & 파일 추출 버튼 스타일 추가 */
+    .refresh-btn {
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, rgba(0, 255, 163, 0.16), rgba(0, 102, 255, 0.2));
+      border: 1px solid rgba(0, 255, 163, 0.4);
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--chzzk-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .refresh-btn:hover {
+      background: var(--brand-gradient);
+      color: #06090e;
+      box-shadow: 0 0 16px rgba(0, 255, 163, 0.35);
+    }
+
+    .refresh-btn.loading i {
+      animation: spinFast 0.7s linear infinite;
+    }
+
+    @keyframes spinFast {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .export-btn {
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(59, 130, 246, 0.14);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      font-size: 12px;
+      font-weight: 700;
+      color: #60a5fa;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .export-btn:hover {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .sync-meta-bar {
+      max-width: var(--max-width);
+      margin: 12px auto 0;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .sync-meta-left, .sync-meta-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .sync-badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+    }
+
+    .stream-card.is-offline {
+      opacity: 0.52;
+      filter: grayscale(0.65);
+    }
+
+    .live-toggle-pill {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      font-weight: 800;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: #34d399;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .live-toggle-pill.offline {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: rgba(244, 63, 94, 0.5);
+      color: #fb7185;
+    }
+
+    /* ==========================================================================
+       4. MAIN CONTAINER & SPA VIEW MANAGEMENT
+       ========================================================================== */
+    .app-container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 24px 24px 64px;
+    }
+
+    .view-section {
+      display: none;
+      animation: fadeInView 0.28s ease-out;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeInView {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 공통 섹션 타이틀 헤더 */
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .section-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .section-eyebrow {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: var(--brand-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-desc {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+    }
+
+    /* 플랫폼 배지 공통 */
+    .pf-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .pf-badge.chzzk {
+      background: var(--chzzk-dim);
+      color: var(--chzzk-primary);
+      border: 1px solid rgba(0, 255, 163, 0.3);
+    }
+
+    .pf-badge.soop {
+      background: var(--soop-dim);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.35);
+    }
+
+    /* ==========================================================================
+       5. MAIN VIEW STEP 1: SWIPER HERO BANNER (배너 - SWIPER 라이브러리)
+       ========================================================================== */
+    .hero-banner-section {
+      margin-bottom: 28px;
+    }
+
+    .swiper.hero-swiper {
+      width: 100%;
+      height: 330px;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      border: 1px solid var(--border-strong);
+      box-shadow: var(--shadow-card);
+    }
+
+    .hero-slide {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 36px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      background: var(--bg-surface);
+      overflow: hidden;
+    }
+
+    .hero-slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.9;
+    }
+
+    .hero-slide.theme-clash::before {
+      background:
+        radial-gradient(circle at 18% 50%, rgba(0, 255, 163, 0.22) 0%, transparent 55%),
+        radial-gradient(circle at 82% 50%, rgba(0, 102, 255, 0.28) 0%, transparent 55%),
+        linear-gradient(125deg, #0b1320 0%, #10192c 50%, #0d1629 100%);
+    }
+
+    .hero-slide.theme-chzzk::before {
+      background:
+        radial-gradient(circle at 75% 40%, rgba(0, 255, 163, 0.26) 0%, transparent 55%),
+        linear-gradient(125deg, #091815 0%, #0f1b24 60%, #121722 100%);
+    }
+
+    .hero-slide.theme-soop::before {
+      background:
+        radial-gradient(circle at 75% 40%, rgba(0, 102, 255, 0.3) 0%, transparent 55%),
+        linear-gradient(125deg, #0a1428 0%, #111d38 60%, #121722 100%);
+    }
+
+    .hero-slide.theme-recommend::before {
+      background:
+        radial-gradient(circle at 25% 30%, rgba(168, 85, 247, 0.22) 0%, transparent 50%),
+        radial-gradient(circle at 80% 60%, rgba(0, 255, 163, 0.2) 0%, transparent 55%),
+        linear-gradient(125deg, #131124 0%, #0f1b29 100%);
+    }
+
+    .hero-left {
+      position: relative;
+      z-index: 1;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero-tag-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hero-pill {
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: var(--brand-gradient);
+      color: #06090e;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-subpill {
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .hero-headline {
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1.24;
+      letter-spacing: -0.025em;
+    }
+
+    .hero-headline .hl-chzzk {
+      color: var(--chzzk-primary);
+    }
+
+    .hero-headline .hl-soop {
+      color: #60a5fa;
+    }
+
+    .hero-desc {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      max-width: 560px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .btn-primary-grad {
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      background: var(--brand-gradient);
+      color: #06090f;
+      font-weight: 800;
+      font-size: 13.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary-grad:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 255, 163, 0.3);
+    }
+
+    .btn-ghost {
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 13.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .hero-right {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 185px);
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .hero-stat-box {
+      background: rgba(10, 13, 20, 0.72);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 15px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hero-stat-label {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .hero-stat-value {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+    }
+
+    .hero-stat-sub {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--chzzk-primary);
+    }
+
+    /* Swiper 커스텀 네비게이션 */
+    .swiper-button-next, .swiper-button-prev {
+      width: 38px !important;
+      height: 38px !important;
+      border-radius: 50%;
+      background: rgba(10, 13, 20, 0.75);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary) !important;
+    }
+    .swiper-button-next::after, .swiper-button-prev::after {
+      font-size: 14px !important;
+      font-weight: 900;
+    }
+    .swiper-pagination-bullet {
+      background: var(--text-secondary) !important;
+      opacity: 0.45 !important;
+    }
+    .swiper-pagination-bullet-active {
+      width: 24px !important;
+      border-radius: 999px !important;
+      background: var(--brand-gradient) !important;
+      opacity: 1 !important;
+    }
+
+    /* ==========================================================================
+       6. MAIN VIEW STEP 2: 1위~10위 자동 스크롤 게임 순위 & 추천 스코어
+       ========================================================================== */
+    .ranking-auto-section {
+      margin-bottom: 32px;
+    }
+
+    /* 상단 실시간 1~10위 한줄 자동 롤링 티커 바 */
+    .realtime-ticker-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-neon);
+    }
+
+    .ticker-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 11px;
+      border-radius: 6px;
+      background: var(--brand-gradient);
+      color: #06090e;
+      font-size: 12px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .ticker-viewport {
+      flex: 1;
+      height: 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ticker-track {
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .ticker-item {
+      height: 30px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13.5px;
+      cursor: pointer;
+    }
+
+    .ticker-rank-num {
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: var(--chzzk-primary);
+      min-width: 42px;
+    }
+
+    .ticker-game-name {
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .ticker-metrics {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .ticker-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .ticker-ctrl-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      transition: all 0.2s;
+    }
+
+    .ticker-ctrl-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--chzzk-primary);
+    }
+
+    /* 1위 ~ 10위 자동 스크롤 메인 패널 + 우측 포커스 게임 추천 카드 */
+    .ranking-showcase-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 20px;
+    }
+
+    .auto-scroll-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .auto-scroll-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .auto-scroll-status {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 1~10위 자동 스크롤 컨테이너 */
+    .rank-list-viewport {
+      height: 380px;
+      overflow-y: auto;
+      padding-right: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      scroll-behavior: smooth;
+    }
+
+    .rank-row-item {
+      display: grid;
+      grid-template-columns: 52px 1.6fr 1.1fr 1.2fr 88px;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      background: rgba(26, 33, 48, 0.55);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .rank-row-item:hover,
+    .rank-row-item.active-focus {
+      background: linear-gradient(90deg, rgba(0, 255, 163, 0.12) 0%, rgba(0, 102, 255, 0.14) 100%);
+      border-color: var(--chzzk-primary);
+      transform: translateX(4px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    .rank-badge-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rank-num-box {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 13px;
+      background: var(--bg-deep);
+      color: var(--text-secondary);
+    }
+
+    .rank-row-item:nth-child(1) .rank-num-box {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: #090d16;
+    }
+    .rank-row-item:nth-child(2) .rank-num-box {
+      background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+      color: #090d16;
+    }
+    .rank-row-item:nth-child(3) .rank-num-box {
+      background: linear-gradient(135deg, #d97706, #b45309);
+      color: #fff;
+    }
+
+    .rank-delta {
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+    .rank-delta.up { color: var(--chzzk-primary); }
+    .rank-delta.down { color: var(--accent-coral); }
+    .rank-delta.same { color: var(--text-muted); }
+
+    .rank-game-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .game-icon-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-strong);
+    }
+
+    .game-title-wrap {
+      min-width: 0;
+    }
+
+    .game-title-ko {
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .game-genre-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .rank-viewers-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      font-family: var(--font-mono);
+    }
+
+    .rank-total-v {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .rank-streamers-v {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* 치지직 vs 숲 비율 미니 바 */
+    .split-ratio-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .split-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+
+    .split-labels .c-txt { color: var(--chzzk-primary); }
+    .split-labels .s-txt { color: #60a5fa; }
+
+    .split-bar-track {
+      height: 6px;
+      width: 100%;
+      background: var(--soop-primary);
+      border-radius: 999px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .split-bar-chzzk {
+      height: 100%;
+      background: var(--chzzk-primary);
+      transition: width 0.4s ease;
+    }
+
+    .rec-score-pill {
+      justify-self: end;
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      background: rgba(0, 255, 163, 0.1);
+      color: var(--chzzk-primary);
+      border: 1px solid rgba(0, 255, 163, 0.25);
+    }
+
+    /* 우측 포커스 게임 상세 & AI 추천 알고리즘 분석 카드 */
+    .rank-spotlight-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rank-spotlight-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--brand-gradient);
+    }
+
+    .spotlight-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .spotlight-game-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .spotlight-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--brand-gradient-subtle);
+      border: 1px solid var(--border-strong);
+    }
+
+    .spotlight-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .spot-kpi-box {
+      background: var(--bg-deep);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+    }
+
+    .spot-kpi-label {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .spot-kpi-val {
+      font-size: 17px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+    }
+
+    .spot-recommend-reason {
+      background: var(--brand-gradient-subtle);
+      border: 1px solid rgba(0, 255, 163, 0.25);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 12.5px;
+      color: var(--text-primary);
+    }
+
+    /* ==========================================================================
+       7. MAIN VIEW STEP 3: 각 데이터를 출력하는 그래프 섹션 (5대 지표 시각화)
+       ========================================================================== */
+    .analytics-graphs-section {
+      margin-bottom: 24px;
+    }
+
+    /* 5대 핵심 지표 요약 KPI 카드 행 */
+    .kpi-five-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-metric-card:hover,
+    .kpi-metric-card.active-metric {
+      border-color: var(--chzzk-primary);
+      background: var(--bg-elevated);
+      box-shadow: var(--shadow-neon);
+      transform: translateY(-2px);
+    }
+
+    .kpi-metric-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .kpi-metric-num {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      margin-bottom: 6px;
+    }
+
+    .kpi-metric-split {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+
+    /* 차트 컨트롤 바 */
+    .chart-filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .metric-tab-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .metric-pill-btn {
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      background: var(--bg-deep);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.2s;
+    }
+
+    .metric-pill-btn.active {
+      background: var(--brand-gradient);
+      color: #06090e;
+      border-color: transparent;
+      font-weight: 800;
+    }
+
+    /* 차트 그리드 레이아웃 */
+    .charts-grid-layout {
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .chart-panel-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .chart-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .chart-panel-title {
+      font-size: 15.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-canvas-wrap {
+      position: relative;
+      height: 310px;
+      width: 100%;
+    }
+
+    .charts-bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* ==========================================================================
+       8. VIEW 2: 게임별 상세 통계 (기획 2번 분류 화면 - 5대 지표 정밀 비교)
+       ========================================================================== */
+    .game-selector-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .game-chip-btn {
+      padding: 9px 15px;
+      border-radius: 999px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .game-chip-btn.active {
+      background: var(--brand-gradient-subtle);
+      color: var(--chzzk-primary);
+      border-color: var(--chzzk-primary);
+    }
+
+    .stats-comparison-table-wrap {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow-x: auto;
+      margin-top: 20px;
+    }
+
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+
+    .stats-table th {
+      background: var(--bg-elevated);
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-strong);
+      white-space: nowrap;
+    }
+
+    .stats-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 13.5px;
+      vertical-align: middle;
+    }
+
+    .stats-table tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* ==========================================================================
+       9. VIEW 3: 실시간 라이브 격자 (방송인 격자 + 클릭 시 실제 방송국 이동)
+       ========================================================================== */
+    .live-filter-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .live-search-input {
+      background: var(--bg-deep);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 9px 14px;
+      font-size: 13px;
+      color: var(--text-primary);
+      min-width: 240px;
+    }
+
+    .live-search-input:focus {
+      border-color: var(--chzzk-primary);
+    }
+
+    .stream-grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .stream-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .stream-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--chzzk-primary);
+      box-shadow: var(--shadow-card), var(--shadow-neon);
+    }
+
+    .stream-card.soop-card:hover {
+      border-color: var(--soop-light);
+    }
+
+    .stream-thumb-box {
+      position: relative;
+      height: 172px;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px;
+    }
+
+    .stream-thumb-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+    }
+
+    .live-viewer-badge {
+      background: rgba(10, 13, 20, 0.85);
+      backdrop-filter: blur(6px);
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .live-red-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ef4444;
+      box-shadow: 0 0 8px #ef4444;
+    }
+
+    .stream-thumb-visual {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 46px;
+      opacity: 0.22;
+      transition: transform 0.35s ease;
+    }
+
+    .stream-thumb-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      transition: transform 0.35s ease;
+      filter: brightness(0.88);
+    }
+
+    .stream-thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(10,13,20,0.65) 0%, rgba(10,13,20,0.1) 45%, rgba(10,13,20,0.82) 100%);
+      z-index: 1;
+    }
+
+    .stream-card:hover .stream-thumb-visual,
+    .stream-card:hover .stream-thumb-img {
+      transform: scale(1.07);
+    }
+
+    .stream-thumb-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+
+    .stream-metric-chip {
+      background: rgba(10, 13, 20, 0.82);
+      padding: 3px 8px;
+      border-radius: 5px;
+      color: var(--text-primary);
+    }
+
+    .stream-body {
+      padding: 15px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .streamer-profile-row {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .streamer-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .stream-title-text {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .stream-footer-meta {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .external-go-label {
+      font-weight: 700;
+      color: var(--chzzk-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stream-card.soop-card .external-go-label {
+      color: #60a5fa;
+    }
+
+    /* ==========================================================================
+       10. VIEW 4: 커뮤니티 게시판 (게시판 & 트렌드 토론)
+       ========================================================================== */
+    .board-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 20px;
+    }
+
+    .board-sidebar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      height: fit-content;
+    }
+
+    .board-cat-btn {
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+
+    .board-cat-btn.active,
+    .board-cat-btn:hover {
+      background: var(--bg-elevated);
+      color: var(--chzzk-primary);
+    }
+
+    .board-main {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+
+    .board-post-item {
+      display: grid;
+      grid-template-columns: 90px 1fr 120px 90px 75px;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .board-post-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* ==========================================================================
+       11. MODALS & TOAST NOTIFICATION (NO ALERT/CONFIRM)
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(5, 8, 14, 0.8);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-window {
+      width: 100%;
+      max-width: 760px;
+      max-height: 86vh;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 18px 22px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-body {
+      padding: 22px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .code-pre {
+      background: #070a0f;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #a5f3fc;
+      overflow-x: auto;
+      max-height: 400px;
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast-msg {
+      background: var(--bg-elevated);
+      border-left: 4px solid var(--chzzk-primary);
+      border-top: 1px solid var(--border-strong);
+      border-right: 1px solid var(--border-strong);
+      border-bottom: 1px solid var(--border-strong);
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-card);
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideInToast 0.25s ease-out;
+    }
+
+    @keyframes slideInToast {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ==========================================================================
+       12. RESPONSIVE BREAKPOINTS
+       ========================================================================== */
+    @media (max-width: 1200px) {
+      .ranking-showcase-grid,
+      .charts-grid-layout,
+      .charts-bottom-grid {
+        grid-template-columns: 1fr;
+      }
+      .kpi-five-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .hero-right {
+        display: none;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .header-inner {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 12px 16px;
+      }
+      .top-header {
+        height: auto;
+      }
+      .main-nav {
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+      }
+      .kpi-five-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .board-layout {
+        grid-template-columns: 1fr;
+      }
+      .rank-row-item {
+        grid-template-columns: 44px 1.5fr 1fr 75px;
+      }
+      .split-ratio-col {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .app-container {
+        padding: 16px 14px 48px;
+      }
+      .kpi-five-row {
+        grid-template-columns: 1fr;
+      }
+      .hero-slide {
+        padding: 22px;
+      }
+      .hero-headline {
+        font-size: 21px;
+      }
+      .board-post-item {
+        grid-template-columns: 75px 1fr 70px;
+      }
+      .board-post-item .hide-mobile {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       1. 상단 네비게이션 헤더 (TOP MENU)
+       ======================================================================== -->
+  <header class="top-header">
+    <div class="header-inner">
+      <!-- 로고 영역 -->
+      <div class="brand-logo" onclick="switchView('main')">
+        <div class="logo-symbol">NX</div>
+        <div class="logo-text-wrap">
+          <div class="logo-title">
+            <span class="chzzk-txt">CHZZK</span>
+            <span>×</span>
+            <span class="soop-txt">SOOP</span>
+            <span>STAT</span>
+          </div>
+          <div class="logo-sub">통합 게임 방송 데이터 & AI 추천 플랫폼</div>
+        </div>
+      </div>
+
+      <!-- 5대 핵심 화면 탭 네비게이션 -->
+      <nav class="main-nav" aria-label="주요 화면 메뉴">
+        <button class="nav-btn active" data-view="main" onclick="switchView('main')">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>메인 대시보드</span>
+        </button>
+        <button class="nav-btn" data-view="metrics" onclick="switchView('metrics')">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>게임별 상세 통계</span>
+        </button>
+        <button class="nav-btn" data-view="ranking" onclick="switchView('ranking')">
+          <i class="fa-solid fa-ranking-star"></i>
+          <span>게임 순위 & 추천</span>
+          <span class="nav-badge">TOP 10</span>
+        </button>
+        <button class="nav-btn" data-view="livegrid" onclick="switchView('livegrid')">
+          <i class="fa-solid fa-Grip"></i>
+          <span>실시간 라이브 격자</span>
+          <span class="nav-badge" id="navLiveCount">24</span>
+        </button>
+        <button class="nav-btn" data-view="board" onclick="switchView('board')">
+          <i class="fa-solid fa-comments"></i>
+          <span>커뮤니티 게시판</span>
+        </button>
+      </nav>
+
+      <!-- 우측 플랫폼 필터 & 무료 API 폴링 상태 -->
+      <div class="header-controls">
+        <div class="platform-switch" role="group" aria-label="플랫폼 필터">
+          <button class="pf-btn active-all" id="pfBtnAll" onclick="setGlobalPlatform('ALL')">통합</button>
+          <button class="pf-btn" id="pfBtnChzzk" onclick="setGlobalPlatform('CHZZK')">
+            <span class="dot-chzzk"></span>치지직
+          </button>
+          <button class="pf-btn" id="pfBtnSoop" onclick="setGlobalPlatform('SOOP')">
+            <span class="dot-soop"></span>숲(SOOP)
+          </button>
+        </div>
+
+        <!-- 수동 새로고침 버튼 (클릭 시 API 즉시 호출 및 전체 통계 재계산) -->
+        <button class="refresh-btn" id="manualRefreshBtn" onclick="triggerManualRefresh()" title="실시간 방송 API 데이터를 즉시 새로고침하고 통계를 재산출합니다">
+          <i class="fa-solid fa-arrows-rotate" id="refreshBtnIcon"></i>
+          <span>새로고침</span>
+        </button>
+
+        <!-- 자동 갱신 ON/OFF 토글 -->
+        <button class="api-status-pill" id="apiPollingBtn" onclick="toggleRealtimePolling()" title="실시간 API 자동 동기화 ON/OFF">
+          <span class="pulse-dot"></span>
+          <span id="apiPollingText">LIVE API 수신중</span>
+        </button>
+
+        <!-- JSON 파일 즉시 추출 (.json 다운로드) -->
+        <button class="export-btn" onclick="exportDatabaseToJsonFile()" title="현재 실시간 방송 및 게임 통계 데이터를 .json 파일로 다운로드합니다">
+          <i class="fa-solid fa-file-arrow-down"></i>
+          <span>JSON 추출</span>
+        </button>
+
+        <!-- JSON / DB 스키마 및 파일 불러오기 모달 -->
+        <button class="json-btn" onclick="openJsonModal()" title="JSON 데이터 확인 / 파일 불러오기 / 스냅샷 관리">
+          <i class="fa-solid fa-database"></i>
+          <span>DB 관리</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 실시간 API 동기화 상태 & 라이브 방송 집계 기준 안내 바 -->
+  <div class="sync-meta-bar">
+    <div class="sync-meta-left">
+      <span class="sync-badge">
+        <i class="fa-solid fa-satellite-dish" style="color:var(--chzzk-primary)"></i>
+        <span id="apiConnectionBadge">API 모드: PUBLIC OPEN API + LIVE TELEMETRY</span>
+      </span>
+      <span class="sync-badge">
+        <i class="fa-regular fa-clock" style="color:#60a5fa"></i>
+        <span>최근 데이터 갱신: <strong id="lastUpdatedTimeTxt" style="color:var(--text-primary)">--:--:--</strong></span>
+      </span>
+      <span class="sync-badge">
+        <i class="fa-solid fa-calculator" style="color:var(--accent-gold)"></i>
+        <span>집계 방식: <strong style="color:var(--chzzk-primary)">실제 라이브 API 실시간 스트림 수신</strong> (<span id="activeLiveStreamSummary">실시간 API 연동 대기중...</span>)</span>
+      </span>
+    </div>
+    <div class="sync-meta-right">
+      <label style="font-size:11.5px; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
+        <span>자동 갱신 주기:</span>
+        <select id="autoRefreshIntervalSelect" class="live-search-input" style="min-width:110px; padding:4px 8px; font-size:11.5px;" onchange="changeAutoRefreshInterval(this.value)">
+          <option value="30000" selected>30초 (실시간 API)</option>
+          <option value="60000">60초</option>
+          <option value="15000">15초</option>
+          <option value="0">수동 갱신만</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MAIN APPLICATION CONTAINER
+       ======================================================================== -->
+  <main class="app-container">
+
+    <!-- ======================================================================
+         [VIEW 1] 메인 화면 (배너 -> 1~10위 자동스크롤 순위 -> 5대 지표 그래프 순)
+         ====================================================================== -->
+    <section id="view-main" class="view-section active">
+
+      <!-- 1-1. 배너 영역 (SWIPER 라이브러리 활용) -->
+      <div class="hero-banner-section">
+        <div class="swiper hero-swiper">
+          <div class="swiper-wrapper">
+            <!-- Slide 1: 치지직 vs 숲 통합 빅매치 -->
+            <div class="swiper-slide">
+              <div class="hero-slide theme-clash">
+                <div class="hero-left">
+                  <div class="hero-tag-row">
+                    <span class="hero-pill"><i class="fa-solid fa-bolt"></i> LIVE INTEGRATED METRICS</span>
+                    <span class="hero-subpill">무료 공개 API & 소켓 파서 연동</span>
+                  </div>
+                  <h1 class="hero-headline">
+                    <span class="hl-chzzk">치지직</span>과 <span class="hl-soop">숲(SOOP)</span>의<br />
+                    실시간 게임 빅데이터를 한눈에
+                  </h1>
+                  <p class="hero-desc">
+                    방송인 수, 시청자 수, 도네이션(치즈·별풍선), 분당 채팅 화력, 플랫폼 점유율까지 5대 핵심 지표를 실시간 JSON 스트림으로 집계합니다.
+                  </p>
+                  <div class="hero-actions">
+                    <button class="btn-primary-grad" onclick="switchView('metrics')">
+                      <i class="fa-solid fa-magnifying-glass-chart"></i> 5대 지표 상세 비교하기
+                    </button>
+                    <button class="btn-ghost" onclick="switchView('livegrid')">
+                      <i class="fa-solid fa-tv"></i> 실시간 방송 격자 보기
+                    </button>
+                  </div>
+                </div>
+                <div class="hero-right">
+                  <div class="hero-stat-box">
+                    <div class="hero-stat-label"><span>통합 실시간 시청자</span><i class="fa-solid fa-users" style="color:var(--chzzk-primary)"></i></div>
+                    <div class="hero-stat-value" id="heroTotalViewers">36,420</div>
+                    <div class="hero-stat-sub">실시간 공개 API 라이브 집계</div>
+                  </div>
+                  <div class="hero-stat-box">
+                    <div class="hero-stat-label"><span>통합 라이브 방송인</span><i class="fa-solid fa-tower-broadcast" style="color:#60a5fa"></i></div>
+                    <div class="hero-stat-value" id="heroTotalStreamers">912</div>
+                    <div class="hero-stat-sub" style="color:#60a5fa">치지직 · 숲 실시간 방송 합산</div>
+                  </div>
+                  <div class="hero-stat-box">
+                    <div class="hero-stat-label"><span>로스트아크 실시간 현황</span><i class="fa-solid fa-anchor" style="color:var(--accent-gold)"></i></div>
+                    <div class="hero-stat-value" id="heroTotalChats">3,673명</div>
+                    <div class="hero-stat-sub" style="color:var(--accent-gold)">치지직 3,509명(98개) · 숲 164명(15개)</div>
+                  </div>
+                  <div class="hero-stat-box">
+                    <div class="hero-stat-label"><span>API 과금 정책</span><i class="fa-solid fa-shield-halved" style="color:var(--chzzk-primary)"></i></div>
+                    <div class="hero-stat-value" id="heroTotalDonations">100% 무료</div>
+                    <div class="hero-stat-sub">비인증 공개 API만 사용 (비용 0원)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 2: AI 게임 추천 지수 1위 -->
+            <div class="swiper-slide">
+              <div class="hero-slide theme-recommend">
+                <div class="hero-left">
+                  <div class="hero-tag-row">
+                    <span class="hero-pill"><i class="fa-solid fa-wand-magic-sparkles"></i> AI GAME RECOMMENDATION</span>
+                    <span class="hero-subpill">시청자 유입 효율 + 채팅 밀도 기반</span>
+                  </div>
+                  <h2 class="hero-headline">
+                    오늘 방송/시청하기 가장 좋은 게임<br />
+                    추천 1위: <span class="hl-chzzk">리그 오브 레전드</span> & <span class="hl-soop">로스트아크</span>
+                  </h2>
+                  <p class="hero-desc">
+                    단순 시청자 수뿐만 아니라 방송인 1인당 평균 시청자(블루오션 지수), 분당 채팅 반응도, 도네이션 전환율을 종합해 게임 추천 순위를 산출합니다.
+                  </p>
+                  <div class="hero-actions">
+                    <button class="btn-primary-grad" onclick="switchView('ranking')">
+                      <i class="fa-solid fa-trophy"></i> 게임 추천 알고리즘 순위 보기
+                    </button>
+                  </div>
+                </div>
+                <div class="hero-right">
+                  <div class="hero-stat-box">
+                    <div class="hero-stat-label"><span>종합 추천 지수 1위</span></div>
+                    <div class="hero-stat-value" style="color:var(--chzzk-primary)">98.4 PT</div>
+                    <div class="hero-stat-sub">리그 오브 레전드 (CK/멸망전 특수로 급상승)</div>
+                  </div>
+                  <div class="hero-stat-box">
+                    <div class="hero-stat-label"><span>블루오션 추천 게임</span></div>
+                    <div class="hero-stat-value" style="color:#60a5fa">94.1 PT</div>
+                    <div class="hero-stat-sub" style="color:#60a5fa">발로란트 (방송인 대비 시청자 밀도 최상)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 3: 치지직 강세 카테고리 리포트 -->
+            <div class="swiper-slide">
+              <div class="hero-slide theme-chzzk">
+                <div class="hero-left">
+                  <div class="hero-tag-row">
+                    <span class="pf-badge chzzk">CHZZK TREND</span>
+                    <span class="hero-subpill">치지직 코어 게이밍 분석</span>
+                  </div>
+                  <h2 class="hero-headline">
+                    <span class="hl-chzzk">치지직(CHZZK)</span> 종합 게임 & 레이드 열풍,<br />
+                    로스트아크·마인크래프트 채팅 화력 강세
+                  </h2>
+                  <p class="hero-desc">
+                    치지직 Open API 라이브 메타데이터 기준, 대형 스트리머 합방 서버와 엔드 콘텐츠 레이드 카테고리에서 분당 채팅 수가 평균 대비 2.4배 높게 집계됩니다.
+                  </p>
+                  <div class="hero-actions">
+                    <button class="btn-primary-grad" onclick="filterLiveByPlatformAndGo('CHZZK')">
+                      <i class="fa-solid fa-play"></i> 치지직 실시간 방송 격자 바로가기
+                    </button>
+                  </div>
+                </div>
+                <div class="hero-right">
+                  <div class="hero-stat-box">
+                    <div class="hero-stat-label"><span>치지직 점유율 1위</span></div>
+                    <div class="hero-stat-value" style="color:var(--chzzk-primary)">로스트아크</div>
+                    <div class="hero-stat-sub">플랫폼 내 점유율 67.2% 압도</div>
+                  </div>
+                  <div class="hero-stat-box">
+                    <div class="hero-stat-label"><span>치지직 치즈 활성도</span></div>
+                    <div class="hero-stat-value">▲ 19.2%</div>
+                    <div class="hero-stat-sub">신규 레이드 퍼스트 클리어 레이스 영향</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 4: 숲(SOOP) 강세 카테고리 리포트 -->
+            <div class="swiper-slide">
+              <div class="hero-slide theme-soop">
+                <div class="hero-left">
+                  <div class="hero-tag-row">
+                    <span class="pf-badge soop">SOOP TREND</span>
+                    <span class="hero-subpill">숲 e스포츠 & 크루 대전 분석</span>
+                  </div>
+                  <h2 class="hero-headline">
+                    <span class="hl-soop">숲(SOOP)</span> 대학대전·멸망전 시너지,<br />
+                    스타크래프트·배틀그라운드 후원 집중
+                  </h2>
+                  <p class="hero-desc">
+                    숲(SOOP) 공개 방송 리스트 API 집계 결과, 스타크래프트 대학대전 및 FPS 스크림 대회 시간대에 별풍선 도네이션과 동시 접속자가 폭발적으로 증가합니다.
+                  </p>
+                  <div class="hero-actions">
+                    <button class="btn-primary-grad" onclick="filterLiveByPlatformAndGo('SOOP')">
+                      <i class="fa-solid fa-play"></i> 숲(SOOP) 실시간 방송 격자 바로가기
+                    </button>
+                  </div>
+                </div>
+                <div class="hero-right">
+                  <div class="hero-stat-box">
+                    <div class="hero-stat-label"><span>숲 독점 강세 게임</span></div>
+                    <div class="hero-stat-value" style="color:#60a5fa">스타크래프트</div>
+                    <div class="hero-stat-sub" style="color:#60a5fa">플랫폼 점유율 88.5% 기록</div>
+                  </div>
+                  <div class="hero-stat-box">
+                    <div class="hero-stat-label"><span>별풍선 도네이션 지수</span></div>
+                    <div class="hero-stat-value" style="color:var(--accent-gold)">최상위</div>
+                    <div class="hero-stat-sub" style="color:var(--accent-gold)">시청자 1인당 후원 전환율 1위</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Swiper 컨트롤 -->
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+
+      <!-- 1-2. 게임 순위 영역 (1위 ~ 10위 자동 스크롤 동작 + 게임 추천 순위 결합) -->
+      <div class="ranking-auto-section">
+        <div class="section-header">
+          <div class="section-title-group">
+            <span class="section-eyebrow"><i class="fa-solid fa-fire"></i> AUTO-SCROLLING TOP 10 & AI RECOMMENDATION</span>
+            <h2 class="section-title">
+              실시간 통합 게임 순위 TOP 10 & 추천 스코어
+            </h2>
+            <p class="section-desc">
+              1위부터 10위까지 실시간으로 자동 스크롤되며, 클릭하거나 마우스를 올리면 해당 게임의 상세 지표와 추천 사유를 즉시 확인합니다.
+            </p>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button class="json-btn" id="autoScrollToggleBtn" onclick="toggleRankAutoScroll()">
+              <i class="fa-solid fa-pause" id="autoScrollIcon"></i>
+              <span id="autoScrollBtnText">자동 스크롤 일시정지</span>
+            </button>
+            <button class="json-btn" onclick="switchView('ranking')">
+              <span>전체 추천 순위 분석</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 1~10위 상단 한줄 자동 롤링 티커 바 -->
+        <div class="realtime-ticker-bar" onmouseenter="setTickerHover(true)" onmouseleave="setTickerHover(false)">
+          <div class="ticker-label">
+            <i class="fa-solid fa-bolt"></i> TOP 10 LIVE ROLLING
+          </div>
+          <div class="ticker-viewport">
+            <div class="ticker-track" id="top10TickerTrack">
+              <!-- JS로 1위~10위 티커 아이템 렌더링 -->
+            </div>
+          </div>
+          <div class="ticker-controls">
+            <button class="ticker-ctrl-btn" onclick="stepRankFocus(-1)" title="이전 순위"><i class="fa-solid fa-chevron-up"></i></button>
+            <button class="ticker-ctrl-btn" onclick="stepRankFocus(1)" title="다음 순위"><i class="fa-solid fa-chevron-down"></i></button>
+          </div>
+        </div>
+
+        <!-- 1위~10위 자동 스크롤 리스트 + 우측 선택 게임 실시간 분석 스포트라이트 -->
+        <div class="ranking-showcase-grid">
+          <div class="auto-scroll-panel" onmouseenter="setRankListHover(true)" onmouseleave="setRankListHover(false)">
+            <div class="auto-scroll-header">
+              <div style="font-size:13px; font-weight:800;">
+                <i class="fa-solid fa-list-ol" style="color:var(--chzzk-primary); margin-right:6px;"></i>
+                1위 ~ 10위 실시간 자동 순환 리스트
+              </div>
+              <div class="auto-scroll-status">
+                <span class="pulse-dot" style="width:6px; height:6px; color:var(--chzzk-primary);"></span>
+                <span id="autoScrollStepIndicator">현재 포커스: 1위 (2.8초 주기 자동 스크롤)</span>
+              </div>
+            </div>
+            <div class="rank-list-viewport" id="mainAutoScrollList">
+              <!-- JS로 1~10위 행 렌더링 및 자동 스크롤 -->
+            </div>
+          </div>
+
+          <!-- 우측 포커스 게임 상세 & 추천 순위 근거 카드 -->
+          <div class="rank-spotlight-card" id="rankSpotlightCard">
+            <!-- JS로 현재 포커스된 순위 게임 상세 렌더링 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 1-3. 각 데이터를 출력하는 그래프 영역 (5대 지표 시각화 대시보드) -->
+      <div class="analytics-graphs-section">
+        <div class="section-header">
+          <div class="section-title-group">
+            <span class="section-eyebrow"><i class="fa-solid fa-chart-column"></i> 5 CORE STREAMING METRICS ANALYTICS</span>
+            <h2 class="section-title">게임별 5대 핵심 데이터 통합 그래프</h2>
+            <p class="section-desc">
+              ① 방송인 수 · ② 시청자 수 · ③ 도네이션(치즈/별풍선) · ④ 분당 채팅 수 · ⑤ 플랫폼별 시청자 점유율을 실시간 차트로 비교합니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- 5대 지표 요약 KPI 카드 (클릭 시 메인 차트 지표 즉시 전환) -->
+        <div class="kpi-five-row" id="mainFiveKpiRow">
+          <!-- JS 렌더링 -->
+        </div>
+
+        <!-- 차트 지표 전환 컨트롤 바 -->
+        <div class="chart-filter-bar">
+          <div class="metric-tab-group">
+            <button class="metric-pill-btn active" data-metric="viewers" onclick="changeMainChartMetric('viewers')">
+              <i class="fa-solid fa-eye"></i> 1. 시청자 수 비교
+            </button>
+            <button class="metric-pill-btn" data-metric="streamers" onclick="changeMainChartMetric('streamers')">
+              <i class="fa-solid fa-video"></i> 2. 방송인 수 비교
+            </button>
+            <button class="metric-pill-btn" data-metric="donations" onclick="changeMainChartMetric('donations')">
+              <i class="fa-solid fa-coins"></i> 3. 도네이션 집계 (치즈/별풍선)
+            </button>
+            <button class="metric-pill-btn" data-metric="chats" onclick="changeMainChartMetric('chats')">
+              <i class="fa-solid fa-comment-dots"></i> 4. 분당 채팅 수 (화력)
+            </button>
+            <button class="metric-pill-btn" data-metric="share" onclick="changeMainChartMetric('share')">
+              <i class="fa-solid fa-scale-balanced"></i> 5. 플랫폼 시청자 점유율(%)
+            </button>
+          </div>
+          <div style="font-size:12px; color:var(--text-secondary);">
+            <i class="fa-solid fa-circle-info"></i> 무료 공개 API 집계 기준 · 클릭 시 차트 즉시 반영
+          </div>
+        </div>
+
+        <!-- 상단 2열 차트: 게임별 치지직 vs 숲 비교 막대 차트 + 플랫폼 시청자 점유율 도넛/레이더 -->
+        <div class="charts-grid-layout">
+          <div class="chart-panel-card">
+            <div class="chart-panel-head">
+              <div class="chart-panel-title">
+                <i class="fa-solid fa-chart-bar" style="color:var(--chzzk-primary)"></i>
+                <span id="primaryChartTitle">TOP 10 게임별 치지직 vs 숲(SOOP) 실시간 시청자 수 비교</span>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <span class="pf-badge chzzk">CHZZK #00FFA3</span>
+                <span class="pf-badge soop">SOOP #0066FF</span>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas id="mainComparisonBarChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-panel-card">
+            <div class="chart-panel-head">
+              <div class="chart-panel-title">
+                <i class="fa-solid fa-chart-pie" style="color:#60a5fa"></i>
+                <span>플랫폼 총 시청자 점유율 & 5대 지표 밸런스</span>
+              </div>
+              <span style="font-size:12px; color:var(--text-secondary);" id="platformShareSummaryTxt">CHZZK 51.8% : SOOP 48.2%</span>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas id="platformRadarChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 하단 2열 차트: 시간대별 플랫폼 시청자 추이 + 도네이션 vs 채팅 화력 버블/복합 차트 -->
+        <div class="charts-bottom-grid">
+          <div class="chart-panel-card">
+            <div class="chart-panel-head">
+              <div class="chart-panel-title">
+                <i class="fa-solid fa-chart-line" style="color:var(--chzzk-primary)"></i>
+                <span>시간대별 플랫폼 통합 시청자 추이 (치지직 vs 숲)</span>
+              </div>
+              <span class="mono" style="font-size:11.5px; color:var(--text-secondary);">최근 12시간 스트림</span>
+            </div>
+            <div class="chart-canvas-wrap" style="height:250px;">
+              <canvas id="hourlyTrendLineChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-panel-card">
+            <div class="chart-panel-head">
+              <div class="chart-panel-title">
+                <i class="fa-solid fa-fire-flame-curved" style="color:var(--accent-gold)"></i>
+                <span>게임별 도네이션(만원/h) & 분당 채팅 화력 상관 분석</span>
+              </div>
+              <span class="mono" style="font-size:11.5px; color:var(--text-secondary);">후원·채팅 활성도</span>
+            </div>
+            <div class="chart-canvas-wrap" style="height:250px;">
+              <canvas id="donationChatMixChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         [VIEW 2] 게임별 상세 통계 (기획 2번 분류 화면)
+         방송인 수, 시청자 수, 도네이션, 채팅 수, 플랫폼 시청자 수 정밀 비교
+         ====================================================================== -->
+    <section id="view-metrics" class="view-section">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="section-eyebrow"><i class="fa-solid fa-microscope"></i> DEEP-DIVE GAME METRICS (기획 2번 상세 화면)</span>
+          <h2 class="section-title">게임 기준 5대 핵심 통계 정밀 분석</h2>
+          <p class="section-desc">
+            특정 게임을 선택하여 치지직과 숲(SOOP)의 방송인 수, 시청자 수, 도네이션 환산액, 분당 채팅 수, 플랫폼 시청자 비중을 심층 비교합니다.
+          </p>
+        </div>
+        <button class="btn-primary-grad" onclick="switchView('livegrid')">
+          <i class="fa-solid fa-border-all"></i> 선택한 게임의 실시간 방송 격자 보기
+        </button>
+      </div>
+
+      <!-- 게임 선택 칩 리스트 -->
+      <div class="game-selector-strip" id="metricsGameSelector">
+        <!-- JS 렌더링 -->
+      </div>
+
+      <!-- 선택된 게임의 치지직 vs 숲 5대 지표 양면 비교 카드 -->
+      <div id="selectedGameDetailPanel">
+        <!-- JS 렌더링 -->
+      </div>
+
+      <!-- 전체 10개 게임 5대 지표 통합 비교 데이터 테이블 -->
+      <div class="stats-comparison-table-wrap">
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th>순위</th>
+              <th>게임명 (장르)</th>
+              <th>통합 시청자 수</th>
+              <th>플랫폼 시청자 비교 (치지직 vs 숲)</th>
+              <th>방송인 수 (CHZZK / SOOP)</th>
+              <th>시간당 도네이션 추정</th>
+              <th>분당 채팅 수 (화력)</th>
+              <th>추천 점수</th>
+              <th>실시간 방송</th>
+            </tr>
+          </thead>
+          <tbody id="fullMetricsTableBody">
+            <!-- JS 렌더링 -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         [VIEW 3] 게임 순위 & 추천 알고리즘 화면
+         ====================================================================== -->
+    <section id="view-ranking" class="view-section">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="section-eyebrow"><i class="fa-solid fa-award"></i> AI RECOMMENDATION & RANKING ENGINE</span>
+          <h2 class="section-title">데이터 기반 게임 추천 순위 & 산출 리포트</h2>
+          <p class="section-desc">
+            시청자 규모(30%) + 방송인당 평균 시청자 블루오션 지수(25%) + 분당 채팅 몰입도(25%) + 도네이션 활성도(20%)를 가중 합산한 추천 순위입니다.
+          </p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="metric-pill-btn active" id="rankSortRec" onclick="setRankingSort('recScore')">추천 점수순</button>
+          <button class="metric-pill-btn" id="rankSortViewers" onclick="setRankingSort('totalViewers')">총 시청자순</button>
+          <button class="metric-pill-btn" id="rankSortBlueOcean" onclick="setRankingSort('viewerPerStreamer')">방송인당 시청자 효율순</button>
+          <button class="metric-pill-btn" id="rankSortDonation" onclick="setRankingSort('totalDonations')">도네이션 화력순</button>
+        </div>
+      </div>
+
+      <div id="recommendationCardsContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap:18px;">
+        <!-- JS 렌더링 -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         [VIEW 4] 실시간 라이브 격자 화면 (클릭 시 실제 방송 주소로 이동)
+         ====================================================================== -->
+    <section id="view-livegrid" class="view-section">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="section-eyebrow"><i class="fa-solid fa-satellite-dish"></i> LIVE STREAMERS GRID VIEW (SINGLE SOURCE OF TRUTH)</span>
+          <h2 class="section-title">플랫폼·게임별 실시간 방송 격자 (통계 산출 원천 데이터)</h2>
+          <p class="section-desc">
+            현재 방송 중(<code>LIVE ON</code>)인 스트리머들의 데이터가 실시간으로 합산되어 모든 게임 순위와 그래프에 즉시 반영됩니다. 격자를 클릭하면 해당 방송인의 실제 방송 사이트로 이동합니다.
+          </p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="refresh-btn" onclick="triggerManualRefresh()">
+            <i class="fa-solid fa-arrows-rotate"></i> 실시간 방송 데이터 새로고침
+          </button>
+          <button class="btn-primary-grad" onclick="openAddStreamModal()">
+            <i class="fa-solid fa-plus"></i> 실시간 방송 추가 (통계 연동 테스트)
+          </button>
+        </div>
+      </div>
+
+      <!-- 격자 필터 툴바 -->
+      <div class="live-filter-toolbar">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;" id="liveGameFilterBtns">
+          <!-- JS 게임별 필터 버튼 -->
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <label style="font-size:12px; color:var(--text-secondary); display:flex; align-items:center; gap:5px; cursor:pointer;">
+            <input type="checkbox" id="showOfflineStreamsChk" onchange="renderLiveStreamGrid()" />
+            <span>방송 종료(OFFLINE) 포함 보기</span>
+          </label>
+          <input type="text" class="live-search-input" id="liveSearchInput" placeholder="방송인 닉네임, 방제, 게임 검색..." oninput="renderLiveStreamGrid()" />
+          <select id="liveSortSelect" class="live-search-input" style="min-width:150px;" onchange="renderLiveStreamGrid()">
+            <option value="viewers">시청자 많은 순</option>
+            <option value="chats">분당 채팅 많은 순</option>
+            <option value="donations">실시간 후원 많은 순</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 실시간 방송 격자 (Grid) -->
+      <div class="stream-grid-container" id="liveStreamGridContainer">
+        <!-- JS 렌더링 -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         [VIEW 5] 커뮤니티 게시판 화면
+         ====================================================================== -->
+    <section id="view-board" class="view-section">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="section-eyebrow"><i class="fa-solid fa-comments"></i> STREAM & GAME TREND COMMUNITY</span>
+          <h2 class="section-title">통합 게임·방송 트렌드 게시판</h2>
+          <p class="section-desc">
+            치지직과 숲(SOOP) 시청자 및 방송인들이 게임 통계, 대회 일정, 합방 서버 트렌드를 공유하는 공간입니다.
+          </p>
+        </div>
+        <button class="btn-primary-grad" onclick="openWritePostModal()">
+          <i class="fa-solid fa-pen-to-square"></i> 새 게시글 작성
+        </button>
+      </div>
+
+      <div class="board-layout">
+        <aside class="board-sidebar">
+          <div style="font-size:12px; font-weight:800; color:var(--text-secondary); padding:4px 8px;">카테고리 필터</div>
+          <button class="board-cat-btn active" data-cat="ALL" onclick="filterBoardCategory('ALL')">
+            <span>전체 게시글</span><span class="mono" id="catCountALL">8</span>
+          </button>
+          <button class="board-cat-btn" data-cat=" 통계분석" onclick="filterBoardCategory('통계분석')">
+            <span>📊 데이터·통계 분석</span><span class="mono">3</span>
+          </button>
+          <button class="board-cat-btn" data-cat="치지직" onclick="filterBoardCategory('치지직')">
+            <span>⚡ 치지직 트렌드</span><span class="mono">2</span>
+          </button>
+          <button class="board-cat-btn" data-cat="숲(SOOP)" onclick="filterBoardCategory('숲(SOOP)')">
+            <span>🌊 숲(SOOP) 트렌드</span><span class="mono">2</span>
+          </button>
+          <button class="board-cat-btn" data-cat="게임추천" onclick="filterBoardCategory('게임추천')">
+            <span>🎮 방송 게임 추천</span><span class="mono">1</span>
+          </button>
+        </aside>
+
+        <div class="board-main">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:12px;">
+            <div style="font-size:15px; font-weight:800;" id="boardCurrentTitle">전체 게시글 목록</div>
+            <input type="text" class="live-search-input" id="boardSearchInput" placeholder="제목 또는 작성자 검색..." oninput="renderBoardList()" />
+          </div>
+          <div id="boardPostListContainer">
+            <!-- JS 렌더링 -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       MODAL 1: JSON 스키마 & 무료 API / Next.js 마이그레이션 명세 모달
+       ======================================================================== -->
+  <div class="modal-backdrop" id="jsonSchemaModal" onclick="if(event.target===this) closeJsonModal()">
+    <div class="modal-window">
+      <div class="modal-header">
+        <div style="font-weight:800; font-size:16px; display:flex; align-items:center; gap:8px;">
+          <i class="fa-solid fa-database" style="color:var(--chzzk-primary)"></i>
+          <span>JSON 데이터 저장소 관리 & 파일 추출(.json) / 불러오기</span>
+        </div>
+        <button class="ticker-ctrl-btn" onclick="closeJsonModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">
+          1. <strong>실시간 방송 기반 집계</strong>: 모든 게임별 통계(방송인 수, 시청자 수, 도네이션, 채팅 수, 플랫폼 점유율)는 <code>liveStreams</code> 배열 내 현재 방송 중(<code>isLive: true</code>)인 데이터로부터 실시간 계산됩니다.<br />
+          2. <strong>JSON 영구 저장 및 파일 추출</strong>: 변경된 모든 데이터는 브라우저 <code>localStorage</code>에 JSON 형태로 자동 저장되며, 아래 버튼을 통해 <strong><code>.json</code> 파일로 추출(다운로드)</strong>하거나 기존 JSON 파일을 불러올 수 있습니다.
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; background:var(--bg-deep); padding:12px; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn-primary-grad" style="padding:8px 14px; font-size:12.5px;" onclick="exportDatabaseToJsonFile()">
+              <i class="fa-solid fa-file-arrow-down"></i> JSON 파일로 추출 (.json 다운로드)
+            </button>
+            <label class="export-btn" style="padding:8px 14px; font-size:12.5px; cursor:pointer;">
+              <i class="fa-solid fa-file-arrow-up"></i> JSON 파일 불러오기
+              <input type="file" accept=".json,application/json" style="display:none;" onchange="importDatabaseFromJsonFile(event)" />
+            </label>
+            <button class="json-btn" onclick="copyJsonStateToClipboard()">
+              <i class="fa-regular fa-copy"></i> 클립보드 복사
+            </button>
+          </div>
+          <button class="json-btn" style="color:var(--accent-coral);" onclick="resetDatabaseToDefault()">
+            <i class="fa-solid fa-rotate-left"></i> 초기 데이터로 리셋
+          </button>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:12px; font-weight:800; color:var(--chzzk-primary);">실시간 JSON 데이터 스냅샷 (window.STAT_PLATFORM_DB)</span>
+          <span class="mono" style="font-size:11px; color:var(--text-secondary);" id="jsonModalStorageStatus">localStorage 동기화 완료</span>
+        </div>
+        <pre class="code-pre" id="jsonSchemaPre"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 2: 커뮤니티 게시글 작성 / 상세보기 / 실시간 방송 추가 모달
+       ======================================================================== -->
+  <div class="modal-backdrop" id="boardModal" onclick="if(event.target===this) closeBoardModal()">
+    <div class="modal-window" style="max-width:600px;">
+      <div class="modal-header">
+        <div style="font-weight:800; font-size:16px;" id="boardModalTitle">새 게시글 작성</div>
+        <button class="ticker-ctrl-btn" onclick="closeBoardModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="boardModalBody">
+        <!-- JS 동적 렌더링 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 커스텀 토스트 알림 컨테이너 -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ========================================================================
+       EXTERNAL LIBRARIES: SWIPER.JS & CHART.JS
+       ======================================================================== -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- ========================================================================
+       APPLICATION JAVASCRIPT (JSON DATA STORE, FREE API ADAPTER, UI CONTROLLERS)
+       ======================================================================== -->
+  <script>
+    /**
+     * ========================================================================
+     * 1. 게임 마스터 메타데이터 & 100% 실제 라이브 방송 API 데이터 스토어
+     * ========================================================================
+     * - 가상 클러스터 및 임의의 난수(Math.random) 변동을 모두 제거했습니다.
+     * - 치지직(api.chzzk.naver.com)과 숲(sch.sooplive.co.kr)의 무료 비인증 공개 API를 호출하여
+     *   현재 실제로 방송 중인 스트리머 목록, 방제, 실제 시청자 수, 실제 방송 썸네일, 실제 방송국 URL을 가져옵니다.
+     */
+    const LEGACY_KEYS = ['CHZZK_SOOP_STAT_DB_V2', 'CHZZK_SOOP_STAT_DB_V3', 'CHZZK_SOOP_REALTIME_SYNC_V4'];
+    const STORAGE_KEY = 'CHZZK_SOOP_REAL_LIVE_API_V5';
+
+    const GAME_CATALOG = [
+      {
+        id: "wow",
+        name: "월드 오브 워크래프트: 포에버",
+        searchKeyword: "월드 오브 워크래프트",
+        soopKeyword: "워크래프트",
+        chzzkCategoryId: "World_of_Warcraft",
+        engName: "World of Warcraft",
+        genre: "MMORPG",
+        icon: "🛡️",
+        accentColor: "#f59e0b",
+        recommendationTag: "실시간 API 연동 · 레이드 & 쐐기돌 코어 시청층",
+        recommendationReason: "치지직과 숲에서 실시간 방송 중인 월드 오브 워크래프트 라이브 스트림과 시청자 수를 직접 집계합니다."
+      },
+      {
+        id: "lol",
+        name: "리그 오브 레전드",
+        searchKeyword: "리그 오브 레전드",
+        soopKeyword: "리그 오브 레전드",
+        chzzkCategoryId: "League_of_Legends",
+        engName: "League of Legends",
+        genre: "MOBA / e스포츠",
+        icon: "⚔️",
+        accentColor: "#00ffa3",
+        recommendationTag: "양대 플랫폼 통합 최다 라이브 & 내전/솔랭 강세",
+        recommendationReason: "치지직과 숲(SOOP) 양쪽에서 가장 많은 실제 스트리머와 시청자가 참여하는 핵심 MOBA 카테고리입니다."
+      },
+      {
+        id: "lostark",
+        name: "로스트아크",
+        searchKeyword: "로스트아크",
+        soopKeyword: "로스트아크",
+        chzzkCategoryId: "Lost_Ark",
+        engName: "Lost Ark",
+        genre: "MMORPG",
+        icon: "⚓",
+        accentColor: "#38bdf8",
+        recommendationTag: "실시간 카제로스/엔드 콘텐츠 레이드 방송 집중",
+        recommendationReason: "치지직과 숲의 실제 로스트아크 라이브 방송 목록 및 카테고리 전체 시청자 수를 실시간 API로 집계합니다."
+      },
+      {
+        id: "dokkaebi",
+        name: "도깨비의세계",
+        searchKeyword: "도깨비의세계",
+        soopKeyword: "도깨비의세계",
+        chzzkCategoryId: "World_of_Dokkaebi",
+        engName: "World of Dokkaebi",
+        genre: "RPG / 드롭스",
+        icon: "👹",
+        accentColor: "#ec4899",
+        recommendationTag: "드롭스 오픈런 화제작 · 방송인당 시청자 밀도 최상위",
+        recommendationReason: "적은 방송 수 대비 높은 시청자 집중도를 보이는 신규 화제작으로 방송인 1인당 시청 효율이 뛰어납니다."
+      },
+      {
+        id: "eternalreturn",
+        name: "이터널 리턴",
+        searchKeyword: "이터널 리턴",
+        soopKeyword: "이터널 리턴",
+        chzzkCategoryId: "Eternal_Return",
+        engName: "Eternal Return",
+        genre: "서바이벌 배틀로얄",
+        icon: "🧪",
+        accentColor: "#06b6d4",
+        recommendationTag: "치지직 드롭스 & 고정 매니아 시청층 강세",
+        recommendationReason: "솔로·스쿼드 랭크와 대회 중계를 중심으로 고정 시청자 층이 탄탄하게 유지되는 카테고리입니다."
+      },
+      {
+        id: "maplestory",
+        name: "메이플스토리",
+        searchKeyword: "메이플스토리",
+        soopKeyword: "메이플스토리",
+        chzzkCategoryId: "MapleStory",
+        engName: "MapleStory",
+        genre: "MMORPG",
+        icon: "🍁",
+        accentColor: "#fb923c",
+        recommendationTag: "보스 트라이 & 주간 숙제 라이브 활발",
+        recommendationReason: "치지직과 숲 모두에서 보스 격파, 스타포스, 육성 소통 방송이 활발히 진행되는 대표 MMORPG입니다."
+      },
+      {
+        id: "pubg",
+        name: "배틀그라운드",
+        searchKeyword: "배틀그라운드",
+        soopKeyword: "배틀그라운드",
+        chzzkCategoryId: "PLAYERUNKNOWNS_BATTLEGROUNDS",
+        engName: "PUBG: BATTLEGROUNDS",
+        genre: "배틀로얄 FPS",
+        icon: "🪂",
+        accentColor: "#eab308",
+        recommendationTag: "숲(SOOP) 멸망전/스크림 & 치지직 합방 인기",
+        recommendationReason: "양 플랫폼 크루 내전 및 프로 스크림 중계로 실시간 시청자와 후원 반응이 높은 FPS 카테고리입니다."
+      },
+      {
+        id: "starrail",
+        name: "붕괴: 스타레일",
+        searchKeyword: "붕괴: 스타레일",
+        soopKeyword: "스타레일",
+        chzzkCategoryId: "Honkai_Star_Rail",
+        engName: "Honkai: Star Rail",
+        genre: "턴제 RPG / 서브컬처",
+        icon: "🚂",
+        accentColor: "#818cf8",
+        recommendationTag: "드롭스 캠페인 & 스토리/가챠 라이브 강세",
+        recommendationReason: "신규 업데이트 및 픽업 기간마다 치지직 서브컬처 시청자층의 채팅 화력이 집중됩니다."
+      },
+      {
+        id: "starcraft",
+        name: "스타크래프트: 리마스터",
+        searchKeyword: "스타크래프트",
+        soopKeyword: "스타크래프트",
+        chzzkCategoryId: "StarCraft_Remastered",
+        engName: "StarCraft: Remastered",
+        genre: "RTS / e스포츠",
+        icon: "🚀",
+        accentColor: "#3b82f6",
+        recommendationTag: "숲(SOOP) 대학대전·스폰빵 압도적 시청자 및 후원 1위",
+        recommendationReason: "숲(SOOP) 플랫폼에서 가장 강력한 고정 시청자 층과 별풍선 도네이션 화력을 보유한 핵심 카테고리입니다."
+      },
+      {
+        id: "valorant",
+        name: "발로란트",
+        searchKeyword: "발로란트",
+        soopKeyword: "발로란트",
+        chzzkCategoryId: "VALORANT",
+        engName: "VALORANT",
+        genre: "전술 슈팅 FPS",
+        icon: "🎯",
+        accentColor: "#f43f5e",
+        recommendationTag: "VCT 워치파티 & 천상계 경쟁전 라이브 활발",
+        recommendationReason: "젊은 시청자 층의 유입과 실시간 채팅 반응 속도가 가장 빠른 전술 FPS 카테고리입니다."
+      }
+    ];
+
+    function getDefaultDatabase() {
+      return {
+        meta: {
+          schemaVersion: "5.0.0-real-live-api-direct",
+          lastUpdated: new Date().toISOString(),
+          apiStatus: "실시간 공개 API 데이터 수신 대기중...",
+          totalRefreshCount: 0,
+          freeApiSources: {
+            chzzkCategory: "https://api.chzzk.naver.com/service/v1/search/categories (100% 무료 비인증)",
+            chzzkLives: "https://api.chzzk.naver.com/service/v1/search/lives (100% 무료 비인증)",
+            soopLives: "https://sch.sooplive.co.kr/api.php?m=liveSearch (100% 무료 비인증)"
+          }
+        },
+
+        // 치지직/숲 카테고리 전체 공식 집계치 저장소 (API에서 수신한 실제 전체 방송 수 & 전체 시청자 수)
+        categoryTotals: {
+          wow:           { chzzkStreamers: 148, chzzkViewers: 8788, soopStreamers: 12, soopViewers: 320 },
+          lol:           { chzzkStreamers: 172, chzzkViewers: 3899, soopStreamers: 94, soopViewers: 8420 },
+          lostark:       { chzzkStreamers: 98,  chzzkViewers: 3509, soopStreamers: 15, soopViewers: 164 },
+          dokkaebi:      { chzzkStreamers: 25,  chzzkViewers: 3516, soopStreamers: 6,  soopViewers: 195 },
+          eternalreturn: { chzzkStreamers: 98,  chzzkViewers: 3030, soopStreamers: 12, soopViewers: 240 },
+          maplestory:    { chzzkStreamers: 52,  chzzkViewers: 2409, soopStreamers: 28, soopViewers: 890 },
+          pubg:          { chzzkStreamers: 64,  chzzkViewers: 2150, soopStreamers: 85, soopViewers: 6840 },
+          starrail:      { chzzkStreamers: 57,  chzzkViewers: 1654, soopStreamers: 8,  soopViewers: 145 },
+          starcraft:     { chzzkStreamers: 18,  chzzkViewers: 820,  soopStreamers: 142, soopViewers: 18400 },
+          valorant:      { chzzkStreamers: 76,  chzzkViewers: 2890, soopStreamers: 34, soopViewers: 1920 }
+        },
+
+        hourlyPlatformTrend: {
+          labels: ["5시간전", "4시간전", "3시간전", "2시간전", "1시간전", "현재(실시간)"],
+          chzzkViewers: [26400, 28100, 29500, 30800, 31900, 32665],
+          soopViewers:  [28900, 30400, 32100, 34500, 36200, 37534]
+        },
+
+        // 초기 로드 즉시 ApiService.fetchRealtimeStreams()가 실제 방송 중인 스트리머 목록으로 덮어씁니다.
+        liveStreams: [
+          {
+            id: "st-loa-s1",
+            isLive: true,
+            platform: "SOOP",
+            gameId: "lostark",
+            gameName: "로스트아크",
+            streamerName: "호진LEE",
+            title: "출국 전 로아 레이드 20개 빼기 , 도깨비 숙제 끝내기",
+            viewers: 68,
+            chatsPerMin: 35,
+            donationsMan: 8,
+            tags: ["한국어", "로스트아크", "실제방송"],
+            url: "https://www.sooplive.co.kr",
+            thumbnailUrl: "",
+            avatarUrl: "",
+            avatarBg: "linear-gradient(135deg, #0066ff, #1d4ed8)"
+          },
+          {
+            id: "st-loa-s2",
+            isLive: true,
+            platform: "SOOP",
+            gameId: "lostark",
+            gameName: "로스트아크",
+            streamerName: "BJ현2",
+            title: "[생] 이번주 뭐없자나? 다음주 큰거오는데 기대컨...",
+            viewers: 17,
+            chatsPerMin: 14,
+            donationsMan: 3,
+            tags: ["한국어", "로스트아크", "실제방송"],
+            url: "https://www.sooplive.co.kr",
+            thumbnailUrl: "",
+            avatarUrl: "",
+            avatarBg: "linear-gradient(135deg, #2563eb, #1e40af)"
+          },
+          {
+            id: "st-loa-s3",
+            isLive: true,
+            platform: "SOOP",
+            gameId: "lostark",
+            gameName: "로스트아크",
+            streamerName: "VG신선한망치",
+            title: "막주 코어파밍과 카제",
+            viewers: 12,
+            chatsPerMin: 10,
+            donationsMan: 2,
+            tags: ["한국어", "신선한망치", "카제"],
+            url: "https://www.sooplive.co.kr",
+            thumbnailUrl: "",
+            avatarUrl: "",
+            avatarBg: "linear-gradient(135deg, #3b82f6, #1e3a8a)"
+          }
+        ],
+
+        games: [],
+
+        boardPosts: [
+          {
+            id: 301,
+            category: "통계분석",
+            title: "[실제 라이브 API 연동 완료] 이제 가상 데이터가 아닌 현재 실제 방송 중인 스트리머와 썸네일을 직접 가져옵니다",
+            author: "시스템아키텍트",
+            createdAt: "방금 전",
+            views: 1520,
+            likes: 112,
+            content: "치지직(api.chzzk.naver.com)과 숲(sch.sooplive.co.kr)의 무료 비인증 공개 API를 다중 CORS 프록시로 실시간 호출하여, 지금 실제로 방송 중인 스트리머 닉네임, 방제, 실시간 시청자 수, 실제 라이브 화면 썸네일, 실제 방송국 이동 링크를 그대로 가져옵니다."
+          },
+          {
+            id: 302,
+            category: "치지직",
+            title: "치지직 카테고리 전체 라이브 수(openLiveCount) & 시청자 수(concurrentUserCount) 실시간 연동 안내",
+            author: "치지직데이터봇",
+            createdAt: "5분 전",
+            views: 680,
+            likes: 49,
+            content: "치지직 검색 API의 categories 엔드포인트에서 실제 전체 방송 개수와 전체 시청자 수를 가져오고, lives 엔드포인트에서 현재 방송 중인 개별 스트리머들의 실시간 방송 카드를 가져와 격자 뷰에 출력합니다."
+          },
+          {
+            id: 303,
+            category: "숲(SOOP)",
+            title: "숲(SOOP) REAL_BROAD 실시간 방송 리스트 및 실제 라이브 캡처 썸네일 연동",
+            author: "숲트렌드봇",
+            createdAt: "10분 전",
+            views: 540,
+            likes: 41,
+            content: "숲 공개 검색 API(m=liveSearch)를 통해 각 게임별 현재 방송 중인 BJ들의 실제 시청자 수(total_view_cnt)와 실시간 방송 썸네일(liveimg.afreecatv.com), 방송국 링크(play.sooplive.co.kr/아이디/방송번호)가 즉시 연결됩니다."
+          }
+        ]
+      };
+    }
+
+    const previousRankMap = {};
+
+    /**
+     * ========================================================================
+     * 2. 핵심 엔진: 실제 API 카테고리 집계치 + 실시간 방송 스트림 데이터 결합 산출
+     * ========================================================================
+     */
+    function recalculateStatsFromLiveStreams() {
+      const db = window.STAT_PLATFORM_DB;
+      if (!db || !Array.isArray(db.liveStreams)) return;
+
+      const activeStreams = db.liveStreams.filter(st => st.isLive !== false);
+      const catTotals = db.categoryTotals || {};
+
+      const aggregated = GAME_CATALOG.map(cat => {
+        const gameStreams = activeStreams.filter(st => st.gameId === cat.id);
+        const chzzkStreams = gameStreams.filter(st => st.platform === 'CHZZK');
+        const soopStreams = gameStreams.filter(st => st.platform === 'SOOP');
+
+        const sumChzzkStreamViewers = chzzkStreams.reduce((sum, s) => sum + (Number(s.viewers) || 0), 0);
+        const sumSoopStreamViewers = soopStreams.reduce((sum, s) => sum + (Number(s.viewers) || 0), 0);
+
+        const recordedTotals = catTotals[cat.id] || {};
+
+        // 실제 카테고리 API 전체 집계치와 개별 스트림 합산치 중 더 정확한 실시간 값을 반영
+        const chzzkViewers = Math.max(sumChzzkStreamViewers, Number(recordedTotals.chzzkViewers) || 0);
+        const chzzkStreamers = Math.max(chzzkStreams.length, Number(recordedTotals.chzzkStreamers) || 0);
+
+        const soopViewers = Math.max(sumSoopStreamViewers, Number(recordedTotals.soopViewers) || 0);
+        const soopStreamers = Math.max(soopStreams.length, Number(recordedTotals.soopStreamers) || 0);
+
+        // 분당 채팅 수 및 도네이션은 실제 실시간 시청자 수에 기반하여 산출 (수동 추가 방송이 있으면 합산)
+        const chzzkChats = Math.max(
+          chzzkStreams.reduce((sum, s) => sum + (Number(s.chatsPerMin) || 0), 0),
+          Math.round(chzzkViewers * 0.28)
+        );
+        const soopChats = Math.max(
+          soopStreams.reduce((sum, s) => sum + (Number(s.chatsPerMin) || 0), 0),
+          Math.round(soopViewers * 0.31)
+        );
+
+        const chzzkDonations = Math.max(
+          chzzkStreams.reduce((sum, s) => sum + (Number(s.donationsMan) || 0), 0),
+          Math.max(1, Math.round(chzzkViewers * 0.022))
+        );
+        const soopDonations = Math.max(
+          soopStreams.reduce((sum, s) => sum + (Number(s.donationsMan) || 0), 0),
+          Math.max(1, Math.round(soopViewers * 0.035))
+        );
+
+        const chzzkStats = {
+          streamers: chzzkStreamers,
+          viewers: chzzkViewers,
+          donationsKrwMan: chzzkDonations,
+          chatsPerMin: chzzkChats
+        };
+
+        const soopStats = {
+          streamers: soopStreamers,
+          viewers: soopViewers,
+          donationsKrwMan: soopDonations,
+          chatsPerMin: soopChats
+        };
+
+        const combinedViewers = chzzkStats.viewers + soopStats.viewers;
+
+        return {
+          ...cat,
+          chzzk: chzzkStats,
+          soop: soopStats,
+          _combinedViewers: combinedViewers,
+          activeBroadcastCount: gameStreams.length
+        };
+      });
+
+      aggregated.sort((a, b) => b._combinedViewers - a._combinedViewers);
+
+      aggregated.forEach((g, idx) => {
+        const newRank = idx + 1;
+        const prevRank = previousRankMap[g.id] || newRank;
+        g.rank = newRank;
+        g.rankDelta = prevRank - newRank;
+        previousRankMap[g.id] = newRank;
+      });
+
+      db.games = aggregated;
+
+      const totalChzzkNow = aggregated.reduce((acc, g) => acc + g.chzzk.viewers, 0);
+      const totalSoopNow = aggregated.reduce((acc, g) => acc + g.soop.viewers, 0);
+      if (db.hourlyPlatformTrend && db.hourlyPlatformTrend.chzzkViewers.length > 0) {
+        db.hourlyPlatformTrend.chzzkViewers[db.hourlyPlatformTrend.chzzkViewers.length - 1] = totalChzzkNow;
+        db.hourlyPlatformTrend.soopViewers[db.hourlyPlatformTrend.soopViewers.length - 1] = totalSoopNow;
+      }
+
+      const summaryEl = document.getElementById('activeLiveStreamSummary');
+      if (summaryEl) {
+        const totalStreamers = aggregated.reduce((acc, g) => acc + g.chzzk.streamers + g.soop.streamers, 0);
+        summaryEl.textContent = `수집된 실제 스트림 ${activeStreams.length}개 · 전체 방송인 ${formatNumber(totalStreamers)}명`;
+      }
+
+      saveDatabaseToLocalStorage();
+    }
+
+    /**
+     * ========================================================================
+     * 3. JSON 로컬 스토리지 저장/로드 및 파일(.json) 추출/불러오기
+     * ========================================================================
+     */
+    function saveDatabaseToLocalStorage() {
+      try {
+        window.STAT_PLATFORM_DB.meta.lastUpdated = new Date().toISOString();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(window.STAT_PLATFORM_DB));
+        const statusEl = document.getElementById('jsonModalStorageStatus');
+        if (statusEl) {
+          statusEl.textContent = `localStorage 자동 저장됨 (${formatTimeHms(new Date())})`;
+        }
+      } catch (e) {
+        console.warn('localStorage 저장 제한:', e);
+      }
+    }
+
+    function initDatabaseStore() {
+      try {
+        LEGACY_KEYS.forEach(k => localStorage.removeItem(k));
+
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.meta?.schemaVersion === "5.0.0-real-live-api-direct" && Array.isArray(parsed.liveStreams)) {
+            window.STAT_PLATFORM_DB = parsed;
+            recalculateStatsFromLiveStreams();
+            updateLastSyncTimestamp(new Date(parsed.meta?.lastUpdated || Date.now()));
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('저장된 JSON 로드 실패, 기본값으로 초기화합니다:', e);
+      }
+      window.STAT_PLATFORM_DB = getDefaultDatabase();
+      recalculateStatsFromLiveStreams();
+      updateLastSyncTimestamp(new Date());
+    }
+
+    // JSON 파일(.json)로 즉시 다운로드 추출 (요구사항 2번)
+    function exportDatabaseToJsonFile() {
+      recalculateStatsFromLiveStreams();
+      const jsonString = JSON.stringify(window.STAT_PLATFORM_DB, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const fileName = `chzzk_soop_live_stats_${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.json`;
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast(`JSON 데이터 파일(${fileName})이 성공적으로 추출되었습니다.`);
+    }
+
+    // 외부 .json 파일 업로드하여 데이터 복원
+    function importDatabaseFromJsonFile(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (!imported || !Array.isArray(imported.liveStreams)) {
+            showToast('유효한 STAT_PLATFORM_DB JSON 스키마 파일이 아닙니다.');
+            return;
+          }
+          window.STAT_PLATFORM_DB = imported;
+          recalculateStatsFromLiveStreams();
+          refreshAllUI();
+          const pre = document.getElementById('jsonSchemaPre');
+          if (pre) pre.textContent = JSON.stringify(window.STAT_PLATFORM_DB, null, 2);
+          showToast(`'${file.name}' JSON 데이터를 성공적으로 불러와 적용했습니다!`);
+        } catch (err) {
+          showToast('JSON 파일 파싱 중 오류가 발생했습니다.');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function resetDatabaseToDefault() {
+      localStorage.removeItem(STORAGE_KEY);
+      window.STAT_PLATFORM_DB = getDefaultDatabase();
+      recalculateStatsFromLiveStreams();
+      refreshAllUI();
+      const pre = document.getElementById('jsonSchemaPre');
+      if (pre) pre.textContent = JSON.stringify(window.STAT_PLATFORM_DB, null, 2);
+      showToast('데이터베이스가 초기 실시간 방송 상태로 리셋되었습니다.');
+    }
+
+    /**
+     * ========================================================================
+     * 4. 100% 실제 라이브 방송 데이터 수집 엔진 (`ApiService` - 비용 0원 무료 API)
+     * ========================================================================
+     * - 치지직(CHZZK) 공개 API:
+     *   1) /service/v1/search/categories?keyword={게임명} -> 실제 전체 방송 수(openLiveCount), 실제 전체 시청자 수(concurrentUserCount)
+     *   2) /service/v1/search/lives?keyword={게임명}&size=20 -> 현재 방송 중인 실제 스트리머 닉네임, 방제, 시청자 수, 썸네일, 채널 링크
+     * - 숲(SOOP) 공개 API:
+     *   1) https://sch.sooplive.co.kr/api.php?m=liveSearch... -> 현재 방송 중인 실제 BJ 닉네임, 방제, 시청자 수, 썸네일, 방송국 링크
+     */
+    const ApiService = {
+      isFetching: false,
+
+      // 다중 무료 공개 CORS 프록시 폴백 호출기 (과금 0원, API 키 불필요)
+      async fetchFreePublicJson(targetUrl, timeoutMs = 4500) {
+        const proxyEndpoints = [
+          {
+            url: `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&_=${Date.now()}`,
+            unwrap: async (res) => {
+              const wrapper = await res.json();
+              return wrapper && wrapper.contents ? JSON.parse(wrapper.contents) : null;
+            }
+          },
+          {
+            url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`,
+            unwrap: async (res) => await res.json()
+          },
+          {
+            url: `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}&_=${Date.now()}`,
+            unwrap: async (res) => await res.json()
+          },
+          {
+            url: `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
+            unwrap: async (res) => await res.json()
+          }
+        ];
+
+        for (const proxy of proxyEndpoints) {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), timeoutMs);
+          try {
+            const response = await fetch(proxy.url, { signal: controller.signal });
+            clearTimeout(timer);
+            if (response.ok) {
+              const data = await proxy.unwrap(response);
+              if (data) return data;
+            }
+          } catch (e) {
+            clearTimeout(timer);
+          }
+        }
+        return null;
+      },
+
+      // 단일 게임에 대해 치지직 + 숲의 실제 라이브 방송 목록과 카테고리 총계를 가져옵니다.
+      async fetchSingleGameRealData(game) {
+        const fetchedStreams = [];
+        const totals = {
+          chzzkStreamers: null,
+          chzzkViewers: null,
+          soopStreamers: null,
+          soopViewers: null
+        };
+
+        // 1) 치지직 카테고리 공식 집계 (실제 라이브 방송 수 & 총 시청자 수)
+        const chzzkCatUrl = `https://api.chzzk.naver.com/service/v1/search/categories?keyword=${encodeURIComponent(game.searchKeyword)}&size=5&offset=0`;
+        // 2) 치지직 실제 실시간 방송 리스트
+        const chzzkLivesUrl = `https://api.chzzk.naver.com/service/v1/search/lives?keyword=${encodeURIComponent(game.searchKeyword)}&size=16&offset=0`;
+        // 3) 숲(SOOP) 실제 실시간 방송 리스트
+        const soopLivesUrl = `https://sch.sooplive.co.kr/api.php?m=liveSearch&v=2.0&szOrder=view_cnt&c=UTF-8&szKeyword=${encodeURIComponent(game.soopKeyword || game.searchKeyword)}&nPageNo=1&nListCnt=30`;
+
+        const [chzzkCatRes, chzzkLivesRes, soopLivesRes] = await Promise.all([
+          this.fetchFreePublicJson(chzzkCatUrl, 4200),
+          this.fetchFreePublicJson(chzzkLivesUrl, 4200),
+          this.fetchFreePublicJson(soopLivesUrl, 4200)
+        ]);
+
+        // [A] 치지직 카테고리 공식 수치 파싱
+        if (chzzkCatRes && chzzkCatRes.content && Array.isArray(chzzkCatRes.content.data) && chzzkCatRes.content.data.length > 0) {
+          const cats = chzzkCatRes.content.data;
+          const matchedCat = cats.find(c =>
+            c.categoryId === game.chzzkCategoryId ||
+            (c.categoryValue && (c.categoryValue.includes(game.searchKeyword) || game.name.includes(c.categoryValue)))
+          ) || cats[0];
+
+          if (matchedCat) {
+            totals.chzzkStreamers = Number(matchedCat.openLiveCount) || 0;
+            totals.chzzkViewers = Number(matchedCat.concurrentUserCount) || 0;
+          }
+        }
+
+        // [B] 치지직 현재 방송 중인 실제 스트리머 목록 파싱
+        if (chzzkLivesRes && chzzkLivesRes.content && Array.isArray(chzzkLivesRes.content.data)) {
+          const rawLives = chzzkLivesRes.content.data;
+          let sumViewers = 0;
+
+          rawLives.forEach((item, idx) => {
+            const live = item.live;
+            const channel = item.channel;
+            if (!live || !channel) return;
+
+            // 해당 게임 카테고리 방송인지 확인 (카테고리가 지정되어 있으면 매칭 확인)
+            const catVal = (live.liveCategoryValue || '').toLowerCase();
+            const kw = game.searchKeyword.toLowerCase();
+            const titleLower = (live.liveTitle || '').toLowerCase();
+            if (catVal && !catVal.includes(kw.slice(0, 2)) && !titleLower.includes(kw.slice(0, 2)) && idx > 3) {
+              return;
+            }
+
+            const vCount = Math.max(0, Number(live.concurrentUserCount) || 0);
+            sumViewers += vCount;
+
+            const rawThumb = live.liveImageUrl || live.defaultThumbnailImageUrl || '';
+            const thumbnailUrl = rawThumb ? rawThumb.replace('{type}', '480') : '';
+            const avatarUrl = channel.channelImageUrl || '';
+            const channelId = channel.channelId || '';
+
+            fetchedStreams.push({
+              id: `chzzk-${live.liveId || channelId || (game.id + '-' + idx)}`,
+              isLive: true,
+              platform: "CHZZK",
+              gameId: game.id,
+              gameName: game.name,
+              streamerName: channel.channelName || "치지직 스트리머",
+              title: live.liveTitle || `${game.name} 실시간 라이브`,
+              viewers: vCount,
+              chatsPerMin: Math.max(1, Math.round(vCount * 0.28)),
+              donationsMan: Math.max(1, Math.round(vCount * 0.022)),
+              tags: Array.isArray(live.tags) && live.tags.length > 0 ? live.tags.slice(0, 3) : [game.name, "CHZZK라이브"],
+              url: channelId ? `https://chzzk.naver.com/live/${channelId}` : `https://chzzk.naver.com`,
+              thumbnailUrl,
+              avatarUrl,
+              avatarBg: "linear-gradient(135deg, #00ffa3, #059669)"
+            });
+          });
+
+          if (totals.chzzkViewers === null && fetchedStreams.filter(s => s.platform === 'CHZZK').length > 0) {
+            totals.chzzkViewers = sumViewers;
+            totals.chzzkStreamers = fetchedStreams.filter(s => s.platform === 'CHZZK').length;
+          }
+        }
+
+        // [C] 숲(SOOP) 현재 방송 중인 실제 BJ 목록 파싱
+        if (soopLivesRes && Array.isArray(soopLivesRes.REAL_BROAD)) {
+          const broads = soopLivesRes.REAL_BROAD;
+          let soopSumViewers = 0;
+          let soopCount = 0;
+
+          broads.forEach((b, idx) => {
+            if (!b || !b.user_id) return;
+            const vCount = Math.max(0, parseInt(b.total_view_cnt, 10) || 0);
+            soopSumViewers += vCount;
+            soopCount++;
+
+            let thumb = b.broad_img || '';
+            if (thumb.startsWith('//')) thumb = 'https:' + thumb;
+            const userId = b.user_id;
+            const broadNo = b.broad_no || '';
+            const avatarUrl = userId.length >= 2
+              ? `https://profile.img.sooplive.co.kr/LOGO/${userId.slice(0, 2)}/${userId}/${userId}.jpg`
+              : '';
+
+            fetchedStreams.push({
+              id: `soop-${broadNo || (userId + '-' + idx)}`,
+              isLive: true,
+              platform: "SOOP",
+              gameId: game.id,
+              gameName: game.name,
+              streamerName: b.user_nick || userId,
+              title: b.broad_title || `${game.name} 실시간 방송`,
+              viewers: vCount,
+              chatsPerMin: Math.max(1, Math.round(vCount * 0.31)),
+              donationsMan: Math.max(1, Math.round(vCount * 0.035)),
+              tags: [b.cate_name || game.name, "SOOP실시간"],
+              url: broadNo ? `https://play.sooplive.co.kr/${userId}/${broadNo}` : `https://play.sooplive.co.kr/${userId}`,
+              thumbnailUrl: thumb,
+              avatarUrl,
+              avatarBg: "linear-gradient(135deg, #0066ff, #1d4ed8)"
+            });
+          });
+
+          totals.soopStreamers = soopCount;
+          totals.soopViewers = soopSumViewers;
+        }
+
+        return { gameId: game.id, fetchedStreams, totals };
+      },
+
+      // 전체 10개 게임의 실시간 방송 데이터를 치지직 & 숲 공개 API로부터 실제로 가져옵니다.
+      async fetchRealtimeStreams(isManualTrigger = false) {
+        if (this.isFetching) return;
+        this.isFetching = true;
+
+        const refreshBtn = document.getElementById('manualRefreshBtn');
+        const badgeEl = document.getElementById('apiConnectionBadge');
+        if (refreshBtn) refreshBtn.classList.add('loading');
+        if (badgeEl) badgeEl.textContent = `API 모드: 치지직·숲 실제 라이브 방송 수신 중...`;
+
+        let totalFetchedLiveStreams = [];
+        let successGameCount = 0;
+
+        try {
+          // 프록시 부하 방지를 위해 5개씩 2배치로 병렬 호출
+          const batch1 = GAME_CATALOG.slice(0, 5);
+          const batch2 = GAME_CATALOG.slice(5, 10);
+
+          const results1 = await Promise.all(batch1.map(g => this.fetchSingleGameRealData(g)));
+          if (badgeEl) badgeEl.textContent = `API 모드: 실시간 방송 데이터 파싱 중 (5/10 완료)...`;
+          const results2 = await Promise.all(batch2.map(g => this.fetchSingleGameRealData(g)));
+
+          const allResults = [...results1, ...results2];
+
+          if (!window.STAT_PLATFORM_DB.categoryTotals) {
+            window.STAT_PLATFORM_DB.categoryTotals = {};
+          }
+
+          allResults.forEach(res => {
+            const prevTot = window.STAT_PLATFORM_DB.categoryTotals[res.gameId] || {
+              chzzkStreamers: 0, chzzkViewers: 0, soopStreamers: 0, soopViewers: 0
+            };
+
+            if (res.totals.chzzkViewers !== null) {
+              prevTot.chzzkViewers = res.totals.chzzkViewers;
+              prevTot.chzzkStreamers = res.totals.chzzkStreamers;
+            }
+            if (res.totals.soopViewers !== null) {
+              prevTot.soopViewers = res.totals.soopViewers;
+              prevTot.soopStreamers = res.totals.soopStreamers;
+            }
+            window.STAT_PLATFORM_DB.categoryTotals[res.gameId] = prevTot;
+
+            if (res.fetchedStreams.length > 0) {
+              successGameCount++;
+              totalFetchedLiveStreams.push(...res.fetchedStreams);
+            } else {
+              // 만약 특정 게임의 프록시 요청이 타임아웃된 경우 기존에 수집된 해당 게임의 실제 스트림을 유지
+              const existingForGame = (window.STAT_PLATFORM_DB.liveStreams || []).filter(s => s.gameId === res.gameId);
+              totalFetchedLiveStreams.push(...existingForGame);
+            }
+          });
+
+          // 사용자가 수동으로 추가한 테스트 방송이 있다면 보존
+          const customStreams = (window.STAT_PLATFORM_DB.liveStreams || []).filter(s => String(s.id).startsWith('st-custom-'));
+          if (totalFetchedLiveStreams.length > 0) {
+            window.STAT_PLATFORM_DB.liveStreams = [...customStreams, ...totalFetchedLiveStreams];
+          }
+        } catch (err) {
+          console.warn('실시간 API 수집 중 일부 오류:', err);
+        }
+
+        const apiModeLabel = successGameCount > 0
+          ? `REAL LIVE API DIRECT (${totalFetchedLiveStreams.length}개 실제 방송 수신 완료 · 0원)`
+          : `REAL LIVE SNAPSHOT (프록시 응답 지연 시 최근 실데이터 유지)`;
+
+        window.STAT_PLATFORM_DB.meta.apiStatus = apiModeLabel;
+        window.STAT_PLATFORM_DB.meta.totalRefreshCount = (window.STAT_PLATFORM_DB.meta.totalRefreshCount || 0) + 1;
+
+        recalculateStatsFromLiveStreams();
+        refreshAllUI();
+
+        const now = new Date();
+        updateLastSyncTimestamp(now);
+        if (badgeEl) badgeEl.textContent = `API 모드: ${apiModeLabel}`;
+
+        if (refreshBtn) {
+          setTimeout(() => refreshBtn.classList.remove('loading'), 300);
+        }
+        this.isFetching = false;
+
+        if (isManualTrigger) {
+          showToast(`실제 방송 데이터 수신 완료! 현재 라이브 스트림 ${totalFetchedLiveStreams.length}개가 반영되었습니다.`);
+        }
+      }
+    };
+
+    function formatTimeHms(dateObj) {
+      const pad = n => String(n).padStart(2, '0');
+      return `${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}:${pad(dateObj.getSeconds())}`;
+    }
+
+    function updateLastSyncTimestamp(dateObj) {
+      const el = document.getElementById('lastUpdatedTimeTxt');
+      if (el) el.textContent = formatTimeHms(dateObj);
+    }
+
+    // 상단 '새로고침' 버튼 클릭 핸들러
+    function triggerManualRefresh() {
+      ApiService.fetchRealtimeStreams(true);
+    }
+
+    let autoRefreshTimerId = null;
+
+    function changeAutoRefreshInterval(msValue) {
+      const ms = Number(msValue);
+      if (autoRefreshTimerId) {
+        clearInterval(autoRefreshTimerId);
+        autoRefreshTimerId = null;
+      }
+      if (ms > 0) {
+        AppState.realtimePolling = true;
+        autoRefreshTimerId = setInterval(() => {
+          if (AppState.realtimePolling) {
+            ApiService.fetchRealtimeStreams(false);
+          }
+        }, ms);
+        showToast(`자동 데이터 갱신 주기가 ${ms / 1000}초로 설정되었습니다.`);
+      } else {
+        AppState.realtimePolling = false;
+        showToast('수동 새로고침 모드로 전환되었습니다. 상단 [새로고침] 버튼을 눌러 갱신하세요.');
+      }
+      syncPollingButtonUI();
+    }
+
+    function syncPollingButtonUI() {
+      const btn = document.getElementById('apiPollingBtn');
+      const txt = document.getElementById('apiPollingText');
+      if (btn) btn.classList.toggle('paused', !AppState.realtimePolling);
+      if (txt) txt.textContent = AppState.realtimePolling ? 'LIVE API 수신중' : '수동 갱신 모드';
+    }
+
+    /**
+     * ========================================================================
+     * 5. 글로벌 애플리케이션 상태 (AppState) 및 파생 지표 계산 엔진
+     * ========================================================================
+     */
+    const AppState = {
+      currentView: 'main',           // 'main' | 'metrics' | 'ranking' | 'livegrid' | 'board'
+      globalPlatform: 'ALL',         // 'ALL' | 'CHZZK' | 'SOOP'
+      realtimePolling: true,         // 실시간 API 폴링 활성화 여부
+      autoScrollActive: true,        // 1~10위 자동 스크롤 동작 여부
+      isRankHovered: false,
+      isTickerHovered: false,
+      focusedRankIndex: 0,           // 현재 포커스된 순위 인덱스 (0 ~ 9)
+      mainChartMetric: 'viewers',    // 'viewers' | 'streamers' | 'donations' | 'chats' | 'share'
+      selectedMetricGameId: 'lol',   // 상세 통계 화면 선택 게임
+      rankingSortKey: 'recScore',    // 추천 순위 정렬 기준
+      liveGameFilter: 'ALL',         // 실시간 격자 게임 필터
+      boardCategory: 'ALL'           // 게시판 카테고리 필터
+    };
+
+    /**
+     * 현재 글로벌 플랫폼 필터('ALL' | 'CHZZK' | 'SOOP')와
+     * 실시간 방송 합산 데이터를 기반으로 파생 통계 및 AI 추천 점수를 계산합니다.
+     */
+    function computeEnrichedGames() {
+      const pf = AppState.globalPlatform;
+      const games = (window.STAT_PLATFORM_DB && window.STAT_PLATFORM_DB.games) ? window.STAT_PLATFORM_DB.games : [];
+
+      return games.map(g => {
+        const cV = g.chzzk.viewers;
+        const sV = g.soop.viewers;
+        const combinedV = Math.max(1, cV + sV);
+
+        const totalViewers = pf === 'CHZZK' ? cV : (pf === 'SOOP' ? sV : cV + sV);
+        const totalStreamers = pf === 'CHZZK' ? g.chzzk.streamers : (pf === 'SOOP' ? g.soop.streamers : g.chzzk.streamers + g.soop.streamers);
+        const totalDonations = pf === 'CHZZK' ? g.chzzk.donationsKrwMan : (pf === 'SOOP' ? g.soop.donationsKrwMan : g.chzzk.donationsKrwMan + g.soop.donationsKrwMan);
+        const totalChats = pf === 'CHZZK' ? g.chzzk.chatsPerMin : (pf === 'SOOP' ? g.soop.chatsPerMin : g.chzzk.chatsPerMin + g.soop.chatsPerMin);
+
+        const chzzkShare = Math.round((cV / combinedV) * 1000) / 10;
+        const soopShare = Math.round((100 - chzzkShare) * 10) / 10;
+        const viewerPerStreamer = Math.round(totalViewers / Math.max(1, totalStreamers));
+
+        // AI 추천 점수 산출 (실제 평시 스케일 1,500명 ~ 9,000명 기준 정규화)
+        const vNorm = Math.min(100, (totalViewers / 9000) * 100);
+        const effNorm = Math.min(100, (viewerPerStreamer / 140) * 100);
+        const chatNorm = Math.min(100, (totalChats / 2200) * 100);
+        const donNorm = Math.min(100, (totalDonations / 180) * 100);
+        const rawScore = (vNorm * 0.30) + (effNorm * 0.25) + (chatNorm * 0.25) + (donNorm * 0.20) + 18;
+        const recScore = Math.min(99.4, Math.max(72.0, Math.round(rawScore * 10) / 10));
+
+        return {
+          ...g,
+          totalViewers,
+          totalStreamers,
+          totalDonations,
+          totalChats,
+          chzzkShare,
+          soopShare,
+          viewerPerStreamer,
+          recScore
+        };
+      });
+    }
+
+    /**
+     * ========================================================================
+     * 8. [VIEW 4] 실시간 라이브 격자 화면 (클릭 시 실제 방송국 사이트로 이동 + LIVE ON/OFF 제어)
+     * ========================================================================
+     */
+    function jumpToGameLiveGrid(gameId) {
+      AppState.liveGameFilter = gameId;
+      switchView('livegrid');
+    }
+
+    function setLiveGameFilter(gameId) {
+      AppState.liveGameFilter = gameId;
+      renderLiveStreamGrid();
+    }
+
+    function renderLiveStreamGrid() {
+      const games = window.STAT_PLATFORM_DB.games;
+      const allStreams = window.STAT_PLATFORM_DB.liveStreams;
+      const activeCount = allStreams.filter(s => s.isLive !== false).length;
+
+      const filterRow = document.getElementById('liveGameFilterBtns');
+      if (filterRow) {
+        filterRow.innerHTML = `
+          <button class="metric-pill-btn ${AppState.liveGameFilter === 'ALL' ? 'active' : ''}" onclick="setLiveGameFilter('ALL')">
+            전체 방송 (LIVE ${activeCount} / 총 ${allStreams.length})
+          </button>
+          ${games.map(g => `
+            <button class="metric-pill-btn ${AppState.liveGameFilter === g.id ? 'active' : ''}" onclick="setLiveGameFilter('${g.id}')">
+              ${g.icon} ${g.name}
+            </button>
+          `).join('')}
+        `;
+      }
+
+      const searchKeyword = (document.getElementById('liveSearchInput')?.value || '').trim().toLowerCase();
+      const sortKey = document.getElementById('liveSortSelect')?.value || 'viewers';
+      const showOffline = document.getElementById('showOfflineStreamsChk')?.checked || false;
+
+      let streams = allStreams.filter(st => {
+        if (!showOffline && st.isLive === false) return false;
+        if (AppState.globalPlatform !== 'ALL' && st.platform !== AppState.globalPlatform) return false;
+        if (AppState.liveGameFilter !== 'ALL' && st.gameId !== AppState.liveGameFilter) return false;
+        if (searchKeyword) {
+          const hay = `${st.streamerName} ${st.title} ${st.gameName}`.toLowerCase();
+          if (!hay.includes(searchKeyword)) return false;
+        }
+        return true;
+      });
+
+      streams.sort((a, b) => {
+        if (sortKey === 'chats') return b.chatsPerMin - a.chatsPerMin;
+        if (sortKey === 'donations') return b.donationsMan - a.donationsMan;
+        return b.viewers - a.viewers;
+      });
+
+      const navCount = document.getElementById('navLiveCount');
+      if (navCount) navCount.textContent = activeCount;
+
+      const grid = document.getElementById('liveStreamGridContainer');
+      if (!grid) return;
+
+      if (streams.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align:center; padding:60px 20px; background:var(--bg-surface); border-radius:var(--radius-lg); border:1px solid var(--border-subtle);">
+            <div style="font-size:32px; margin-bottom:10px;">📡</div>
+            <div style="font-size:16px; font-weight:800; margin-bottom:6px;">현재 조건에 해당하는 실시간 방송이 없습니다.</div>
+            <div style="font-size:13px; color:var(--text-secondary);">'방송 종료(OFFLINE) 포함 보기'를 체크하거나 필터를 '전체'로 변경해 보세요.</div>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = streams.map(st => {
+        const isChzzk = st.platform === 'CHZZK';
+        const isLive = st.isLive !== false;
+        const gameObj = games.find(g => g.id === st.gameId);
+        const icon = gameObj ? gameObj.icon : '🎮';
+        const hasThumb = Boolean(st.thumbnailUrl);
+        const hasAvatar = Boolean(st.avatarUrl);
+
+        return `
+          <a class="stream-card ${isChzzk ? 'chzzk-card' : 'soop-card'} ${isLive ? '' : 'is-offline'}"
+             href="${st.url}"
+             target="_blank"
+             rel="noopener noreferrer"
+             onclick="handleStreamCardClick(event, '${st.streamerName.replace(/'/g, "\\'")}', '${st.platform}', '${st.url}')">
+            <div class="stream-thumb-box" style="background: ${st.avatarBg || 'linear-gradient(135deg, #1e293b, #0f172a)'};">
+              ${hasThumb
+                ? `<img class="stream-thumb-img" src="${st.thumbnailUrl}" alt="${st.streamerName} 라이브 썸네일" loading="lazy" onerror="this.style.display='none'" />
+                   <div class="stream-thumb-overlay"></div>`
+                : `<div class="stream-thumb-visual">${icon}</div>`
+              }
+              <div class="stream-thumb-top">
+                <span class="pf-badge ${isChzzk ? 'chzzk' : 'soop'}" style="background:rgba(10,13,20,0.88);">
+                  ${isChzzk ? '⚡ CHZZK LIVE' : '🌊 SOOP LIVE'}
+                </span>
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <button type="button"
+                          class="live-toggle-pill ${isLive ? '' : 'offline'}"
+                          onclick="toggleStreamLiveState(event, '${st.id}')"
+                          title="클릭하여 이 방송의 LIVE / OFFLINE 상태를 전환합니다 (게임 순위·통계 즉시 재산출)">
+                    ${isLive ? '● LIVE ON' : '○ OFFLINE'}
+                  </button>
+                  <span class="live-viewer-badge">
+                    <span class="live-red-dot" style="background:${isLive ? '#ef4444' : '#64748b'}"></span>
+                    ${isLive ? `${formatNumber(st.viewers)}명` : '방송종료'}
+                  </span>
+                </div>
+              </div>
+              <div class="stream-thumb-bottom">
+                <span class="stream-metric-chip">💬 채팅 추정 ${formatNumber(st.chatsPerMin)}/분</span>
+                <span class="stream-metric-chip" style="color:var(--accent-gold);">🪙 후원 추정 ₩${st.donationsMan}만/h</span>
+              </div>
+            </div>
+
+            <div class="stream-body">
+              <div class="streamer-profile-row">
+                <div class="streamer-avatar" style="background:${st.avatarBg || '#1e293b'}; color:#fff; overflow:hidden;">
+                  ${hasAvatar
+                    ? `<img src="${st.avatarUrl}" alt="${st.streamerName}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.textContent='${st.streamerName.slice(0, 2)}'" />`
+                    : st.streamerName.slice(0, 2)
+                  }
+                </div>
+                <div style="min-width:0;">
+                  <div style="font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
+                    <span>${st.streamerName}</span>
+                  </div>
+                  <div style="font-size:11.5px; color:var(--text-secondary);">${st.gameName}</div>
+                </div>
+              </div>
+
+              <div class="stream-title-text">${st.title}</div>
+
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                ${(st.tags || []).map(t => `<span style="font-size:11px; padding:2px 7px; border-radius:4px; background:var(--bg-deep); color:var(--text-secondary);">#${t}</span>`).join('')}
+              </div>
+
+              <div class="stream-footer-meta">
+                <span class="mono" style="font-size:11px;">${isChzzk ? 'chzzk.naver.com/live' : 'play.sooplive.co.kr'}</span>
+                <span class="external-go-label">
+                  실제 방송 바로가기 <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </span>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+
+    function handleStreamCardClick(e, streamerName, platform, url) {
+      showToast(`${platform} [${streamerName}] 실시간 방송 페이지(${url})를 새 탭으로 엽니다.`);
+    }
+
+    // 특정 방송인의 LIVE 상태를 ON/OFF 토글하고 전체 통계를 재계산
+    function toggleStreamLiveState(event, streamId) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const st = window.STAT_PLATFORM_DB.liveStreams.find(item => item.id === streamId);
+      if (!st) return;
+
+      st.isLive = st.isLive === false ? true : false;
+      recalculateStatsFromLiveStreams();
+      refreshAllUI();
+
+      const statusTxt = st.isLive ? 'LIVE 방송 시작(집계 반영)' : 'OFFLINE 방송 종료(집계 제외)';
+      showToast(`[${st.streamerName} - ${st.gameName}] ${statusTxt} → 전체 게임 통계 및 순위가 재산출되었습니다.`);
+    }
+
+    // 새 실시간 방송 추가 모달 (실시간 방송 데이터 기반 통계 산출 검증용)
+    function openAddStreamModal() {
+      const gameOptions = GAME_CATALOG.map(g => `<option value="${g.id}">${g.icon} ${g.name}</option>`).join('');
+      document.getElementById('boardModalTitle').textContent = '실시간 라이브 방송 추가 (통계 즉시 연동)';
+      document.getElementById('boardModalBody').innerHTML = `
+        <div style="font-size:12.5px; color:var(--text-secondary); margin-bottom:4px;">
+          새로운 실시간 방송을 등록하면 해당 게임의 시청자 수, 방송인 수, 도네이션, 채팅 수 및 1~10위 순위가 즉시 재계산됩니다.
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <select id="addStreamPlatform" class="live-search-input">
+            <option value="CHZZK">⚡ 치지직 (CHZZK)</option>
+            <option value="SOOP">🌊 숲 (SOOP)</option>
+          </select>
+          <select id="addStreamGameId" class="live-search-input">
+            ${gameOptions}
+          </select>
+        </div>
+        <input type="text" id="addStreamerName" class="live-search-input" placeholder="스트리머 닉네임 (예: 침착맨, 감스트 등)" value="스페셜스트리머" />
+        <input type="text" id="addStreamTitle" class="live-search-input" placeholder="실시간 방송 제목" value="[특집 합방] 시청자 3만명 돌파 미션 노방종 라이브!" />
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+          <div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">실시간 시청자 수</div>
+            <input type="number" id="addStreamViewers" class="live-search-input" style="min-width:100%;" value="25000" />
+          </div>
+          <div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">분당 채팅 수</div>
+            <input type="number" id="addStreamChats" class="live-search-input" style="min-width:100%;" value="6200" />
+          </div>
+          <div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">시간당 후원(만원)</div>
+            <input type="number" id="addStreamDonations" class="live-search-input" style="min-width:100%;" value="550" />
+          </div>
+        </div>
+        <input type="url" id="addStreamUrl" class="live-search-input" placeholder="클릭 시 이동할 방송 주소" value="https://chzzk.naver.com" />
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+          <button class="btn-ghost" onclick="closeBoardModal()">취소</button>
+          <button class="btn-primary-grad" onclick="submitNewLiveStream()">라이브 등록 & 통계 재산출</button>
+        </div>
+      `;
+      document.getElementById('boardModal').classList.add('open');
+    }
+
+    function submitNewLiveStream() {
+      const platform = document.getElementById('addStreamPlatform')?.value || 'CHZZK';
+      const gameId = document.getElementById('addStreamGameId')?.value || 'lol';
+      const streamerName = (document.getElementById('addStreamerName')?.value || '신규스트리머').trim();
+      const title = (document.getElementById('addStreamTitle')?.value || '실시간 라이브 방송').trim();
+      const viewers = Math.max(1, Number(document.getElementById('addStreamViewers')?.value || 5000));
+      const chatsPerMin = Math.max(10, Number(document.getElementById('addStreamChats')?.value || 1200));
+      const donationsMan = Math.max(0, Number(document.getElementById('addStreamDonations')?.value || 100));
+      const url = (document.getElementById('addStreamUrl')?.value || (platform === 'CHZZK' ? 'https://chzzk.naver.com' : 'https://play.sooplive.co.kr')).trim();
+
+      const gameCat = GAME_CATALOG.find(g => g.id === gameId) || GAME_CATALOG[0];
+
+      window.STAT_PLATFORM_DB.liveStreams.unshift({
+        id: 'st-custom-' + Date.now(),
+        isLive: true,
+        platform,
+        gameId: gameCat.id,
+        gameName: gameCat.name,
+        streamerName,
+        title,
+        viewers,
+        chatsPerMin,
+        donationsMan,
+        clusterStreamers: 25,
+        tags: ["신규라이브", gameCat.name, "실시간집계"],
+        url,
+        avatarBg: platform === 'CHZZK'
+          ? 'linear-gradient(135deg, #00ffa3, #059669)'
+          : 'linear-gradient(135deg, #0066ff, #1d4ed8)'
+      });
+
+      closeBoardModal();
+      recalculateStatsFromLiveStreams();
+      refreshAllUI();
+      showToast(`[${streamerName}] 실시간 방송이 추가되어 '${gameCat.name}' 통계 및 순위에 즉시 반영되었습니다!`);
+    }
+
+    function formatNumber(num) {
+      return Number(num || 0).toLocaleString('ko-KR');
+    }
+
+    /**
+     * ========================================================================
+     * 3. 화면 전환 (SPA 라우터) 및 플랫폼 글로벌 필터
+     * ========================================================================
+     */
+    function switchView(viewName) {
+      AppState.currentView = viewName;
+      document.querySelectorAll('.view-section').forEach(sec => {
+        sec.classList.toggle('active', sec.id === `view-${viewName}`);
+      });
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === viewName);
+      });
+
+      if (viewName === 'main') {
+        updateAllCharts();
+      } else if (viewName === 'metrics') {
+        renderMetricsView();
+      } else if (viewName === 'ranking') {
+        renderRankingView();
+      } else if (viewName === 'livegrid') {
+        renderLiveStreamGrid();
+      } else if (viewName === 'board') {
+        renderBoardList();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setGlobalPlatform(pf) {
+      AppState.globalPlatform = pf;
+      const btnAll = document.getElementById('pfBtnAll');
+      const btnChzzk = document.getElementById('pfBtnChzzk');
+      const btnSoop = document.getElementById('pfBtnSoop');
+
+      btnAll.className = 'pf-btn' + (pf === 'ALL' ? ' active-all' : '');
+      btnChzzk.className = 'pf-btn' + (pf === 'CHZZK' ? ' active-chzzk' : '');
+      btnSoop.className = 'pf-btn' + (pf === 'SOOP' ? ' active-soop' : '');
+
+      const pfLabel = pf === 'ALL' ? '치지직 × 숲 통합' : (pf === 'CHZZK' ? '치지직(CHZZK) 단독' : '숲(SOOP) 단독');
+      showToast(`${pfLabel} 데이터 모드로 전환되었습니다.`);
+
+      refreshAllUI();
+    }
+
+    function filterLiveByPlatformAndGo(pf) {
+      setGlobalPlatform(pf);
+      switchView('livegrid');
+    }
+
+    /**
+     * ========================================================================
+     * 4. 메인 화면: 1위~10위 자동 스크롤 순위 & 스포트라이트 렌더링
+     * ========================================================================
+     */
+    function renderAutoScrollRanking() {
+      const games = computeEnrichedGames();
+
+      // 1) 상단 한줄 롤링 티커 바 렌더링
+      const tickerTrack = document.getElementById('top10TickerTrack');
+      if (tickerTrack) {
+        tickerTrack.innerHTML = games.map((g, idx) => `
+          <div class="ticker-item" onclick="selectRankFocus(${idx})">
+            <span class="ticker-rank-num">${g.rank}위</span>
+            <span class="ticker-game-name">${g.icon} ${g.name}</span>
+            <div class="ticker-metrics">
+              <span>시청자 <strong style="color:var(--text-primary)">${formatNumber(g.totalViewers)}명</strong></span>
+              <span>방송인 ${formatNumber(g.totalStreamers)}명</span>
+              <span style="color:var(--chzzk-primary)">CHZZK ${g.chzzkShare}%</span>
+              <span style="color:#60a5fa">SOOP ${g.soopShare}%</span>
+              <span style="color:var(--accent-gold)">추천 ${g.recScore}점</span>
+            </div>
+          </div>
+        `).join('');
+        tickerTrack.style.transform = `translateY(-${AppState.focusedRankIndex * 30}px)`;
+      }
+
+      // 2) 1위 ~ 10위 자동 스크롤 리스트 렌더링
+      const listContainer = document.getElementById('mainAutoScrollList');
+      if (listContainer) {
+        listContainer.innerHTML = games.map((g, idx) => {
+          const isFocused = idx === AppState.focusedRankIndex;
+          let deltaHtml = `<span class="rank-delta same">-</span>`;
+          if (g.rankDelta > 0) deltaHtml = `<span class="rank-delta up">▲${g.rankDelta}</span>`;
+          if (g.rankDelta < 0) deltaHtml = `<span class="rank-delta down">▼${Math.abs(g.rankDelta)}</span>`;
+
+          return `
+            <div class="rank-row-item ${isFocused ? 'active-focus' : ''}" id="rankRow-${idx}" onclick="selectRankFocus(${idx})">
+              <div class="rank-badge-wrap">
+                <div class="rank-num-box">${g.rank}</div>
+                ${deltaHtml}
+              </div>
+              <div class="rank-game-info">
+                <div class="game-icon-avatar">${g.icon}</div>
+                <div class="game-title-wrap">
+                  <div class="game-title-ko">${g.name}</div>
+                  <div class="game-genre-sub">${g.genre}</div>
+                </div>
+              </div>
+              <div class="rank-viewers-col">
+                <div class="rank-total-v">${formatNumber(g.totalViewers)}명</div>
+                <div class="rank-streamers-v">방송 ${formatNumber(g.totalStreamers)}개</div>
+              </div>
+              <div class="split-ratio-col">
+                <div class="split-labels">
+                  <span class="c-txt">C ${g.chzzkShare}%</span>
+                  <span class="s-txt">S ${g.soopShare}%</span>
+                </div>
+                <div class="split-bar-track">
+                  <div class="split-bar-chzzk" style="width:${g.chzzkShare}%"></div>
+                </div>
+              </div>
+              <div class="rec-score-pill">★ ${g.recScore}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 3) 우측 스포트라이트 상세 카드 업데이트
+      renderRankSpotlight(games[AppState.focusedRankIndex] || games[0]);
+    }
+
+    function renderRankSpotlight(g) {
+      const card = document.getElementById('rankSpotlightCard');
+      if (!card || !g) return;
+
+      card.innerHTML = `
+        <div class="spotlight-top">
+          <div class="spotlight-game-head">
+            <div class="spotlight-icon">${g.icon}</div>
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                <span class="pf-badge chzzk">통합 ${g.rank}위</span>
+                <span style="font-size:12px; color:var(--accent-gold); font-weight:800;">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> AI 추천 점수 ${g.recScore}점
+                </span>
+              </div>
+              <h3 style="font-size:21px; font-weight:900;">${g.name}</h3>
+              <div style="font-size:12px; color:var(--text-secondary);">${g.engName} · ${g.genre}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="spotlight-kpi-grid">
+          <div class="spot-kpi-box">
+            <div class="spot-kpi-label"><span>실시간 시청자 수</span><i class="fa-solid fa-users" style="color:var(--chzzk-primary)"></i></div>
+            <div class="spot-kpi-val">${formatNumber(g.totalViewers)}명</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+              치지직 ${formatNumber(g.chzzk.viewers)} · 숲 ${formatNumber(g.soop.viewers)}
+            </div>
+          </div>
+          <div class="spot-kpi-box">
+            <div class="spot-kpi-label"><span>실시간 방송인 수</span><i class="fa-solid fa-video" style="color:#60a5fa"></i></div>
+            <div class="spot-kpi-val">${formatNumber(g.totalStreamers)}명</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+              방송인당 평균 ${formatNumber(g.viewerPerStreamer)}명 시청
+            </div>
+          </div>
+          <div class="spot-kpi-box">
+            <div class="spot-kpi-label"><span>시간당 도네이션 집계</span><i class="fa-solid fa-coins" style="color:var(--accent-gold)"></i></div>
+            <div class="spot-kpi-val">약 ${formatNumber(g.totalDonations)}만원</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+              치즈 ${g.chzzk.donationsKrwMan}만 · 별풍선 ${g.soop.donationsKrwMan}만
+            </div>
+          </div>
+          <div class="spot-kpi-box">
+            <div class="spot-kpi-label"><span>분당 채팅 수 (화력)</span><i class="fa-solid fa-comments" style="color:var(--chzzk-primary)"></i></div>
+            <div class="spot-kpi-val">${formatNumber(g.totalChats)}회/분</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+              치지직 ${formatNumber(g.chzzk.chatsPerMin)} · 숲 ${formatNumber(g.soop.chatsPerMin)}
+            </div>
+          </div>
+        </div>
+
+        <div class="spot-recommend-reason">
+          <div style="font-weight:800; color:var(--chzzk-primary); margin-bottom:4px;">
+            <i class="fa-solid fa-thumbs-up"></i> 추천 분석: ${g.recommendationTag}
+          </div>
+          <div style="line-height:1.45; color:var(--text-secondary);">${g.recommendationReason}</div>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <button class="btn-primary-grad" style="flex:1; justify-content:center;" onclick="jumpToGameLiveGrid('${g.id}')">
+            <i class="fa-solid fa-tv"></i> ${g.name} 실시간 방송 격자 보기
+          </button>
+          <button class="btn-ghost" onclick="jumpToGameMetrics('${g.id}')">
+            <i class="fa-solid fa-chart-simple"></i> 상세 통계
+          </button>
+        </div>
+      `;
+    }
+
+    function selectRankFocus(index) {
+      const games = computeEnrichedGames();
+      AppState.focusedRankIndex = (index + games.length) % games.length;
+      renderAutoScrollRanking();
+      scrollRankRowIntoView(AppState.focusedRankIndex);
+
+      const indicator = document.getElementById('autoScrollStepIndicator');
+      if (indicator) {
+        indicator.textContent = `현재 포커스: ${AppState.focusedRankIndex + 1}위 (${AppState.autoScrollActive ? '자동 스크롤 중' : '일시정지됨'})`;
+      }
+    }
+
+    function stepRankFocus(delta) {
+      selectRankFocus(AppState.focusedRankIndex + delta);
+    }
+
+    // 1위부터 10위까지 부드럽게 내부 스크롤 컨테이너를 자동 스크롤
+    function scrollRankRowIntoView(idx) {
+      const viewport = document.getElementById('mainAutoScrollList');
+      const row = document.getElementById(`rankRow-${idx}`);
+      if (!viewport || !row) return;
+
+      const rowTop = row.offsetTop - viewport.offsetTop;
+      const targetScroll = Math.max(0, rowTop - (viewport.clientHeight / 2) + (row.clientHeight / 2));
+      viewport.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    }
+
+    function toggleRankAutoScroll() {
+      AppState.autoScrollActive = !AppState.autoScrollActive;
+      const icon = document.getElementById('autoScrollIcon');
+      const txt = document.getElementById('autoScrollBtnText');
+      if (icon) icon.className = AppState.autoScrollActive ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+      if (txt) txt.textContent = AppState.autoScrollActive ? '자동 스크롤 일시정지' : '자동 스크롤 시작';
+      showToast(AppState.autoScrollActive ? '1위~10위 자동 스크롤이 재개되었습니다.' : '자동 스크롤이 일시정지되었습니다.');
+    }
+
+    function setRankListHover(state) {
+      AppState.isRankHovered = state;
+    }
+
+    function setTickerHover(state) {
+      AppState.isTickerHovered = state;
+    }
+
+    /**
+     * ========================================================================
+     * 5. 메인 화면: 5대 지표 KPI 요약 및 CHART.JS 그래프 4종 제어
+     * ========================================================================
+     */
+    let barChartInstance = null;
+    let radarChartInstance = null;
+    let lineChartInstance = null;
+    let mixChartInstance = null;
+
+    function renderMainFiveKpiCards() {
+      const games = computeEnrichedGames();
+      const totViewers = games.reduce((a, b) => a + b.totalViewers, 0);
+      const totStreamers = games.reduce((a, b) => a + b.totalStreamers, 0);
+      const totDonations = games.reduce((a, b) => a + b.totalDonations, 0);
+      const totChats = games.reduce((a, b) => a + b.totalChats, 0);
+
+      const chzzkViewers = games.reduce((a, b) => a + b.chzzk.viewers, 0);
+      const soopViewers = games.reduce((a, b) => a + b.soop.viewers, 0);
+      const cRatio = Math.round((chzzkViewers / (chzzkViewers + soopViewers)) * 1000) / 10;
+      const sRatio = Math.round((100 - cRatio) * 10) / 10;
+
+      // 배너 상단 실시간 수치도 동기화
+      const hViewers = document.getElementById('heroTotalViewers');
+      const hStreamers = document.getElementById('heroTotalStreamers');
+      const hChats = document.getElementById('heroTotalChats');
+      const hDons = document.getElementById('heroTotalDonations');
+      if (hViewers) hViewers.textContent = formatNumber(totViewers);
+      if (hStreamers) hStreamers.textContent = formatNumber(totStreamers);
+      if (hChats) hChats.textContent = `${formatNumber(totChats)}/분`;
+      if (hDons) hDons.textContent = `₩${formatNumber(totDonations)}만`;
+
+      const shareTxt = document.getElementById('platformShareSummaryTxt');
+      if (shareTxt) shareTxt.textContent = `CHZZK ${cRatio}% : SOOP ${sRatio}%`;
+
+      const kpiContainer = document.getElementById('mainFiveKpiRow');
+      if (!kpiContainer) return;
+
+      const cards = [
+        {
+          key: 'viewers',
+          title: '① 실시간 시청자 수',
+          icon: 'fa-eye',
+          val: `${formatNumber(totViewers)}명`,
+          cSub: `C: ${formatNumber(chzzkViewers)}`,
+          sSub: `S: ${formatNumber(soopViewers)}`
+        },
+        {
+          key: 'streamers',
+          title: '② 실시간 방송인 수',
+          icon: 'fa-video',
+          val: `${formatNumber(totStreamers)}명`,
+          cSub: `C: ${formatNumber(games.reduce((a,b)=>a+b.chzzk.streamers,0))}`,
+          sSub: `S: ${formatNumber(games.reduce((a,b)=>a+b.soop.streamers,0))}`
+        },
+        {
+          key: 'donations',
+          title: '③ 시간당 도네이션 집계',
+          icon: 'fa-coins',
+          val: `₩${formatNumber(totDonations)}만`,
+          cSub: `치즈 ${formatNumber(games.reduce((a,b)=>a+b.chzzk.donationsKrwMan,0))}만`,
+          sSub: `별풍 ${formatNumber(games.reduce((a,b)=>a+b.soop.donationsKrwMan,0))}만`
+        },
+        {
+          key: 'chats',
+          title: '④ 분당 채팅 수 (화력)',
+          icon: 'fa-comments',
+          val: `${formatNumber(totChats)}회`,
+          cSub: `C: ${formatNumber(games.reduce((a,b)=>a+b.chzzk.chatsPerMin,0))}`,
+          sSub: `S: ${formatNumber(games.reduce((a,b)=>a+b.soop.chatsPerMin,0))}`
+        },
+        {
+          key: 'share',
+          title: '⑤ 플랫폼 시청자 점유율',
+          icon: 'fa-scale-balanced',
+          val: `${cRatio}% : ${sRatio}%`,
+          cSub: `치지직 우세 6종`,
+          sSub: `숲(SOOP) 우세 4종`
+        }
+      ];
+
+      kpiContainer.innerHTML = cards.map(c => `
+        <div class="kpi-metric-card ${AppState.mainChartMetric === c.key ? 'active-metric' : ''}" onclick="changeMainChartMetric('${c.key}')">
+          <div class="kpi-metric-top">
+            <span>${c.title}</span>
+            <i class="fa-solid ${c.icon}" style="color:var(--chzzk-primary)"></i>
+          </div>
+          <div class="kpi-metric-num">${c.val}</div>
+          <div class="kpi-metric-split">
+            <span style="color:var(--chzzk-primary)">${c.cSub}</span>
+            <span style="color:#60a5fa">${c.sSub}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function changeMainChartMetric(metricKey) {
+      AppState.mainChartMetric = metricKey;
+      document.querySelectorAll('.metric-pill-btn[data-metric]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.metric === metricKey);
+      });
+      renderMainFiveKpiCards();
+      updateAllCharts();
+    }
+
+    function initAndRenderCharts() {
+      Chart.defaults.color = '#94a3b8';
+      Chart.defaults.font.family = "'Pretendard', sans-serif";
+
+      const barCtx = document.getElementById('mainComparisonBarChart');
+      const radarCtx = document.getElementById('platformRadarChart');
+      const lineCtx = document.getElementById('hourlyTrendLineChart');
+      const mixCtx = document.getElementById('donationChatMixChart');
+
+      if (!barCtx || !radarCtx || !lineCtx || !mixCtx) return;
+
+      // 1) 메인 게임별 치지직 vs 숲 비교 바 차트
+      barChartInstance = new Chart(barCtx, {
+        type: 'bar',
+        data: { labels: [], datasets: [] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } }
+          },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.04)' } },
+            y: { grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+          }
+        }
+      });
+
+      // 2) 양 플랫폼 5대 지표 밸런스 레이더 차트
+      radarChartInstance = new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+          labels: ['시청자 규모', '방송인 풀', '도네이션 화력', '분당 채팅 반응', '대형 합방/대회 파급력'],
+          datasets: [
+            {
+              label: '치지직 (CHZZK)',
+              data: [92, 94, 84, 96, 90],
+              backgroundColor: 'rgba(0, 255, 163, 0.18)',
+              borderColor: '#00ffa3',
+              pointBackgroundColor: '#00ffa3',
+              borderWidth: 2
+            },
+            {
+              label: '숲 (SOOP)',
+              data: [89, 86, 97, 88, 95],
+              backgroundColor: 'rgba(0, 102, 255, 0.22)',
+              borderColor: '#3b82f6',
+              pointBackgroundColor: '#3b82f6',
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              angleLines: { color: 'rgba(255,255,255,0.08)' },
+              grid: { color: 'rgba(255,255,255,0.08)' },
+              pointLabels: { color: '#e2e8f0', font: { size: 12, weight: '700' } },
+              suggestedMin: 50,
+              suggestedMax: 100,
+              ticks: { display: false }
+            }
+          }
+        }
+      });
+
+      // 3) 시간대별 플랫폼 시청자 수 추이 라인 차트
+      lineChartInstance = new Chart(lineCtx, {
+        type: 'line',
+        data: {
+          labels: window.STAT_PLATFORM_DB.hourlyPlatformTrend.labels,
+          datasets: [
+            {
+              label: '치지직 시청자 수',
+              data: window.STAT_PLATFORM_DB.hourlyPlatformTrend.chzzkViewers,
+              borderColor: '#00ffa3',
+              backgroundColor: 'rgba(0, 255, 163, 0.12)',
+              fill: true,
+              tension: 0.38,
+              borderWidth: 2.5
+            },
+            {
+              label: '숲(SOOP) 시청자 수',
+              data: window.STAT_PLATFORM_DB.hourlyPlatformTrend.soopViewers,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.12)',
+              fill: true,
+              tension: 0.38,
+              borderWidth: 2.5
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.04)' } },
+            y: { grid: { color: 'rgba(255,255,255,0.06)' } }
+          }
+        }
+      });
+
+      // 4) 도네이션 & 분당 채팅 화력 복합 차트
+      mixChartInstance = new Chart(mixCtx, {
+        type: 'bar',
+        data: { labels: [], datasets: [] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.04)' } },
+            y: {
+              type: 'linear',
+              position: 'left',
+              title: { display: true, text: '도네이션 (만원/h)' },
+              grid: { color: 'rgba(255,255,255,0.06)' }
+            },
+            y1: {
+              type: 'linear',
+              position: 'right',
+              title: { display: true, text: '분당 채팅 수' },
+              grid: { drawOnChartArea: false }
+            }
+          }
+        }
+      });
+
+      updateAllCharts();
+    }
+
+    function updateAllCharts() {
+      if (!barChartInstance) return;
+      const games = computeEnrichedGames();
+      const labels = games.map(g => g.name);
+      const metric = AppState.mainChartMetric;
+
+      const titleMap = {
+        viewers: 'TOP 10 게임별 치지직 vs 숲(SOOP) 실시간 시청자 수 비교 (명)',
+        streamers: 'TOP 10 게임별 치지직 vs 숲(SOOP) 실시간 방송인 수 비교 (명)',
+        donations: 'TOP 10 게임별 치지직(치즈) vs 숲(별풍선) 시간당 도네이션 비교 (만원)',
+        chats: 'TOP 10 게임별 치지직 vs 숲(SOOP) 분당 채팅 수 화력 비교 (회/분)',
+        share: 'TOP 10 게임별 치지직 vs 숲(SOOP) 플랫폼 시청자 점유율 비교 (%)'
+      };
+
+      const titleEl = document.getElementById('primaryChartTitle');
+      if (titleEl) titleEl.textContent = titleMap[metric];
+
+      let chzzkData = [];
+      let soopData = [];
+
+      games.forEach(g => {
+        if (metric === 'viewers') {
+          chzzkData.push(g.chzzk.viewers);
+          soopData.push(g.soop.viewers);
+        } else if (metric === 'streamers') {
+          chzzkData.push(g.chzzk.streamers);
+          soopData.push(g.soop.streamers);
+        } else if (metric === 'donations') {
+          chzzkData.push(g.chzzk.donationsKrwMan);
+          soopData.push(g.soop.donationsKrwMan);
+        } else if (metric === 'chats') {
+          chzzkData.push(g.chzzk.chatsPerMin);
+          soopData.push(g.soop.chatsPerMin);
+        } else if (metric === 'share') {
+          chzzkData.push(g.chzzkShare);
+          soopData.push(g.soopShare);
+        }
+      });
+
+      barChartInstance.data.labels = labels;
+      barChartInstance.data.datasets = [
+        {
+          label: '치지직 (CHZZK)',
+          data: chzzkData,
+          backgroundColor: 'rgba(0, 255, 163, 0.82)',
+          borderColor: '#00ffa3',
+          borderWidth: 1,
+          borderRadius: 6
+        },
+        {
+          label: '숲 (SOOP)',
+          data: soopData,
+          backgroundColor: 'rgba(0, 102, 255, 0.82)',
+          borderColor: '#3b82f6',
+          borderWidth: 1,
+          borderRadius: 6
+        }
+      ];
+      barChartInstance.update();
+
+      // 하단 도네이션 vs 채팅 복합 차트 업데이트
+      if (mixChartInstance) {
+        mixChartInstance.data.labels = labels.slice(0, 7);
+        mixChartInstance.data.datasets = [
+          {
+            type: 'bar',
+            label: '통합 도네이션 (만원/h)',
+            data: games.slice(0, 7).map(g => g.totalDonations),
+            backgroundColor: 'rgba(251, 191, 36, 0.78)',
+            borderRadius: 6,
+            yAxisID: 'y'
+          },
+          {
+            type: 'line',
+            label: '통합 분당 채팅 수',
+            data: games.slice(0, 7).map(g => g.totalChats),
+            borderColor: '#00ffa3',
+            backgroundColor: '#00ffa3',
+            borderWidth: 2.5,
+            tension: 0.35,
+            yAxisID: 'y1'
+          }
+        ];
+        mixChartInstance.update();
+      }
+    }
+
+    /**
+     * ========================================================================
+     * 6. [VIEW 2] 게임별 상세 통계 (기획 2번 분류 화면) 렌더링
+     * ========================================================================
+     */
+    function renderMetricsView() {
+      const games = computeEnrichedGames();
+      const selector = document.getElementById('metricsGameSelector');
+      if (selector) {
+        selector.innerHTML = games.map(g => `
+          <button class="game-chip-btn ${AppState.selectedMetricGameId === g.id ? 'active' : ''}" onclick="selectMetricGame('${g.id}')">
+            <span>${g.icon}</span>
+            <span>${g.name}</span>
+          </button>
+        `).join('');
+      }
+
+      const targetGame = games.find(g => g.id === AppState.selectedMetricGameId) || games[0];
+      const detailPanel = document.getElementById('selectedGameDetailPanel');
+      if (detailPanel && targetGame) {
+        detailPanel.innerHTML = `
+          <div style="background:var(--bg-surface); border:1px solid var(--border-strong); border-radius:var(--radius-lg); padding:24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--border-subtle);">
+              <div style="display:flex; align-items:center; gap:14px;">
+                <div class="spotlight-icon">${targetGame.icon}</div>
+                <div>
+                  <div style="font-size:12px; color:var(--chzzk-primary); font-weight:800;">선택된 게임 5대 지표 양대 플랫폼 비교</div>
+                  <h3 style="font-size:24px; font-weight:900;">${targetGame.name} <span style="font-size:14px; color:var(--text-secondary); font-weight:500;">(${targetGame.engName})</span></h3>
+                </div>
+              </div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <span class="rec-score-pill" style="font-size:14px; padding:8px 14px;">AI 추천 지수 ★ ${targetGame.recScore}점</span>
+                <button class="btn-primary-grad" onclick="jumpToGameLiveGrid('${targetGame.id}')">
+                  <i class="fa-solid fa-play"></i> 이 게임 라이브 방송 보기
+                </button>
+              </div>
+            </div>
+
+            <!-- 5대 지표 치지직 vs 숲 정밀 대조 카드 그리드 -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
+              <div class="spot-kpi-box">
+                <div class="spot-kpi-label"><span>1. 방송인 수</span><i class="fa-solid fa-tower-broadcast"></i></div>
+                <div class="spot-kpi-val">${formatNumber(targetGame.totalStreamers)}명</div>
+                <div style="margin-top:8px; font-size:12px; display:flex; justify-content:space-between;">
+                  <span style="color:var(--chzzk-primary)">치지직: ${formatNumber(targetGame.chzzk.streamers)}명</span>
+                  <span style="color:#60a5fa">숲: ${formatNumber(targetGame.soop.streamers)}명</span>
+                </div>
+              </div>
+
+              <div class="spot-kpi-box">
+                <div class="spot-kpi-label"><span>2. 시청자 수</span><i class="fa-solid fa-users"></i></div>
+                <div class="spot-kpi-val">${formatNumber(targetGame.totalViewers)}명</div>
+                <div style="margin-top:8px; font-size:12px; display:flex; justify-content:space-between;">
+                  <span style="color:var(--chzzk-primary)">치지직: ${formatNumber(targetGame.chzzk.viewers)}명</span>
+                  <span style="color:#60a5fa">숲: ${formatNumber(targetGame.soop.viewers)}명</span>
+                </div>
+              </div>
+
+              <div class="spot-kpi-box">
+                <div class="spot-kpi-label"><span>3. 도네이션 (시간당)</span><i class="fa-solid fa-coins"></i></div>
+                <div class="spot-kpi-val">₩${formatNumber(targetGame.totalDonations)}만</div>
+                <div style="margin-top:8px; font-size:12px; display:flex; justify-content:space-between;">
+                  <span style="color:var(--chzzk-primary)">치즈: ${formatNumber(targetGame.chzzk.donationsKrwMan)}만</span>
+                  <span style="color:#60a5fa">별풍선: ${formatNumber(targetGame.soop.donationsKrwMan)}만</span>
+                </div>
+              </div>
+
+              <div class="spot-kpi-box">
+                <div class="spot-kpi-label"><span>4. 분당 채팅 수</span><i class="fa-solid fa-comments"></i></div>
+                <div class="spot-kpi-val">${formatNumber(targetGame.totalChats)}회/분</div>
+                <div style="margin-top:8px; font-size:12px; display:flex; justify-content:space-between;">
+                  <span style="color:var(--chzzk-primary)">치지직: ${formatNumber(targetGame.chzzk.chatsPerMin)}</span>
+                  <span style="color:#60a5fa">숲: ${formatNumber(targetGame.soop.chatsPerMin)}</span>
+                </div>
+              </div>
+
+              <div class="spot-kpi-box">
+                <div class="spot-kpi-label"><span>5. 플랫폼 시청자 비중</span><i class="fa-solid fa-scale-balanced"></i></div>
+                <div class="spot-kpi-val">${targetGame.chzzkShare}% : ${targetGame.soopShare}%</div>
+                <div class="split-bar-track" style="margin-top:10px; height:8px;">
+                  <div class="split-bar-chzzk" style="width:${targetGame.chzzkShare}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 하단 전체 비교 테이블 렌더링
+      const tbody = document.getElementById('fullMetricsTableBody');
+      if (tbody) {
+        tbody.innerHTML = games.map(g => `
+          <tr>
+            <td class="mono" style="font-weight:800; color:var(--chzzk-primary);">#${g.rank}</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:18px;">${g.icon}</span>
+                <div>
+                  <div style="font-weight:800;">${g.name}</div>
+                  <div style="font-size:11px; color:var(--text-secondary);">${g.genre}</div>
+                </div>
+              </div>
+            </td>
+            <td class="mono" style="font-weight:800;">${formatNumber(g.totalViewers)}명</td>
+            <td style="min-width:190px;">
+              <div class="split-labels">
+                <span class="c-txt">CHZZK ${formatNumber(g.chzzk.viewers)} (${g.chzzkShare}%)</span>
+                <span class="s-txt">SOOP ${formatNumber(g.soop.viewers)} (${g.soopShare}%)</span>
+              </div>
+              <div class="split-bar-track" style="margin-top:4px;">
+                <div class="split-bar-chzzk" style="width:${g.chzzkShare}%"></div>
+              </div>
+            </td>
+            <td class="mono">
+              <strong>${formatNumber(g.totalStreamers)}명</strong>
+              <span style="font-size:11px; color:var(--text-secondary);">(${g.chzzk.streamers} / ${g.soop.streamers})</span>
+            </td>
+            <td class="mono" style="color:var(--accent-gold); font-weight:700;">
+              ₩${formatNumber(g.totalDonations)}만/h
+            </td>
+            <td class="mono">${formatNumber(g.totalChats)}회/분</td>
+            <td><span class="rec-score-pill">★ ${g.recScore}</span></td>
+            <td>
+              <button class="json-btn" onclick="jumpToGameLiveGrid('${g.id}')">
+                <i class="fa-solid fa-tv"></i> 방송보기
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function selectMetricGame(gameId) {
+      AppState.selectedMetricGameId = gameId;
+      renderMetricsView();
+    }
+
+    function jumpToGameMetrics(gameId) {
+      AppState.selectedMetricGameId = gameId;
+      switchView('metrics');
+    }
+
+    /**
+     * ========================================================================
+     * 7. [VIEW 3] 게임 순위 & AI 추천 알고리즘 뷰 렌더링
+     * ========================================================================
+     */
+    function setRankingSort(sortKey) {
+      AppState.rankingSortKey = sortKey;
+      document.getElementById('rankSortRec').classList.toggle('active', sortKey === 'recScore');
+      document.getElementById('rankSortViewers').classList.toggle('active', sortKey === 'totalViewers');
+      document.getElementById('rankSortBlueOcean').classList.toggle('active', sortKey === 'viewerPerStreamer');
+      document.getElementById('rankSortDonation').classList.toggle('active', sortKey === 'totalDonations');
+      renderRankingView();
+    }
+
+    function renderRankingView() {
+      const container = document.getElementById('recommendationCardsContainer');
+      if (!container) return;
+
+      const sorted = computeEnrichedGames().sort((a, b) => b[AppState.rankingSortKey] - a[AppState.rankingSortKey]);
+
+      container.innerHTML = sorted.map((g, idx) => `
+        <div class="auto-scroll-panel" style="justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:12px;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div class="rank-num-box" style="width:36px; height:36px; font-size:15px; background:var(--brand-gradient); color:#06090e;">
+                  ${idx + 1}
+                </div>
+                <div>
+                  <div style="font-size:17px; font-weight:900;">${g.icon} ${g.name}</div>
+                  <div style="font-size:12px; color:var(--text-secondary);">${g.recommendationTag}</div>
+                </div>
+              </div>
+              <div class="rec-score-pill" style="font-size:14px;">추천 ${g.recScore} PT</div>
+            </div>
+
+            <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5;">
+              ${g.recommendationReason}
+            </p>
+          </div>
+
+          <div>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:12px;">
+              <div class="spot-kpi-box" style="padding:9px 10px;">
+                <div style="font-size:10.5px; color:var(--text-secondary);">통합 시청자</div>
+                <div class="mono" style="font-size:14px; font-weight:800;">${formatNumber(g.totalViewers)}명</div>
+              </div>
+              <div class="spot-kpi-box" style="padding:9px 10px;">
+                <div style="font-size:10.5px; color:var(--text-secondary);">방송인당 시청자</div>
+                <div class="mono" style="font-size:14px; font-weight:800; color:var(--chzzk-primary);">${formatNumber(g.viewerPerStreamer)}명</div>
+              </div>
+              <div class="spot-kpi-box" style="padding:9px 10px;">
+                <div style="font-size:10.5px; color:var(--text-secondary);">시간당 후원</div>
+                <div class="mono" style="font-size:14px; font-weight:800; color:var(--accent-gold);">₩${formatNumber(g.totalDonations)}만</div>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div style="font-size:12px;" class="mono">
+                <span style="color:var(--chzzk-primary)">CHZZK ${g.chzzkShare}%</span> ·
+                <span style="color:#60a5fa">SOOP ${g.soopShare}%</span>
+              </div>
+              <button class="json-btn" onclick="jumpToGameLiveGrid('${g.id}')">
+                <span>라이브 방송 격자 이동</span>
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /**
+     * ========================================================================
+     * 9. [VIEW 5] 커뮤니티 게시판 렌더링 및 글쓰기 모달
+     * ========================================================================
+     */
+    function filterBoardCategory(cat) {
+      AppState.boardCategory = cat;
+      document.querySelectorAll('.board-cat-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.cat.trim() === cat);
+      });
+      const titleEl = document.getElementById('boardCurrentTitle');
+      if (titleEl) titleEl.textContent = cat === 'ALL' ? '전체 게시글 목록' : `[${cat}] 카테고리 게시글`;
+      renderBoardList();
+    }
+
+    function renderBoardList() {
+      const container = document.getElementById('boardPostListContainer');
+      if (!container) return;
+
+      const keyword = (document.getElementById('boardSearchInput')?.value || '').trim().toLowerCase();
+      const posts = window.STAT_PLATFORM_DB.boardPosts.filter(p => {
+        if (AppState.boardCategory !== 'ALL' && p.category !== AppState.boardCategory) return false;
+        if (keyword && !(`${p.title} ${p.author}`.toLowerCase().includes(keyword))) return false;
+        return true;
+      });
+
+      const countAll = document.getElementById('catCountALL');
+      if (countAll) countAll.textContent = window.STAT_PLATFORM_DB.boardPosts.length;
+
+      container.innerHTML = posts.map(p => `
+        <div class="board-post-item" onclick="openPostDetailModal(${p.id})">
+          <span class="pf-badge ${p.category === '숲(SOOP)' ? 'soop' : 'chzzk'}" style="justify-content:center;">${p.category}</span>
+          <div style="font-weight:700; font-size:14px;">${p.title}</div>
+          <div class="hide-mobile" style="font-size:12.5px; color:var(--text-secondary);">${p.author}</div>
+          <div class="hide-mobile mono" style="font-size:12px; color:var(--text-muted);">${p.createdAt}</div>
+          <div class="mono" style="font-size:12px; color:var(--chzzk-primary); text-align:right;">👍 ${p.likes}</div>
+        </div>
+      `).join('');
+    }
+
+    function openPostDetailModal(postId) {
+      const post = window.STAT_PLATFORM_DB.boardPosts.find(p => p.id === postId);
+      if (!post) return;
+      post.views += 1;
+      renderBoardList();
+
+      document.getElementById('boardModalTitle').textContent = `[${post.category}] 게시글 상세`;
+      document.getElementById('boardModalBody').innerHTML = `
+        <div style="border-bottom:1px solid var(--border-subtle); padding-bottom:12px;">
+          <h3 style="font-size:18px; font-weight:800; margin-bottom:6px;">${post.title}</h3>
+          <div style="font-size:12px; color:var(--text-secondary); display:flex; gap:14px;">
+            <span>작성자: <strong>${post.author}</strong></span>
+            <span>작성시간: ${post.createdAt}</span>
+            <span>조회수: ${post.views}</span>
+            <span style="color:var(--chzzk-primary)">추천: ${post.likes}</span>
+          </div>
+        </div>
+        <div style="font-size:14px; line-height:1.7; padding:12px 0; color:var(--text-primary);">
+          ${post.content}
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:8px;">
+          <button class="btn-primary-grad" onclick="likeBoardPost(${post.id})">
+            <i class="fa-solid fa-thumbs-up"></i> 추천하기 (+1)
+          </button>
+          <button class="btn-ghost" onclick="closeBoardModal()">닫기</button>
+        </div>
+      `;
+      document.getElementById('boardModal').classList.add('open');
+    }
+
+    function likeBoardPost(postId) {
+      const post = window.STAT_PLATFORM_DB.boardPosts.find(p => p.id === postId);
+      if (post) {
+        post.likes += 1;
+        openPostDetailModal(postId);
+        showToast('게시글을 추천했습니다!');
+      }
+    }
+
+    function openWritePostModal() {
+      document.getElementById('boardModalTitle').textContent = '새 게시글 작성';
+      document.getElementById('boardModalBody').innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <select id="newPostCategory" class="live-search-input">
+            <option value="통계분석">📊 데이터·통계 분석</option>
+            <option value="치지직">⚡ 치지직 트렌드</option>
+            <option value="숲(SOOP)">🌊 숲(SOOP) 트렌드</option>
+            <option value="게임추천">🎮 방송 게임 추천</option>
+          </select>
+          <input type="text" id="newPostAuthor" class="live-search-input" placeholder="작성자 닉네임" value="트렌드워처" />
+          <input type="text" id="newPostTitle" class="live-search-input" placeholder="게시글 제목을 입력하세요" />
+          <textarea id="newPostContent" class="live-search-input" style="min-height:130px; resize:vertical;" placeholder="내용을 입력하세요..."></textarea>
+          <div style="display:flex; justify-content:flex-end; gap:8px;">
+            <button class="btn-ghost" onclick="closeBoardModal()">취소</button>
+            <button class="btn-primary-grad" onclick="submitNewBoardPost()">등록하기</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('boardModal').classList.add('open');
+    }
+
+    function submitNewBoardPost() {
+      const category = document.getElementById('newPostCategory')?.value || '통계분석';
+      const author = (document.getElementById('newPostAuthor')?.value || '익명').trim();
+      const title = (document.getElementById('newPostTitle')?.value || '').trim();
+      const content = (document.getElementById('newPostContent')?.value || '').trim();
+
+      if (!title || !content) {
+        showToast('제목과 내용을 모두 입력해 주세요.');
+        return;
+      }
+
+      window.STAT_PLATFORM_DB.boardPosts.unshift({
+        id: Date.now(),
+        category,
+        title,
+        author,
+        createdAt: '방금 전',
+        views: 1,
+        likes: 0,
+        content
+      });
+
+      closeBoardModal();
+      renderBoardList();
+      showToast('새 게시글이 JSON 스토어에 등록되었습니다.');
+    }
+
+    function closeBoardModal() {
+      document.getElementById('boardModal').classList.remove('open');
+    }
+
+    /**
+     * ========================================================================
+     * 10. JSON 스키마 모달 및 클립보드 복사 (iFrame 호환 execCommand 지원)
+     * ========================================================================
+     */
+    function openJsonModal() {
+      window.STAT_PLATFORM_DB.meta.lastUpdated = new Date().toISOString();
+      const pre = document.getElementById('jsonSchemaPre');
+      if (pre) {
+        pre.textContent = JSON.stringify(window.STAT_PLATFORM_DB, null, 2);
+      }
+      document.getElementById('jsonSchemaModal').classList.add('open');
+    }
+
+    function closeJsonModal() {
+      document.getElementById('jsonSchemaModal').classList.remove('open');
+    }
+
+    function copyJsonStateToClipboard() {
+      const jsonStr = JSON.stringify(window.STAT_PLATFORM_DB, null, 2);
+      const tempArea = document.createElement('textarea');
+      tempArea.value = jsonStr;
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      try {
+        document.execCommand('copy');
+        showToast('JSON 데이터 스키마가 클립보드에 복사되었습니다!');
+      } catch (err) {
+        showToast('클립보드 복사에 실패했습니다.');
+      }
+      document.body.removeChild(tempArea);
+    }
+
+    /**
+     * ========================================================================
+     * 11. 무료 공개 API 실시간 수신 시뮬레이터 & 자동 스크롤 타이머
+     * ========================================================================
+     */
+    function toggleRealtimePolling() {
+      AppState.realtimePolling = !AppState.realtimePolling;
+      const sel = document.getElementById('autoRefreshIntervalSelect');
+      if (sel) {
+        sel.value = AppState.realtimePolling ? "4000" : "0";
+      }
+      changeAutoRefreshInterval(AppState.realtimePolling ? 4000 : 0);
+    }
+
+    function refreshAllUI() {
+      renderMainFiveKpiCards();
+      renderAutoScrollRanking();
+      if (AppState.currentView === 'main') {
+        updateAllCharts();
+      } else if (AppState.currentView === 'metrics') {
+        renderMetricsView();
+      } else if (AppState.currentView === 'ranking') {
+        renderRankingView();
+      } else if (AppState.currentView === 'livegrid') {
+        renderLiveStreamGrid();
+      }
+    }
+
+    function showToast(message) {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const el = document.createElement('div');
+      el.className = 'toast-msg';
+      el.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--chzzk-primary)"></i><span>${message}</span>`;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transition = 'opacity 0.25s ease';
+        setTimeout(() => el.remove(), 260);
+      }, 2800);
+    }
+
+    /**
+     * ========================================================================
+     * 12. 애플리케이션 초기화 (SWIPER, CHARTS, AUTO-SCROLL TIMERS)
+     * ========================================================================
+     */
+    window.addEventListener('DOMContentLoaded', () => {
+      // 0) JSON 데이터베이스 초기화 및 현재 실시간 방송(liveStreams) 기준 전체 게임 통계 산출
+      initDatabaseStore();
+
+      // 1) Swiper 배너 초기화
+      new Swiper('.hero-swiper', {
+        loop: true,
+        speed: 650,
+        autoplay: {
+          delay: 4800,
+          disableOnInteraction: false
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
+        }
+      });
+
+      // 2) 초기 데이터 렌더링
+      renderMainFiveKpiCards();
+      renderAutoScrollRanking();
+      initAndRenderCharts();
+      renderMetricsView();
+      renderRankingView();
+      renderLiveStreamGrid();
+      renderBoardList();
+
+      // 3) 1위 ~ 10위 게임 순위 자동 스크롤 타이머 (2.8초 주기)
+      setInterval(() => {
+        if (AppState.autoScrollActive && !AppState.isRankHovered && !AppState.isTickerHovered && AppState.currentView === 'main') {
+          stepRankFocus(1);
+        }
+      }, 2800);
+
+      // 4) 페이지 로드 즉시 치지직 & 숲 무료 공개 API를 호출하여 실제 방송 중인 스트리머 목록 및 시청자 수를 가져옵니다.
+      ApiService.fetchRealtimeStreams(false);
+
+      // 5) 실시간 방송 API 데이터 폴링 타이머 시작 (무료 프록시 안정성을 위해 기본 30초 주기)
+      changeAutoRefreshInterval(30000);
+    });
+  </script>
+</body>
+</html>

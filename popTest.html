@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>급여 정산 설정 - 그리드 템플릿 다중 선택 시안</title>
+    <!-- DevExtreme CSS CDN (디자인 시안 시각화용) -->
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/21.2.7/css/dx.light.css">
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 30px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #ed5331;
+            margin-bottom: 30px;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+        }
+        .design-box {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 600px;
+        }
+        .popup-card {
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 24px;
+            position: relative;
+        }
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .close-btn {
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #555;
+        }
+        .form-label span {
+            color: #ed5331;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ed5331;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        /* 그리드 영역 스타일 */
+        .grid-container {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 4px;
+            background: #fafafa;
+        }
+        .popup-footer {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 24px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background-color: #ed5331;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #fff;
+            color: #555;
+            border: 1px solid #ccc;
+        }
+    </style>
+    <!-- jQuery 및 DevExtreme JS CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn3.devexpress.com/jslib/21.2.7/js/dx.all.js"></script>
+</head>
+<body>
+
+    <h1>급여 정산 템플릿 다중 선택 (DataGrid 적용 시안)</h1>
+
+    <div class="container">
+        <div class="design-box">
+            <div class="popup-card">
+                <div class="popup-header">
+                    <span>급여 정산 설정</span>
+                    <span class="close-btn">&times;</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">제목 <span>*</span></label>
+                    <input type="text" class="form-input" value="2026년 7월 정기 급여 정산">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">적용 템플릿 다중 선택 <span>*</span></label>
+                    <div class="grid-container">
+                        <!-- DevExtreme DataGrid가 렌더링될 영역 -->
+                        <div id="templateGrid"></div>
+                    </div>
+                </div>
+
+                <div class="popup-footer">
+                    <button class="btn btn-primary" onclick="saveData()">저장</button>
+                    <button class="btn btn-secondary">취소</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 샘플 템플릿 데이터 (월급용, 주급용 등 포함)
+        const templateData = [
+            { id: 1, type: "월급용", name: "[월급용] 본사 정규직 기본 템플릿", priority: 1, status: "활성" },
+            { id: 2, type: "월급용", name: "[월급용] 임원진 성과 연동 템플릿", priority: 2, status: "활성" },
+            { id: 3, type: "주급용", name: "[주급용] 현장 계약직 주간 템플릿", priority: 1, status: "활성" },
+            { id: 4, type: "주급용", name: "[주급용] 단기 아르바이트 시급 템플릿", priority: 2, status: "비활성" }
+        ];
+
+        $(function(){
+            // DevExtreme DataGrid 초기화
+            $("#templateGrid").dxDataGrid({
+                dataSource: templateData,
+                keyExpr: "id",
+                selection: {
+                    mode: "multiple",          // 다중 선택 모드 활성화
+                    showCheckBoxesMode: "always" // 항상 체크박스 노출
+                },
+                paging: {
+                    pageSize: 3                // 팝업 내에서 보기 좋게 페이지당 행 제한 (또는 스크롤 사용 가능)
+                },
+                scrolling: {
+                    mode: "standard"
+                },
+                columns: [
+                    { dataField: "type", caption: "구분", width: 80, alignment: "center" },
+                    { dataField: "name", caption: "템플릿 명" },
+                    { dataField: "priority", caption: "우선순위", width: 70, alignment: "center" },
+                    { dataField: "status", caption: "상태", width: 70, alignment: "center" }
+                ],
+                // 초기 선택된 항목 지정 (예시: 1번, 3번 기본 선택)
+                selectedRowKeys: [1, 3] 
+            });
+        });
+
+        function saveData() {
+            // 저장 버튼 클릭 시 그리드에서 선택된 행 데이터 가져오기 예시
+            var gridInstance = $("#templateGrid").dxDataGrid("instance");
+            var selectedRows = gridInstance.getSelectedRowsData();
+            console.log("선택된 템플릿 목록:", selectedRows);
+            alert("선택된 템플릿 " + selectedRows.length + "개가 설정되었습니다.");
+        }
+    </script>
+
+</body>
+</html>
